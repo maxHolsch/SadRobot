@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Agent - Press Space to Talk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f5f5f5;
+            transition: all 0.3s ease;
+        }
+
+        .status-indicator.recording {
+            background: #ffebee;
+            border: 2px solid #ef5350;
+        }
+
+        .status-indicator.processing {
+            background: #e3f2fd;
+            border: 2px solid #42a5f5;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #9e9e9e;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .status-indicator.recording .status-dot {
+            background: #ef5350;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .status-indicator.processing .status-dot {
+            background: #42a5f5;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .transcription-box {
+            background: #fff9e6;
+            border: 2px solid #ffd54f;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: none;
+        }
+
+        .transcription-box.show {
+            display: block;
+        }
+
+        .transcription-label {
+            font-size: 0.9em;
+            color: #f57c00;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .transcription-text {
+            font-size: 1.1em;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .transcription-text.interim {
+            color: #999;
+            font-style: italic;
+        }
+
+        .chat-container {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.assistant {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .message-label {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .instructions {
+            text-align: center;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .instructions kbd {
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1.1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-reset {
+            background: #ef5350;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        /* Scrollbar styling */
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Voice Agent</h1>
+        <p class="subtitle">Talk to Eric, the pizza shop employee</p>
+
+        <div class="instructions">
+            <p>Press and hold <kbd>SPACE</kbd> to record, release to send</p>
+        </div>
+
+        <div class="status-indicator" id="status">
+            <div class="status-dot"></div>
+            <div class="status-text">Ready - Press Space to talk</div>
+        </div>
+
+        <div class="transcription-box" id="transcriptionBox">
+            <div class="transcription-label">🎤 Live Transcription:</div>
+            <div class="transcription-text" id="transcriptionText"></div>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-reset" onclick="resetConversation()">Reset Conversation</button>
+        </div>
+
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        let recognition;
+        let isRecording = false;
+        let isProcessing = false;
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        // Initialize speech recognition
+        function initSpeechRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showError('Speech recognition not supported in this browser. Please use Chrome.');
+                return false;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                console.log('Speech recognition started');
+            };
+
+            recognition.onresult = (event) => {
+                interimTranscript = '';
+                finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                // Update the transcription display
+                updateTranscription();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                if (event.error !== 'no-speech' && event.error !== 'aborted') {
+                    showError('Speech recognition error: ' + event.error);
+                }
+            };
+
+            recognition.onend = () => {
+                console.log('Speech recognition ended');
+                if (isRecording) {
+                    // Restart if we're still supposed to be recording
+                    recognition.start();
+                }
+            };
+
+            return true;
+        }
+
+        // Handle spacebar press and release
+        document.addEventListener('keydown', async (e) => {
+            if (e.code === 'Space' && !isRecording && !isProcessing) {
+                e.preventDefault();
+                await startRecording();
+            }
+        });
+
+        document.addEventListener('keyup', async (e) => {
+            if (e.code === 'Space' && isRecording) {
+                e.preventDefault();
+                await stopRecording();
+            }
+        });
+
+        async function startRecording() {
+            if (!recognition) {
+                if (!initSpeechRecognition()) {
+                    return;
+                }
+            }
+
+            finalTranscript = '';
+            interimTranscript = '';
+            isRecording = true;
+
+            // Show transcription box
+            document.getElementById('transcriptionBox').classList.add('show');
+            document.getElementById('transcriptionText').textContent = '';
+
+            updateStatus('recording', 'Recording... Release Space to send');
+
+            try {
+                recognition.start();
+            } catch (error) {
+                console.error('Error starting recognition:', error);
+                showError('Failed to start speech recognition');
+                isRecording = false;
+            }
+        }
+
+        async function stopRecording() {
+            if (!recognition || !isRecording) {
+                return;
+            }
+
+            isRecording = false;
+            recognition.stop();
+
+            // Get the final transcript
+            const userText = (finalTranscript + interimTranscript).trim();
+
+            if (!userText) {
+                updateStatus('ready', 'Ready - Press Space to talk');
+                document.getElementById('transcriptionBox').classList.remove('show');
+                showError('No speech detected. Please try again.');
+                return;
+            }
+
+            // Process the transcribed text
+            await processTranscript(userText);
+        }
+
+        function updateTranscription() {
+            const transcriptionText = document.getElementById('transcriptionText');
+            const fullText = finalTranscript + interimTranscript;
+
+            if (interimTranscript) {
+                transcriptionText.innerHTML = finalTranscript + '<span class="interim">' + interimTranscript + '</span>';
+            } else {
+                transcriptionText.textContent = finalTranscript;
+            }
+        }
+
+        async function processTranscript(userText) {
+            isProcessing = true;
+            updateStatus('processing', 'Processing...');
+
+            // Hide transcription box
+            document.getElementById('transcriptionBox').classList.remove('show');
+
+            try {
+                // Display user message
+                addMessage('user', userText);
+
+                // Step 1: Get chat response
+                updateStatus('processing', 'Thinking...');
+                const chatResponse = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: userText })
+                });
+
+                if (!chatResponse.ok) {
+                    throw new Error('Chat failed');
+                }
+
+                const chatData = await chatResponse.json();
+                const assistantText = chatData.response;
+
+                // Display assistant message
+                addMessage('assistant', assistantText);
+
+                // Step 2: Text to speech and auto-play
+                updateStatus('processing', 'Speaking...');
+                const ttsResponse = await fetch('/speak', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: assistantText })
+                });
+
+                if (!ttsResponse.ok) {
+                    throw new Error('TTS failed');
+                }
+
+                const audioData = await ttsResponse.blob();
+                const audioUrl = URL.createObjectURL(audioData);
+                const audio = new Audio(audioUrl);
+
+                // Auto-play the response
+                await audio.play();
+
+                // Wait for audio to finish playing
+                audio.onended = () => {
+                    isProcessing = false;
+                    updateStatus('ready', 'Ready - Press Space to talk');
+                };
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message);
+                isProcessing = false;
+                updateStatus('ready', 'Ready - Press Space to talk');
+            }
+        }
+
+        function updateStatus(state, text) {
+            const statusEl = document.getElementById('status');
+            const statusText = statusEl.querySelector('.status-text');
+
+            statusEl.className = 'status-indicator ' + state;
+            statusText.textContent = text;
+        }
+
+        function addMessage(role, content) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+
+            const label = role === 'user' ? 'You' : 'Eric';
+            messageDiv.innerHTML = `
+                <div class="message-label">${label}</div>
+                <div class="message-content">${content}</div>
+            `;
+
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+
+            setTimeout(() => {
+                errorEl.classList.remove('show');
+            }, 5000);
+        }
+
+        async function resetConversation() {
+            try {
+                await fetch('/reset', { method: 'POST' });
+                document.getElementById('chatContainer').innerHTML = '';
+                document.getElementById('transcriptionBox').classList.remove('show');
+                finalTranscript = '';
+                interimTranscript = '';
+                updateStatus('ready', 'Ready - Press Space to talk');
+            } catch (error) {
+                showError('Failed to reset conversation');
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            updateStatus('ready', 'Ready - Press Space to talk');
+            initSpeechRecognition();
+        });
+    </script>
+</body>
+</html>
