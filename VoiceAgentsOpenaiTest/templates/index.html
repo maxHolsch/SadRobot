@@ -633,6 +633,7 @@
         import { EffectComposer }  from 'three/addons/postprocessing/EffectComposer.js';
         import { RenderPass }      from 'three/addons/postprocessing/RenderPass.js';
         import { ShaderPass }      from 'three/addons/postprocessing/ShaderPass.js';
+        import { SavePass }        from 'three/addons/postprocessing/SavePass.js';
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
         import { OutputPass }      from 'three/addons/postprocessing/OutputPass.js';
         import { GLTFLoader }      from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
@@ -652,6 +653,28 @@
         // ---------- Scene / camera ----------
         const scene = new THREE.Scene();
 
+        // ---------- Bloom exclusion list ----------
+        // List object names to exclude from the bloom pass (they will still render in the final pass)
+        // Edit this array to match names in your GLTF (e.g. ['Char', 'NoBloom'])
+        const bloomExclude = ['Base001', 'Base'];
+
+        // Internal storage for original visibility states when toggling bloom exclusion
+        const _bloomHidden = [];
+        function hideBloomExcluded(){
+            _bloomHidden.length = 0;
+            for (let name of bloomExclude){
+                const obj = scene.getObjectByName(name);
+                if (obj){
+                    _bloomHidden.push({ obj, visible: obj.visible });
+                    obj.visible = false;
+                }
+            }
+        }
+        function restoreBloomExcluded(){
+            for (let rec of _bloomHidden) rec.obj.visible = rec.visible;
+            _bloomHidden.length = 0;
+        }
+
         // ---------- Background images ----------
         const bgPaths = [
             '/static/img/sky01.png',
@@ -663,8 +686,71 @@
         const bgTextures = bgPaths.map(p => texLoader.load(p));
         bgTextures.forEach(t => { try { if (t) t.colorSpace = THREE.SRGBColorSpace; } catch(e){} });
 
+        let bgPass = null;
+        function createBgPass(){
+            // use the simple UV passthrough vertex shader already in the document
+            const bgMat = new THREE.ShaderMaterial({
+                uniforms: {
+                    t0: { value: bgTextures[0] },
+                    t1: { value: bgTextures[1] },
+                    uMix: { value: 0.0 },
+                    resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    uniform sampler2D t0;
+                    uniform sampler2D t1;
+                    uniform float uMix;
+                    void main(){
+                        vec2 uv = vUv;
+                        vec4 a = texture2D(t0, uv);
+                        vec4 b = texture2D(t1, uv);
+                        gl_FragColor = mix(a, b, uMix);
+                    }
+                `,
+                depthWrite: false,
+                depthTest: false,
+                toneMapped: false
+            });
+            // create ShaderPass without a textureID so our t0/t1 uniforms are preserved
+            bgPass = new ShaderPass(bgMat);
+        }
+
         let bgIndex = 0;
-        scene.background = bgTextures[bgIndex];
+        function setBackground(i){
+            bgIndex = i % 10;
+            // if we have a shader-driven bgPass, prefer it (we'll still update the label)
+            if (bgPass && bgPass.material && bgPass.material.uniforms){
+                updateBgFromIndex(bgIndex);
+            }
+        }
+        setBackground(bgIndex);
+        window.addEventListener('keydown', (e)=>{
+            if (e.key === 'ArrowRight') setBackground(bgIndex + 1);
+            if (e.key === 'ArrowLeft') setBackground(bgIndex - 1);
+        });
+
+        function updateBgFromIndex(index){
+            const s = Number(index);
+            const N = bgTextures.length;
+
+            // sanity checks
+            if (N === 0 || !bgPass || !bgPass.material || !bgPass.material.uniforms) return;
+
+            const frac = (s / 10) * (N - 1);
+            const i0 = Math.floor(frac);
+            const i1 = Math.min(i0 + 1, N - 1);
+            const localMix = frac - i0;
+
+            // shader inputs
+            bgPass.material.uniforms.t0.value = bgTextures[i0];
+            bgPass.material.uniforms.t1.value = bgTextures[i1];
+            bgPass.material.uniforms.uMix.value = localMix;
+        }
 
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
         camera.position.set(0.8, 0.8, 1.8);
@@ -729,18 +815,54 @@
                 uHueScale:  { value: 1.0 },
                 uHueSpeed:  { value: 0.3 },
                 uHueSat:    { value: 0.5 },
-                uEdgeStrength: { value: 0.9 }
+                uEdgeStrength: { value: 0.9 },
+                // Blob effect
+                uAmp: {value: 0.5},
+                uFreq: {value: 0.3 },
+                uSpeed: {value: 0.4}
             },
             vertexShader: `
                 varying vec3 vPos;
                 varying vec3 vNormal;
                 varying vec3 viewDir;
+
+                uniform float uTime;      // seconds
+                uniform float uAmp;       // displacement amplitude
+                uniform float uFreq;      // spatial frequency
+                uniform float uSpeed;     // time scale
+
+                // cheap value-noise (hash + trilinear)
+                float hash(vec3 p){
+                    return fract(sin(dot(p, vec3(127.1,311.7, 74.7))) * 43758.5453);
+                }
+
+                float noise(vec3 x){
+                    vec3 i = floor(x), f = fract(x);
+                    float n000=hash(i+vec3(0,0,0)), n100=hash(i+vec3(1,0,0));
+                    float n010=hash(i+vec3(0,1,0)), n110=hash(i+vec3(1,1,0));
+                    float n001=hash(i+vec3(0,0,1)), n101=hash(i+vec3(1,0,1));
+                    float n011=hash(i+vec3(0,1,1)), n111=hash(i+vec3(1,1,1));
+                    vec3 u = f*f*(3.0-2.0*f);
+                    float nx00 = mix(n000,n100,u.x), nx10 = mix(n010,n110,u.x);
+                    float nx01 = mix(n001,n101,u.x), nx11 = mix(n011,n111,u.x);
+                    float nxy0 = mix(nx00,nx10,u.y), nxy1 = mix(nx01,nx11,u.y);
+
+                    return mix(nxy0,nxy1,u.z);
+                }
+
                 void main(){
                     vPos = position * 3.0;
                     vNormal = normalize( normalMatrix * normal );
                     vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
                     viewDir = normalize( -mvPos.xyz );
-                    gl_Position = projectionMatrix * mvPos;
+
+                    vec3 pos = position;
+                    float mask = 1.0 - ((dot(vNormal, viewDir) + 1.0) * 0.5);
+                    float n = noise(position * uFreq + vec3(0.0, 0.0, uTime * uSpeed));
+                    float disp = (n * 2.0 - 1.0) * uAmp * mask;
+                    pos += normalize(normal) * disp;
+
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                 }
             `,
             fragmentShader: `
@@ -820,27 +942,43 @@
         renderScene.clear = true;
         renderScene.clearAlpha = 0.0;
 
+        const renderTarget = new THREE.WebGLRenderTarget(100, 100, {
+            depthBuffer: false, stencilBuffer: false
+        });
+
         // ---------- Bloom composer (off-screen) ----------
         const bloomComposer = new EffectComposer(renderer);
         bloomComposer.renderToScreen = false;
         const bloomPass = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.2,
+            2.4,
             1.0,
             0.1
         );
 
+        if (!bgPass) createBgPass();
+        bloomComposer.addPass(bgPass);
         bloomComposer.addPass(renderScene);
         bloomComposer.addPass(bloomPass);
+        bloomComposer.addPass(new SavePass(renderTarget));
 
         // ---------- Final composer ----------
         const finalComposer = new EffectComposer(renderer);
-        finalComposer.addPass(renderScene);
+
+        scene.background = null;
+
+        if (!bgPass) createBgPass();
+        finalComposer.addPass(bgPass);
+
+        const renderSceneFinal = new RenderPass(scene, camera);
+        renderSceneFinal.clear = false;
+        renderSceneFinal.clearAlpha = 0.0;
+        finalComposer.addPass(renderSceneFinal);
 
         const mixPass = new ShaderPass(
             new THREE.ShaderMaterial({
                 uniforms: {
-                    baseTexture:  { value: null },
+                    baseTexture:  { value: renderTarget },
                     bloomTexture: { value: bloomComposer.renderTarget2.texture }
                 },
                 vertexShader: `
@@ -868,6 +1006,7 @@
         function onResize(){
             const w = window.innerWidth, h = window.innerHeight;
             renderer.setSize(w, h);
+            renderTarget.setSize(w,h);
             camera.aspect = w/h;
             camera.updateProjectionMatrix();
             bloomComposer.setSize(w, h);
@@ -887,7 +1026,10 @@
 
             try { updateChar(t); } catch(e) {}
 
+            try{ hideBloomExcluded(); } catch(e){}
             bloomComposer.render();
+            try{ restoreBloomExcluded(); } catch(e){}
+
             finalComposer.render();
         });
     </script>
