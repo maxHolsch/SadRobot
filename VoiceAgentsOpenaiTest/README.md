@@ -29,6 +29,12 @@ A web-based voice conversation app featuring Eric, a depressed pizza shop employ
    pip install -r requirements.txt
    ```
 
+   Or, if you're using `uv` for package management, run
+   ```bash
+   uv sync
+   ```
+   and you should be good to go.
+
 3. **Configure environment variables**
 
    Create a `.env` file:
@@ -44,6 +50,12 @@ A web-based voice conversation app featuring Eric, a depressed pizza shop employ
 4. **Run the server**
    ```bash
    python app.py
+   ```
+
+   or
+
+   ```bash
+   uv run app.py
    ```
 
 5. **Open in browser**
