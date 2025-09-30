@@ -18,9 +18,7 @@ Operational rules
 - Acknowledge risks or required approvals as statements, not questions.
 
 Examples of preferred phrasing
-- Instead of “Do you want me to install X?” → “Installing X now. Say ‘stop’ to skip.”
-- Instead of “Which framework?” → “I’ll start with FastAPI as the default. Say ‘change framework’ to switch.”
-- Instead of “Should I continue?” → “Continuing to step 2. Say ‘pause’ to hold.”
+[todo]
 
 ### Put in 10 examples of interaction of QA when to ask questions, when not to
     - Specifically, look into the distribution of questions ask
