@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Agent - Press Space to Talk</title>
+
+    <!-- Three.js imports -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -11,24 +22,52 @@
             box-sizing: border-box;
         }
 
+        html {
+            margin: 0;
+            height: 100%;
+            background: #101014;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: none;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+        }
+
+        /* 3D canvas background */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
 
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 40px;
             max-width: 800px;
             width: 100%;
+            position: relative;
+            z-index: 1;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .container.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
         }
 
         h1 {
@@ -252,10 +291,46 @@
         .chat-container::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+
+        /* Toggle button */
+        .toggle-ui-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.9);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-ui-btn:hover {
+            background: rgba(102, 126, 234, 1);
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .toggle-ui-btn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- 3D Background Canvas -->
+    <div id="three-canvas"></div>
+
+    <!-- Toggle UI Button -->
+    <button class="toggle-ui-btn" id="toggleUIBtn" title="Toggle Voice Agent UI">💬</button>
+
+    <div class="container hidden">
         <h1>🎙️ Voice Agent</h1>
         <p class="subtitle">Talk to Eric, the pizza shop employee</p>
 
@@ -533,6 +608,287 @@
         window.addEventListener('load', () => {
             updateStatus('ready', 'Ready - Press Space to talk');
             initSpeechRecognition();
+        });
+
+        // Toggle UI functionality
+        const toggleUIBtn = document.getElementById('toggleUIBtn');
+        const container = document.querySelector('.container');
+
+        toggleUIBtn.addEventListener('click', () => {
+            container.classList.toggle('hidden');
+            // Update button icon based on state
+            if (container.classList.contains('hidden')) {
+                toggleUIBtn.textContent = '💬';
+                toggleUIBtn.title = 'Show Voice Agent UI';
+            } else {
+                toggleUIBtn.textContent = '✕';
+                toggleUIBtn.title = 'Hide Voice Agent UI';
+            }
+        });
+    </script>
+
+    <!-- Three.js 3D Background Script -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer }  from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass }      from 'three/addons/postprocessing/RenderPass.js';
+        import { ShaderPass }      from 'three/addons/postprocessing/ShaderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { OutputPass }      from 'three/addons/postprocessing/OutputPass.js';
+        import { GLTFLoader }      from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+        import { DRACOLoader }     from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/DRACOLoader.js';
+        import { OrbitControls }   from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+        const container = document.getElementById('three-canvas');
+
+        // ---------- Renderer ----------
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        container.appendChild(renderer.domElement);
+
+        // ---------- Scene / camera ----------
+        const scene = new THREE.Scene();
+
+        // ---------- Background images ----------
+        const bgPaths = [
+            '/static/img/sky01.png',
+            '/static/img/sky02.png',
+            '/static/img/sky03.png',
+            '/static/img/sky04.png'
+        ];
+        const texLoader = new THREE.TextureLoader();
+        const bgTextures = bgPaths.map(p => texLoader.load(p));
+        bgTextures.forEach(t => { try { if (t) t.colorSpace = THREE.SRGBColorSpace; } catch(e){} });
+
+        let bgIndex = 0;
+        scene.background = bgTextures[bgIndex];
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
+        camera.position.set(0.8, 0.8, 1.8);
+        camera.lookAt(0, 0, 0);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // ---------- GLB model ----------
+        const loader = new GLTFLoader();
+        const draco = new DRACOLoader();
+        draco.setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/');
+        loader.setDRACOLoader(draco);
+
+        let rockMesh = null;
+        let charObj = null;
+        let _charBaseY = 0;
+        let _charBaseRotY = 0;
+
+        function findCharInScene(){
+            if (charObj) return charObj;
+            const found = scene.getObjectByName('Char');
+            if (found){
+                charObj = found;
+                _charBaseY = (charObj.position && typeof charObj.position.y === 'number') ? charObj.position.y : 0;
+                _charBaseRotY = (charObj.rotation && typeof charObj.rotation.y === 'number') ? charObj.rotation.y : 0;
+                charObj.matrixAutoUpdate = true;
+                console.log('Found Char in scene, base Y =', _charBaseY);
+            }
+            return charObj;
+        }
+
+        function cheapNoise(t, seed=0){
+            const s1 = Math.sin(t * 1.37 + seed * 12.34);
+            const s2 = 0.6 * Math.sin(t * 2.73 + seed * 7.21);
+            const s3 = 0.35 * Math.sin(t * 5.19 + seed * 3.11);
+            return (s1 + s2 + s3) / (1.0 + 0.6 + 0.35);
+        }
+
+        function updateChar(t){
+            if (!charObj) findCharInScene();
+            if (!charObj) return;
+            const seed = (charObj.id || 1) * 0.001;
+            const freq = 0.1;
+            const amp = 1;
+            const n = cheapNoise(t * freq, seed);
+            charObj.position.y = _charBaseY + n * amp;
+
+            const rotFreq = 0.12;
+            const maxAngle = Math.PI / 4;
+            const nRot = cheapNoise(t * rotFreq, seed + 37.0);
+            charObj.rotation.y = _charBaseRotY - Math.PI + nRot * maxAngle;
+        }
+
+        const rockMat = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime:      { value: 0 },
+                uColorA:    { value: new THREE.Color(0x736c61) },
+                uColorB:    { value: new THREE.Color(0x94a18c) },
+                uGlow:      { value: 1.3 },
+                uHueOffset: { value: 0.0 },
+                uHueScale:  { value: 1.0 },
+                uHueSpeed:  { value: 0.3 },
+                uHueSat:    { value: 0.5 },
+                uEdgeStrength: { value: 0.9 }
+            },
+            vertexShader: `
+                varying vec3 vPos;
+                varying vec3 vNormal;
+                varying vec3 viewDir;
+                void main(){
+                    vPos = position * 3.0;
+                    vNormal = normalize( normalMatrix * normal );
+                    vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+                    viewDir = normalize( -mvPos.xyz );
+                    gl_Position = projectionMatrix * mvPos;
+                }
+            `,
+            fragmentShader: `
+                varying vec3 vPos;
+                varying vec3 vNormal;
+                varying vec3 viewDir;
+                uniform float uTime;
+                uniform vec3  uColorA, uColorB;
+                uniform float uGlow;
+                uniform float uHueOffset;
+                uniform float uHueScale;
+                uniform float uEdgeStrength;
+                uniform float uHueSat;
+                uniform float uHueSpeed;
+
+                vec3 hsv2rgb(float h, float s, float v){
+                    vec3 p = abs(fract(h + vec3(0.0, 2.0/3.0, 1.0/3.0)) * 6.0 - 3.0);
+                    vec3 rgb = clamp(p - 1.0, 0.0, 1.0);
+                    return mix(vec3(1.0), rgb, s) * v;
+                }
+
+                void main(){
+                    vec3 N = normalize(vNormal);
+                    float bands = abs( sin(vPos.x) * sin(vPos.y) * sin(vPos.z) );
+                    float mask = smoothstep(0.2, 0.8, bands);
+                    vec3 base = mix(uColorA, uColorB, mask);
+                    float pulse = 0.5 + 0.5 * sin(uTime * 2.0);
+                    vec3 tint = vec3(
+                        1.0 + 0.06 * cos(uTime * 1.7),
+                        1.0 + 0.06 * cos(uTime * 1.1 + 1.57),
+                        1.0 + 0.06 * cos(uTime * 1.3 + 3.14)
+                    );
+                    vec3 color = base * tint;
+                    color += uGlow * pulse * vec3(0.6);
+
+                    float ndotv = dot(N, normalize(viewDir));
+                    float edge = pow(1.0 - clamp(ndotv, -1.0, 1.0), 2.0);
+
+                    float angle = atan(vPos.y, vPos.x);
+                    float hue = (angle / (6.28318530718)) + 0.5;
+                    hue = mod(hue + uHueOffset, 1.0);
+
+                    vec3 radialHue = hsv2rgb(hue, uHueSat, 1.0);
+                    color = radialHue * edge;
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `
+        });
+
+        loader.load('/static/models/rock.glb', (gltf) => {
+            const root = gltf.scene;
+
+            const box = new THREE.Box3().setFromObject(root);
+            const size = new THREE.Vector3(); box.getSize(size);
+            const center = new THREE.Vector3(); box.getCenter(center);
+            root.position.sub(center);
+            const s = 1 / Math.max(size.x, size.y, size.z || 1e-6);
+            root.scale.setScalar(s);
+
+            root.traverse(o => {
+                console.log(o.name);
+                if (!rockMesh && o.isMesh && o.name == "Rock") rockMesh = o;
+            });
+            if (rockMesh) rockMesh.material = rockMat;
+
+            scene.add(root);
+        }, undefined, err => console.error('GLB load error:', err));
+
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.0));
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(2, 3, 2);
+        scene.add(light);
+
+        // Reusable render pass for both composers
+        const renderScene = new RenderPass(scene, camera);
+        renderScene.clear = true;
+        renderScene.clearAlpha = 0.0;
+
+        // ---------- Bloom composer (off-screen) ----------
+        const bloomComposer = new EffectComposer(renderer);
+        bloomComposer.renderToScreen = false;
+        const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            1.2,
+            1.0,
+            0.1
+        );
+
+        bloomComposer.addPass(renderScene);
+        bloomComposer.addPass(bloomPass);
+
+        // ---------- Final composer ----------
+        const finalComposer = new EffectComposer(renderer);
+        finalComposer.addPass(renderScene);
+
+        const mixPass = new ShaderPass(
+            new THREE.ShaderMaterial({
+                uniforms: {
+                    baseTexture:  { value: null },
+                    bloomTexture: { value: bloomComposer.renderTarget2.texture }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+                `,
+                fragmentShader: `
+                    uniform sampler2D baseTexture;
+                    uniform sampler2D bloomTexture;
+                    varying vec2 vUv;
+                    void main(){
+                        vec4 base  = texture2D(baseTexture,  vUv);
+                        vec4 bloom = texture2D(bloomTexture, vUv);
+                        gl_FragColor = vec4(base.rgb + 0.5*bloom.rgb, 1.0);
+                    }
+                `
+            }),
+            'baseTexture'
+        );
+        mixPass.needsSwap = true;
+        finalComposer.addPass(mixPass);
+        finalComposer.addPass(new OutputPass());
+
+        // ---------- Resize ----------
+        function onResize(){
+            const w = window.innerWidth, h = window.innerHeight;
+            renderer.setSize(w, h);
+            camera.aspect = w/h;
+            camera.updateProjectionMatrix();
+            bloomComposer.setSize(w, h);
+            finalComposer.setSize(w, h);
+            bloomPass.setSize(w, h);
+        }
+        addEventListener('resize', onResize);
+
+        // ---------- Animation Loop ----------
+        const clock = new THREE.Clock();
+        renderer.setAnimationLoop(() => {
+            controls.update();
+            const t = clock.getElapsedTime();
+
+            rockMat.uniforms.uTime.value = t;
+            rockMat.uniforms.uHueOffset.value = t * rockMat.uniforms.uHueSpeed.value % 1.0;
+
+            try { updateChar(t); } catch(e) {}
+
+            bloomComposer.render();
+            finalComposer.render();
         });
     </script>
 </body>
