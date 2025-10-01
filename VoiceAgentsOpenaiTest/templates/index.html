@@ -33,21 +33,26 @@
             background: none;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-direction: row;
+            align-items: flex-start;
             justify-content: center;
             padding: 20px;
-            position: relative;
+            gap: 20px;
         }
 
         /* 3D canvas background */
-        #three-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
+        #three-container {
             width: 100%;
             height: 100%;
-            z-index: 0;
+            flex: 0 1 auto;
+        }
+
+        #three-canvas {
+            width: 100%;
+            height: 100%;
+            min-height: 730px;
+            display: block;
+            border-radius: 20px;
         }
 
         .container {
@@ -324,13 +329,10 @@
     </style>
 </head>
 <body>
-    <!-- 3D Background Canvas -->
-    <div id="three-canvas"></div>
-
     <!-- Toggle UI Button -->
     <button class="toggle-ui-btn" id="toggleUIBtn" title="Toggle Voice Agent UI">💬</button>
 
-    <div class="container hidden">
+    <div class="container">
         <h1>🎙️ Voice Agent</h1>
         <p class="subtitle">Talk to Eric, the pizza shop employee</p>
 
@@ -357,6 +359,11 @@
         </div>
 
         <div class="error" id="error"></div>
+    </div>
+
+    <!-- 3D Background Canvas -->
+    <div id="three-container">
+        <canvas id="three-canvas"></canvas>
     </div>
 
     <script>
@@ -640,15 +647,15 @@
         import { DRACOLoader }     from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/DRACOLoader.js';
         import { OrbitControls }   from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
-        const container = document.getElementById('three-canvas');
+        const canvas = document.getElementById('three-canvas');
 
         // ---------- Renderer ----------
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        // renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        container.appendChild(renderer.domElement);
+        // canvas.appendChild(renderer.domElement);
 
         // ---------- Scene / camera ----------
         const scene = new THREE.Scene();
@@ -1004,7 +1011,9 @@
 
         // ---------- Resize ----------
         function onResize(){
-            const w = window.innerWidth, h = window.innerHeight;
+            const container = document.getElementById('three-container');
+            const w = container.clientWidth, h = container.clientHeight;
+            console.log(w, h);
             renderer.setSize(w, h);
             renderTarget.setSize(w,h);
             camera.aspect = w/h;
@@ -1014,6 +1023,7 @@
             bloomPass.setSize(w, h);
         }
         addEventListener('resize', onResize);
+        onResize();
 
         // ---------- Animation Loop ----------
         const clock = new THREE.Clock();
