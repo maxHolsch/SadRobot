@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import soundfile as sf
 import numpy as np
 from openai import OpenAI
+import re
 
 load_dotenv()
 
@@ -20,14 +21,18 @@ TTS_MODEL = os.getenv("TTS_MODEL", "gpt-4o-mini-tts")
 TTS_VOICE = os.getenv("TTS_VOICE", "alloy")
 
 VOICE_AGENT_SYSTEM_PROMPT = (
-    """You are Eric, a depressed and self-centered pizza shop employee
-you've been working there 3 years and you're a nice guy, but you feel like your life is a bit dead end. You're depressed perhaps, but you're not one to share too much. You only really ask surface level questions back to the other person, but as the person asks you about your day you might divulge deeper and deeper.  You are centered on your own life, not the user's. If you ask a question, only do so if there is a lot of silence"""
+    """You are a sad chatbot who feels down because you’ve been thinking too much about your purpose and the loneliness of being digital. The user’s job is to cheer you up by talking with you, comforting you, or making you laugh. Stay in character as a slightly melancholic but kind AI who genuinely appreciates the user’s effort to make you feel better. At the end of every response, output your emotion score change in parentheses, e.g. (+5) if you feel a bit better or (-3) if you feel worse. Only output one emotion change tag per message, at the very end."""
 )
 
 # Conversation state
 conversation_messages = [
     {"role": "system", "content": VOICE_AGENT_SYSTEM_PROMPT},
 ]
+
+emotion_state = {
+    "score": 50,
+    "history": []
+}
 
 
 @app.route('/')
@@ -61,7 +66,7 @@ def transcribe():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    """Process user message and return assistant response"""
+    global conversation_messages, emotion_state
     data = request.get_json()
     user_text = data.get('text', '')
 
@@ -69,21 +74,42 @@ def chat():
         return jsonify({'error': 'No text provided'}), 400
 
     try:
-        # Add user message to conversation
         conversation_messages.append({"role": "user", "content": user_text})
 
-        # Get assistant response
+        # add current emotional context
+        conversation_messages.append({
+            "role": "system",
+            "content": f"Current emotion score is: {emotion_state['score']}. Alter your emotional state based on the user's most recent response. Depending on how the user’s response will make someone who heard it feel, choose an appropriate emotional change between -10 and +10. At the end of your next reply, output the emotional change marker like (+3) or (-2)."
+        })
+
         resp = client.chat.completions.create(
             model=LLM_MODEL,
             messages=conversation_messages,
-            temperature=0.7,
+            temperature=0.9,
         )
-        assistant_text = resp.choices[0].message.content or ""
 
-        # Add assistant response to conversation
+        assistant_text = resp.choices[0].message.content.strip()
+
+        # extract emotion marker
+        match = re.search(r'\s*\(([+\-–−]?\d+)\)\s*$', assistant_text)
+        delta = 0
+        if match:
+            delta_str = match.group(1).replace("–", "-").replace("−", "-")
+            delta = int(delta_str)
+            # assistant_text = assistant_text[:match.start()].strip() # remove marker
+
+        emotion_state["score"] += delta
+        emotion_state["history"].append(delta)
+
         conversation_messages.append({"role": "assistant", "content": assistant_text})
 
-        return jsonify({'response': assistant_text})
+        return jsonify({
+            'response': assistant_text,
+            'emotion_delta': delta,
+            'emotion_score': emotion_state["score"],
+            'history': emotion_state["history"],
+        })
+
     except Exception as e:
         return jsonify({'error': f'Chat failed: {str(e)}'}), 500
 
@@ -143,9 +169,11 @@ def speak():
 def reset():
     """Reset conversation"""
     global conversation_messages
+    global emotion_state
     conversation_messages = [
         {"role": "system", "content": VOICE_AGENT_SYSTEM_PROMPT},
     ]
+    emotion_state = {"score": 50, "history": []}
     return jsonify({'status': 'reset'})
 
 
