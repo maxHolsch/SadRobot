@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Video Crossfade with Slider (4 clips)</title>
+<style>
+  html, body {
+    background: black;
+  }
+  #stage { position: relative; width: 100%; max-width: 960px; aspect-ratio: 16/9; background:#000; margin: 24px auto; }
+  #stage video {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; opacity: 0; pointer-events: none; z-index: 1;
+  }
+  #stage video.active { opacity: 1; }
+  #stage video.on-top { z-index: 2; }
+  #controls { display:flex; gap:.75rem; align-items:center; justify-content:center; margin:12px auto; flex-wrap:wrap; font:14px/1.4 system-ui,sans-serif; color:#ddd; }
+  button { padding:.45rem .8rem; border:1px solid #444; background:#111; color:#eee; border-radius:.5rem; cursor:pointer; }
+  button:hover { background:#222; }
+  input[type="range"] { width: 260px; }
+  .val { min-width: 1.5ch; text-align: right; display:inline-block; }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <video id="v0" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
+  <video id="v1" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
+</div>
+
+<div id="controls">
+  <button id="play">Play</button>
+  <button id="pause">Pause</button>
+  <label>
+    Video:
+    <input id="picker" type="range" min="1" max="4" step="1" value="1" />
+    <span class="val" id="pickerval">1</span>/4
+  </label>
+</div>
+
+<script>
+(() => {
+  // --- 4-item playlist ---
+  const playlist = [
+    { src: "sad_stitched_1.mp4" },
+    { src: "neutral_stitched_1.mp4" },
+    { src: "neutral_stitched_1.mp4" },
+    { src: "happier_stitched_1.mp4" },
+  ];
+
+  const vids = [document.getElementById("v0"), document.getElementById("v1")];
+  let front = 0;          // visible element index
+  let currentIdx = 0;     // active playlist index
+
+  // --- helpers ---
+  function setSource(video, { src }) {
+    if (!src) return;
+    const abs = new URL(src, location.href).href;
+    if (video.currentSrc !== abs) video.src = abs;
+    video.preload = "auto";
+    try { video.load(); } catch {}
+  }
+
+  function waitForReady(video, { timeoutMs = 8000 } = {}) {
+    if (video.readyState >= 2) return Promise.resolve(); // HAVE_CURRENT_DATA
+    return new Promise((resolve, reject) => {
+      const done = (fn) => {
+        clearTimeout(t);
+        ["canplay","loadeddata","loadedmetadata","canplaythrough","error"]
+          .forEach(ev => video.removeEventListener(ev, handlers[ev]));
+        fn();
+      };
+      const handlers = {
+        canplay:        () => done(resolve),
+        loadeddata:     () => done(resolve),
+        loadedmetadata: () => done(resolve),
+        canplaythrough: () => done(resolve),
+        error:          () => done(() => reject(video.error || new Error("video error"))),
+      };
+      Object.keys(handlers).forEach(ev => video.addEventListener(ev, handlers[ev], { once:true }));
+      try { video.load(); } catch {}
+      const t = setTimeout(() => done(() => reject(new Error("timeout waiting for canplay"))), timeoutMs);
+    });
+  }
+
+  function waitForMetadata(video, { timeoutMs = 4000 } = {}) {
+    if (!isNaN(video.duration) && video.duration > 0) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const onOk = () => { cleanup(); resolve(); };
+      const onErr = () => { cleanup(); reject(video.error || new Error("metadata error")); };
+      const cleanup = () => {
+        clearTimeout(timer);
+        video.removeEventListener("loadedmetadata", onOk);
+        video.removeEventListener("error", onErr);
+      };
+      video.addEventListener("loadedmetadata", onOk, { once:true });
+      video.addEventListener("error", onErr, { once:true });
+      try { video.load(); } catch {}
+      const timer = setTimeout(() => { cleanup(); reject(new Error("timeout waiting for metadata")); }, timeoutMs);
+    });
+  }
+
+  async function seekTo(video, t) {
+    const dur = isFinite(video.duration) ? video.duration : Infinity;
+    t = Math.max(0, Math.min(t, dur));
+    if (typeof video.fastSeek === "function") {
+      try { await video.fastSeek(t); return; } catch {}
+    }
+    return new Promise((resolve) => {
+      const onSeeked = () => { video.removeEventListener("seeked", onSeeked); resolve(); };
+      video.addEventListener("seeked", onSeeked, { once:true });
+      video.currentTime = t;
+    });
+  }
+
+  // --- fade to a specific playlist index (sync by seconds) ---
+  async function crossfadeTo(targetIdx, { durationMs = 800 } = {}) {
+    targetIdx = Math.max(0, Math.min(targetIdx, playlist.length - 1));
+    if (targetIdx === currentIdx) return;
+
+    const frontVid = vids[front];
+    const back = 1 - front;
+    const backVid = vids[back];
+
+    setSource(backVid, playlist[targetIdx]);
+    await Promise.all([waitForMetadata(frontVid).catch(()=>{}), waitForMetadata(backVid).catch(()=>{})]);
+    await waitForReady(backVid);
+
+    const targetTime = Math.min(backVid.duration || Infinity, frontVid.currentTime || 0);
+    await seekTo(backVid, targetTime);
+    await backVid.play().catch(()=>{});
+    backVid.classList.add("on-top");
+
+    const fadeIn  = backVid.animate([{opacity:0},{opacity:1}], { duration: durationMs, easing:"linear", fill:"forwards" });
+    const fadeOut = frontVid.animate([{opacity:1},{opacity:0}], { duration: durationMs, easing:"linear", fill:"forwards" });
+    await Promise.all([fadeIn.finished, fadeOut.finished]).catch(()=>{});
+
+    frontVid.pause();
+    frontVid.classList.remove("active");
+    backVid.classList.add("active");
+    backVid.classList.remove("on-top");
+
+    front = back;
+    currentIdx = targetIdx;
+
+    // optional: preload something for next time (here we preload the previous front as next, no-op if same)
+    const newBack = 1 - front;
+    const preloadIdx = (currentIdx + 1) % playlist.length;
+    setSource(vids[newBack], playlist[preloadIdx]);
+  }
+
+  // --- init ---
+  async function start() {
+    setSource(vids[front], playlist[currentIdx]);
+    await waitForReady(vids[front]).catch(()=>{});
+    vids[front].classList.add("active");
+    await vids[front].play().catch(()=>{});
+
+    // prime back buffer with next
+    const back = 1 - front;
+    setSource(vids[back], playlist[(currentIdx + 1) % playlist.length]);
+  }
+
+  // public api (optional)
+  window.videoMixer = {
+    play: () => vids[front].play(),
+    pause: () => vids[front].pause(),
+    goTo: (idx, opts) => crossfadeTo(idx, opts),
+    currentIndex: () => currentIdx,
+  };
+
+  start();
+
+  // --- UI wiring ---
+  const $ = (s) => document.querySelector(s);
+  $("#play").onclick  = () => videoMixer.play();
+  $("#pause").onclick = () => videoMixer.pause();
+
+  const picker = $("#picker");
+  const pickerval = $("#pickerval");
+  pickerval.textContent = picker.value;
+
+  let pending = null; // simple debounce to avoid stacking fades on rapid drags
+  picker.addEventListener("input", () => { pickerval.textContent = picker.value; });
+  picker.addEventListener("change", () => {
+    const idx = parseInt(picker.value, 10) - 1; // slider is 1..4, playlist is 0..3
+    if (pending) { clearTimeout(pending); pending = null; }
+    pending = setTimeout(() => videoMixer.goTo(idx, { durationMs: 800 }), 0);
+  });
+})();
+</script>
+</body>
+</html>
