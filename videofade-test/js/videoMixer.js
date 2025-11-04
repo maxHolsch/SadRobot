@@ -252,6 +252,7 @@ class VideoMixer {
     let durationMs = baseMs + pauseMs;
     durationMs = Math.max(durationMs, 1500);    // minimum 1.5s
     durationMs = Math.min(durationMs, 30000);   // maximum 30s
+    durationMs *= 0.7;
 
     // Enter talking mode and schedule exit after durationMs
     try {
