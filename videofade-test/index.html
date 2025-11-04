@@ -222,6 +222,7 @@ videoMixer.initPlaylistBuffers();
         },
         onMessage: (message) => {
           console.log("Agent message:", message);
+          videoMixer.handleMessage(message);
 
           // Store conversation text for analysis at next video loop
           if (message && message.message && window.emotionAnalyzer) {

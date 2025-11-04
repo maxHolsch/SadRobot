@@ -26,6 +26,7 @@ class VideoMixer {
     this.currentIdx = 0; // active playlist index
     this._isTalking = false; // internal state
     this.playlistStarted = false;
+    this._talkingTimer = null; // timeout id for auto-exit talking mode
 
     // Make intro_video available globally for other modules
     window.sadRobot = { intro_video };
@@ -229,6 +230,47 @@ class VideoMixer {
     return this._isTalking;
   }
 
+  // Handle an incoming message (string or message object) and estimate how long
+  // talking-mode should be enabled. Returns the estimated duration in ms.
+  handleMessage(msg) {
+    // Extract text from either a raw string or a message object (e.g. { message: '...' })
+    const text = typeof msg === 'string' ? msg : (msg && (msg.message || msg.text || '')) || '';
+    if (!text || !text.trim()) return 0;
+
+    // Estimate speaking duration from word count + sentence pauses.
+    const words = (text.trim().match(/\S+/g) || []).length;
+    const sentences = (text.match(/[.!?]+/g) || []).length;
+
+    // Typical speaking rate ~150 wpm -> 2.5 words/sec
+    const wordsPerSec = 2.5;
+    const baseMs = (words / wordsPerSec) * 1000;
+
+    // Add ~600ms per sentence-ending punctuation to allow natural pauses
+    const pauseMs = sentences * 600;
+
+    // Small padding and sensible bounds
+    let durationMs = Math.round(baseMs + pauseMs + 500);
+    durationMs = Math.max(durationMs, 1500);    // minimum 1.5s
+    durationMs = Math.min(durationMs, 30000);   // maximum 30s
+
+    // Enter talking mode and schedule exit after durationMs
+    try {
+      this.setTalking(true);
+      if (this._talkingTimer) {
+        clearTimeout(this._talkingTimer);
+        this._talkingTimer = null;
+      }
+      this._talkingTimer = setTimeout(() => {
+        try { this.setTalking(false); } catch (e) { /* ignore */ }
+        this._talkingTimer = null;
+      }, durationMs);
+    } catch (e) {
+      console.warn('handleMessage: failed to schedule talking state', e);
+    }
+
+    return durationMs;
+  }
+
   // Toggle talking-mode playlist
   setTalking(flag) {
     console.log(`[VideoMixer] setTalking: ${flag}`);
@@ -253,6 +295,11 @@ class VideoMixer {
     // Crossfade to the (possibly clamped) current index in the newly selected playlist
     this.crossfadeTo(this.currentIdx, { durationMs: 300 }).catch(()=>{});
     console.log(`[VideoMixer] switched to ${this.isTalking ? 'talking' : 'normal'} playlist, currentIdx=${this.currentIdx}`);
+    // If talking mode was turned off manually, clear any pending auto-exit timer
+    if (!this._isTalking && this._talkingTimer) {
+      clearTimeout(this._talkingTimer);
+      this._talkingTimer = null;
+    }
   }
 }
 
