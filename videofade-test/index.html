@@ -7,8 +7,19 @@
 <style>
   html, body {
     background: black;
+    /* keep room for fixed controls so they don't overlap the page content */
+    padding-bottom: 88px;
   }
-  #stage { position: relative; width: 100%; max-width: 960px; aspect-ratio: 16/9; background:#000; margin: 24px auto; }
+  #stage { 
+    position: relative; 
+    width: 100%; 
+    max-width: 960px; 
+    aspect-ratio: 16/9; 
+    background:#000; 
+    margin: 0 auto;
+    /* Add top margin to push stage down */
+    margin-top: calc((100vh - 88px - (960px * 9/16)) / 2);
+}
   #stage video {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; opacity: 0; pointer-events: none; z-index: 1;
@@ -47,7 +58,24 @@
     height: 100vh;
     margin: 0;
   }
-  #controls { display:flex; gap:.75rem; align-items:center; justify-content:center; margin:12px auto; flex-wrap:wrap; font:14px/1.4 system-ui,sans-serif; color:#ddd; }
+  /* Controls are fixed to the bottom of the viewport (floating bar) */
+  #controls {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    z-index: 50;
+    flex-wrap: wrap;
+    font: 14px/1.4 system-ui, sans-serif;
+    color: #ddd;
+  }
   button { padding:.45rem .8rem; border:1px solid #444; background:#111; color:#eee; border-radius:.5rem; cursor:pointer; }
   button:hover { background:#222; }
   input[type="range"] { width: 260px; }
@@ -106,529 +134,31 @@
 <div id="controls">
   <button id="play">Play</button>
   <button id="pause">Pause</button>
+  <!--
   <button id="fullscreenBtn">⛶ Fullscreen</button>
+  -->
   <label>
     Video:
     <input id="picker" type="range" min="1" max="4" step="1" value="1" />
     <span class="val" id="pickerval">1</span>/4
   </label>
   <button id="voiceAgentBtn">🎤 Talk to Sad Robot</button>
+  <button id="toggleTalking">Toggle Talking Mode</button>
+  <div id="voiceStatus"></div>
 </div>
-<div id="voiceStatus"></div>
 
 <script type="module">
-// Import ElevenLabs Conversational AI SDK from CDN
+// Import dependencies
 import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
-
-(() => {
-  // --- 4-item playlist ---
-  const playlist = [
-    { src: "sad_stitched_1.mp4" },
-    { src: "neutral_stitched_1.mp4" },
-    { src: "neutral_stitched_1.mp4" },
-    { src: "happier_stitched_1.mp4" },
-  ];
-
-  const vids = [document.getElementById("v0"), document.getElementById("v1")];
-  let front = 0;          // visible element index
-  let currentIdx = 0;     // active playlist index
-
-  // --- helpers ---
-  function setSource(video, { src }) {
-    if (!src) return;
-    const abs = new URL(src, location.href).href;
-    if (video.currentSrc !== abs) video.src = abs;
-    video.preload = "auto";
-    try { video.load(); } catch {}
-  }
-
-  function waitForReady(video, { timeoutMs = 8000 } = {}) {
-    if (video.readyState >= 2) return Promise.resolve(); // HAVE_CURRENT_DATA
-    return new Promise((resolve, reject) => {
-      const done = (fn) => {
-        clearTimeout(t);
-        ["canplay","loadeddata","loadedmetadata","canplaythrough","error"]
-          .forEach(ev => video.removeEventListener(ev, handlers[ev]));
-        fn();
-      };
-      const handlers = {
-        canplay:        () => done(resolve),
-        loadeddata:     () => done(resolve),
-        loadedmetadata: () => done(resolve),
-        canplaythrough: () => done(resolve),
-        error:          () => done(() => reject(video.error || new Error("video error"))),
-      };
-      Object.keys(handlers).forEach(ev => video.addEventListener(ev, handlers[ev], { once:true }));
-      try { video.load(); } catch {}
-      const t = setTimeout(() => done(() => reject(new Error("timeout waiting for canplay"))), timeoutMs);
-    });
-  }
-
-  function waitForMetadata(video, { timeoutMs = 4000 } = {}) {
-    if (!isNaN(video.duration) && video.duration > 0) return Promise.resolve();
-    return new Promise((resolve, reject) => {
-      const onOk = () => { cleanup(); resolve(); };
-      const onErr = () => { cleanup(); reject(video.error || new Error("metadata error")); };
-      const cleanup = () => {
-        clearTimeout(timer);
-        video.removeEventListener("loadedmetadata", onOk);
-        video.removeEventListener("error", onErr);
-      };
-      video.addEventListener("loadedmetadata", onOk, { once:true });
-      video.addEventListener("error", onErr, { once:true });
-      try { video.load(); } catch {}
-      const timer = setTimeout(() => { cleanup(); reject(new Error("timeout waiting for metadata")); }, timeoutMs);
-    });
-  }
-
-  async function seekTo(video, t) {
-    const dur = isFinite(video.duration) ? video.duration : Infinity;
-    t = Math.max(0, Math.min(t, dur));
-    if (typeof video.fastSeek === "function") {
-      try { await video.fastSeek(t); return; } catch {}
-    }
-    return new Promise((resolve) => {
-      const onSeeked = () => { video.removeEventListener("seeked", onSeeked); resolve(); };
-      video.addEventListener("seeked", onSeeked, { once:true });
-      video.currentTime = t;
-    });
-  }
-
-  // --- fade to a specific playlist index (sync by seconds) ---
-  async function crossfadeTo(targetIdx, { durationMs = 800 } = {}) {
-    targetIdx = Math.max(0, Math.min(targetIdx, playlist.length - 1));
-    if (targetIdx === currentIdx) return;
-
-    const frontVid = vids[front];
-    const back = 1 - front;
-    const backVid = vids[back];
-
-    setSource(backVid, playlist[targetIdx]);
-    await Promise.all([waitForMetadata(frontVid).catch(()=>{}), waitForMetadata(backVid).catch(()=>{})]);
-    await waitForReady(backVid);
-
-    const targetTime = Math.min(backVid.duration || Infinity, frontVid.currentTime || 0);
-    await seekTo(backVid, targetTime);
-    await backVid.play().catch(()=>{});
-    backVid.classList.add("on-top");
-
-    const fadeIn  = backVid.animate([{opacity:0},{opacity:1}], { duration: durationMs, easing:"linear", fill:"forwards" });
-    const fadeOut = frontVid.animate([{opacity:1},{opacity:0}], { duration: durationMs, easing:"linear", fill:"forwards" });
-    await Promise.all([fadeIn.finished, fadeOut.finished]).catch(()=>{});
-
-    frontVid.pause();
-    frontVid.classList.remove("active");
-    backVid.classList.add("active");
-    backVid.classList.remove("on-top");
-
-    front = back;
-    currentIdx = targetIdx;
-
-    // optional: preload something for next time (here we preload the previous front as next, no-op if same)
-    const newBack = 1 - front;
-    const preloadIdx = (currentIdx + 1) % playlist.length;
-    setSource(vids[newBack], playlist[preloadIdx]);
-  }
-
-  // --- init ---
-  async function start() {
-    setSource(vids[front], playlist[currentIdx]);
-    await waitForReady(vids[front]).catch(()=>{});
-    vids[front].classList.add("active");
-    await vids[front].play().catch(()=>{});
-
-    // prime back buffer with next
-    const back = 1 - front;
-    setSource(vids[back], playlist[(currentIdx + 1) % playlist.length]);
-  }
-
-  // public api (optional)
-  window.videoMixer = {
-    play: () => vids[front].play(),
-    pause: () => vids[front].pause(),
-    goTo: (idx, opts) => crossfadeTo(idx, opts),
-    currentIndex: () => currentIdx,
-  };
-
-  start();
-
-  // --- UI wiring ---
-  const $ = (s) => document.querySelector(s);
-  $("#play").onclick  = () => videoMixer.play();
-  $("#pause").onclick = () => videoMixer.pause();
-
-  // Fullscreen toggle
-  const stage = $("#stage");
-  const fullscreenBtn = $("#fullscreenBtn");
-
-  fullscreenBtn.onclick = () => {
-    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
-      // Enter fullscreen
-      if (stage.requestFullscreen) {
-        stage.requestFullscreen();
-      } else if (stage.webkitRequestFullscreen) {
-        stage.webkitRequestFullscreen();
-      } else if (stage.mozRequestFullScreen) {
-        stage.mozRequestFullScreen();
-      }
-    } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      }
-    }
-  };
-
-  // Update button text based on fullscreen state
-  const updateFullscreenButton = () => {
-    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-      fullscreenBtn.textContent = "⛶ Exit Fullscreen";
-    } else {
-      fullscreenBtn.textContent = "⛶ Fullscreen";
-    }
-  };
-
-  document.addEventListener("fullscreenchange", updateFullscreenButton);
-  document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
-  document.addEventListener("mozfullscreenchange", updateFullscreenButton);
-
-  const picker = $("#picker");
-  const pickerval = $("#pickerval");
-  pickerval.textContent = picker.value;
-
-  let pending = null; // simple debounce to avoid stacking fades on rapid drags
-  picker.addEventListener("input", () => { pickerval.textContent = picker.value; });
-  picker.addEventListener("change", () => {
-    const emotion = parseInt(picker.value, 10); // slider is 1..4
-
-    // Set manual override flag to prevent automatic emotion changes
-    if (window.emotionAnalyzer) {
-      window.emotionAnalyzer.setManualOverride(true);
-      console.log(`[Manual Override] User manually set emotion to ${emotion}`);
-    }
-
-    if (pending) { clearTimeout(pending); pending = null; }
-    pending = setTimeout(() => {
-      // Trigger emotion transition directly with manual source
-      if (window.emotionAnalyzer && window.emotionAnalyzer.transitionTo) {
-        window.emotionAnalyzer.transitionTo(emotion, 'manual');
-      } else {
-        // Fallback to direct video control if emotion analyzer not available
-        const idx = emotion - 1; // playlist is 0..3
-        videoMixer.goTo(idx, { durationMs: 800 });
-      }
-    }, 0);
-  });
-})();
-
-// --- Emotion Analysis System (AFINN-based) ---
-(() => {
-  // Curated AFINN lexicon - positive/negative words with intensity scores
-  // Scale: -5 (very negative) to +5 (very positive)
-  const afinnLexicon = {
-    // Very negative emotions (-3 to -5)
-    'hate': -3, 'hated': -3, 'hates': -3, 'hating': -3, 'hatred': -4,
-    'terrible': -3, 'awful': -3, 'horrible': -3, 'worst': -3, 'horrific': -4,
-    'sad': -2, 'sadness': -2, 'saddened': -2, 'depressed': -3, 'depression': -3,
-    'miserable': -3, 'unhappy': -2, 'disappointed': -2, 'disappointing': -2, 'disappointment': -2,
-    'angry': -3, 'anger': -3, 'furious': -4, 'mad': -3, 'rage': -4, 'enraged': -4,
-    'bad': -2, 'wrong': -2, 'fail': -2, 'failed': -2, 'failure': -3, 'failing': -2,
-    'pain': -2, 'painful': -2, 'hurt': -2, 'hurting': -2, 'ache': -2, 'aching': -2,
-    'lonely': -2, 'alone': -1, 'isolated': -2, 'abandoned': -3, 'neglected': -2,
-    'broken': -2, 'devastated': -3, 'destroyed': -3, 'ruined': -3, 'crushed': -3,
-    'tragic': -3, 'tragedy': -3, 'disaster': -3, 'catastrophe': -3, 'nightmare': -3,
-    'hopeless': -3, 'helpless': -3, 'desperate': -3, 'despair': -3, 'despairing': -3,
-    'worthless': -3, 'useless': -2, 'pathetic': -3, 'weak': -2, 'inferior': -2,
-    'cruel': -3, 'vicious': -3, 'brutal': -3, 'harsh': -2, 'mean': -2,
-    'disgusting': -3, 'disgusted': -3, 'repulsive': -3, 'revolting': -3, 'sickening': -3,
-    'dreadful': -3, 'dread': -2, 'fear': -2, 'afraid': -2, 'scared': -2, 'terrified': -3,
-    'anxious': -2, 'anxiety': -2, 'nervous': -2, 'panic': -3, 'panicked': -3,
-
-    // Moderately negative (-1 to -2)
-    'difficult': -1, 'hard': -1, 'problem': -1, 'problems': -1, 'issue': -1, 'issues': -1,
-    'worry': -2, 'worried': -2, 'worrying': -2, 'concern': -1, 'concerned': -2, 'concerning': -2,
-    'unfortunately': -1, 'regret': -2, 'regretful': -2, 'sorry': -1, 'apologize': -1,
-    'mistake': -1, 'error': -1, 'fault': -1, 'blame': -1, 'guilty': -2,
-    'confused': -1, 'confusing': -1, 'unclear': -1, 'uncertain': -1, 'doubt': -1,
-    'tired': -1, 'exhausted': -2, 'weary': -2, 'drained': -2, 'fatigued': -2,
-    'stressed': -2, 'stress': -2, 'tense': -2, 'pressure': -1, 'strain': -2,
-    'boring': -2, 'bored': -2, 'dull': -2, 'tedious': -2, 'monotonous': -2,
-    'annoyed': -2, 'annoying': -2, 'irritated': -2, 'irritating': -2, 'frustrating': -2,
-    'uncomfortable': -1, 'uneasy': -1, 'awkward': -1, 'embarrassed': -2, 'ashamed': -2,
-    'sick': -2, 'ill': -2, 'unwell': -2, 'sore': -1, 'injured': -2,
-
-    // Neutral to slightly negative/positive
-    'okay': 1, 'ok': 1, 'alright': 1, 'fine': 1, 'decent': 1,
-    'maybe': 0, 'perhaps': 0, 'might': 0, 'possibly': 0, 'sometimes': 0,
-
-    // Moderately positive (1 to 2)
-    'good': 2, 'well': 1, 'better': 2, 'best': 3, 'great': 3,
-    'nice': 2, 'pleasant': 2, 'pleasing': 2, 'lovely': 2, 'charming': 2,
-    'like': 1, 'liked': 2, 'likes': 2, 'liking': 1, 'fond': 2,
-    'enjoy': 2, 'enjoyed': 2, 'enjoying': 2, 'enjoyable': 2, 'fun': 2,
-    'thank': 2, 'thanks': 2, 'thankful': 2, 'grateful': 2, 'gratitude': 2, 'appreciate': 2,
-    'hope': 1, 'hopeful': 2, 'hoping': 1, 'optimistic': 2, 'optimism': 2, 'positive': 2,
-    'help': 1, 'helpful': 2, 'helped': 2, 'helping': 2, 'support': 2, 'supportive': 2,
-    'improve': 1, 'improved': 2, 'improving': 2, 'improvement': 2, 'progress': 2,
-    'success': 3, 'successful': 3, 'succeed': 2, 'achieving': 2, 'accomplish': 2,
-    'comfort': 2, 'comfortable': 2, 'comforting': 2, 'reassuring': 2, 'calm': 2,
-    'interested': 2, 'interesting': 2, 'curious': 1, 'fascinated': 2, 'fascinating': 3,
-    'creative': 2, 'inspired': 2, 'inspiring': 2, 'motivated': 2, 'motivation': 2,
-    'kind': 2, 'kindness': 2, 'caring': 2, 'gentle': 2, 'warm': 2, 'friendly': 2,
-
-    // Very positive (3 to 5)
-    'love': 3, 'loved': 3, 'loves': 3, 'loving': 3, 'adore': 4, 'adored': 4,
-    'amazing': 4, 'awesome': 4, 'fantastic': 4, 'wonderful': 4, 'fabulous': 4,
-    'excellent': 3, 'exceptional': 4, 'extraordinary': 4, 'remarkable': 3,
-    'perfect': 3, 'perfection': 4, 'flawless': 4, 'ideal': 3, 'superb': 4,
-    'beautiful': 3, 'gorgeous': 4, 'stunning': 4, 'magnificent': 4, 'spectacular': 4,
-    'happy': 3, 'happiness': 3, 'happier': 3, 'happiest': 4, 'cheerful': 3, 'joyful': 3,
-    'joy': 3, 'joyous': 3, 'delighted': 4, 'ecstatic': 4, 'elated': 4, 'euphoric': 4,
-    'excited': 3, 'exciting': 3, 'excitement': 3, 'thrilled': 4, 'thrilling': 4,
-    'brilliant': 3, 'outstanding': 4, 'incredible': 4, 'unbelievable': 4,
-    'proud': 2, 'pride': 2, 'confident': 2, 'confidence': 2, 'accomplished': 3,
-    'blessed': 3, 'blessing': 3, 'lucky': 2, 'fortunate': 2, 'grateful': 2,
-    'celebrate': 3, 'celebration': 3, 'victory': 3, 'triumph': 3, 'win': 2, 'winner': 3,
-    'peaceful': 2, 'peace': 2, 'serene': 2, 'tranquil': 2, 'relaxed': 2,
-    'energetic': 2, 'energized': 2, 'vibrant': 3, 'lively': 2, 'dynamic': 2,
-  };
-
-  // Analyze sentiment of text using AFINN lexicon
-  function analyzeSentiment(text) {
-    if (!text || typeof text !== 'string') {
-      return { score: 0, comparative: 0, words: [] };
-    }
-
-    // Normalize text: lowercase, remove punctuation, split into words
-    const words = text.toLowerCase()
-      .replace(/[^\w\s]/g, ' ')
-      .split(/\s+/)
-      .filter(word => word.length > 0);
-
-    let score = 0;
-    const matchedWords = [];
-
-    // Calculate sentiment score
-    words.forEach(word => {
-      if (afinnLexicon.hasOwnProperty(word)) {
-        score += afinnLexicon[word];
-        matchedWords.push({ word, score: afinnLexicon[word] });
-      }
-    });
-
-    // Comparative score (normalized by word count)
-    const comparative = words.length > 0 ? score / words.length : 0;
-
-    return {
-      score,           // Total sentiment score
-      comparative,     // Score per word (normalized)
-      words: matchedWords,
-      totalWords: words.length
-    };
-  }
-
-  // Map sentiment score to emotion level (1=sad, 2=neutral-sad, 3=neutral-happy, 4=happy)
-  function mapSentimentToEmotion(sentiment) {
-    const { score, comparative } = sentiment;
-
-    // Use comparative score for more consistent results with varying text lengths
-    // Thresholds tuned for natural conversation
-    if (comparative <= -0.5 || score <= -3) {
-      return 1; // Very sad
-    } else if (comparative <= -0.1 || score <= -1) {
-      return 2; // Slightly sad / neutral-sad
-    } else if (comparative <= 0.5 || score <= 2) {
-      return 3; // Slightly happy / neutral-happy
-    } else {
-      return 4; // Very happy
-    }
-  }
-
-  // Emotion state management
-  let currentEmotion = 1; // Start at sad (matches initial video)
-  let pendingEmotion = null;
-  let isTransitioning = false;
-  let manualOverride = false; // Track if user manually changed emotion
-  let lastVideoTime = 0; // Track video position for loop detection
-  let recentConversationText = []; // Buffer of recent conversation messages
-  const CONVERSATION_BUFFER_SIZE = 5; // Keep last 5 messages for analysis
-
-  // Store conversation text for analysis at next video loop
-  function storeConversationText(text) {
-    if (!text || typeof text !== 'string') return;
-
-    console.log(`[Conversation Buffer] Storing message: "${text.substring(0, 60)}${text.length > 60 ? '...' : ''}"`);
-    recentConversationText.push(text);
-
-    // Keep only recent messages
-    if (recentConversationText.length > CONVERSATION_BUFFER_SIZE) {
-      recentConversationText.shift();
-    }
-
-    console.log(`[Conversation Buffer] Buffer size: ${recentConversationText.length}/${CONVERSATION_BUFFER_SIZE}`);
-  }
-
-  // Decide next emotion at video loop cycle
-  function decideNextEmotion() {
-    // Skip if manual override is active or already transitioning
-    if (manualOverride || isTransitioning) {
-      console.log(`[Video Cycle] Skipped (${manualOverride ? 'manual override' : 'transitioning'})`);
-      return;
-    }
-
-    let targetEmotion = currentEmotion;
-    let decisionMethod = 'none';
-
-    // If we have recent conversation, analyze it
-    if (recentConversationText.length > 0) {
-      const combinedText = recentConversationText.join(' ');
-      const sentiment = analyzeSentiment(combinedText);
-      const sentimentEmotion = mapSentimentToEmotion(sentiment);
-
-      console.log(`[Video Cycle] Recent conversation analysis:`);
-      console.log(`  Messages: ${recentConversationText.length}`);
-      console.log(`  Sentiment: score=${sentiment.score}, comparative=${sentiment.comparative.toFixed(3)}`);
-      console.log(`  Suggested emotion: ${sentimentEmotion} (${['', 'sad', 'neutral-sad', 'neutral-happy', 'happy'][sentimentEmotion]})`);
-
-      // Use sentiment with small randomness factor
-      const rand = Math.random();
-      if (rand < 0.15) {
-        // 15% chance: Stay at current emotion
-        targetEmotion = currentEmotion;
-        decisionMethod = 'stay_same';
-      } else if (rand < 0.25) {
-        // 10% chance: Random adjacent emotion (overrides sentiment)
-        const adjacentOptions = [];
-        if (currentEmotion > 1) adjacentOptions.push(currentEmotion - 1);
-        if (currentEmotion < 4) adjacentOptions.push(currentEmotion + 1);
-        if (adjacentOptions.length > 0) {
-          targetEmotion = adjacentOptions[Math.floor(Math.random() * adjacentOptions.length)];
-          decisionMethod = 'random_adjacent';
-        }
-      } else {
-        // 75% chance: Use sentiment-based emotion
-        targetEmotion = sentimentEmotion;
-        decisionMethod = 'sentiment';
-      }
-
-      // Clear conversation buffer after using it
-      recentConversationText = [];
-    } else {
-      // No conversation - use random adjacent transition or stay same
-      const options = [currentEmotion]; // Can stay same
-      if (currentEmotion > 1) options.push(currentEmotion - 1);
-      if (currentEmotion < 4) options.push(currentEmotion + 1);
-      targetEmotion = options[Math.floor(Math.random() * options.length)];
-      decisionMethod = 'random_idle';
-
-      console.log(`[Video Cycle] No recent conversation, idle behavior`);
-    }
-
-    // Ensure adjacent transition only (±1 or same)
-    const emotionDiff = Math.abs(targetEmotion - currentEmotion);
-    if (emotionDiff > 1) {
-      targetEmotion = targetEmotion > currentEmotion ? currentEmotion + 1 : currentEmotion - 1;
-      console.log(`  → Adjusted to adjacent: ${targetEmotion}`);
-    }
-
-    console.log(`[Video Cycle] Decision: ${currentEmotion} → ${targetEmotion} (method: ${decisionMethod})`);
-
-    // Trigger emotion change
-    if (targetEmotion !== currentEmotion) {
-      transitionToEmotion(targetEmotion, 'video_cycle');
-    } else {
-      console.log(`  → Staying at emotion ${currentEmotion}`);
-    }
-  }
-
-  // Video loop monitoring - triggers emotion decisions at end of each 16s cycle
-  function setupVideoLoopMonitoring() {
-    console.log('[Video Loop Monitor] Starting video cycle monitoring');
-
-    // Check video position every 500ms to detect loop
-    setInterval(() => {
-      if (!window.videoMixer) return;
-
-      // Get the currently active video (the one with .active class)
-      const activeVideo = document.querySelector('#stage video.active');
-      if (!activeVideo || !activeVideo.currentTime) return;
-
-      const currentTime = activeVideo.currentTime;
-
-      // Detect loop: currentTime went backwards significantly (video restarted)
-      // Also check if we were near the end (> 10s) to avoid false positives at startup
-      if (currentTime < lastVideoTime && lastVideoTime > 10) {
-        console.log(`[Video Loop Monitor] Video looped (${lastVideoTime.toFixed(2)}s → ${currentTime.toFixed(2)}s)`);
-        decideNextEmotion();
-      }
-
-      lastVideoTime = currentTime;
-    }, 500);
-  }
-
-  // Transition to new emotion video
-  async function transitionToEmotion(emotion, source = 'unknown') {
-    isTransitioning = true;
-    const videoIdx = emotion - 1; // Convert 1-4 to 0-3 playlist index
-
-    console.log(`  → Transitioning to emotion ${emotion} (video ${videoIdx}) from ${source}`);
-
-    try {
-      // Update the slider UI to match (unless this was triggered by manual slider change)
-      if (source !== 'manual') {
-        const picker = document.getElementById('picker');
-        const pickerval = document.getElementById('pickerval');
-        if (picker && pickerval) {
-          picker.value = emotion;
-          pickerval.textContent = emotion;
-        }
-      }
-
-      await window.videoMixer.goTo(videoIdx, { durationMs: 800 });
-      currentEmotion = emotion;
-      console.log(`  ✓ Transition complete`);
-
-      // If this was a manual override, clear it after animation completes
-      if (source === 'manual' && manualOverride) {
-        manualOverride = false;
-        console.log(`  → Manual override cleared, video-cycle emotion detection resumed`);
-      }
-    } catch (error) {
-      console.error(`  ✗ Transition failed:`, error);
-    } finally {
-      isTransitioning = false;
-
-      // Process queued emotion if one exists
-      if (pendingEmotion !== null && pendingEmotion !== currentEmotion) {
-        const nextEmotion = pendingEmotion;
-        pendingEmotion = null;
-        console.log(`  → Processing queued emotion ${nextEmotion}`);
-        transitionToEmotion(nextEmotion, source);
-      }
-    }
-  }
-
-  // Public API
-  window.emotionAnalyzer = {
-    analyze: analyzeSentiment,
-    mapToEmotion: mapSentimentToEmotion,
-    storeMessage: storeConversationText,
-    transitionTo: transitionToEmotion,
-    getCurrentEmotion: () => currentEmotion,
-    getPendingEmotion: () => pendingEmotion,
-    setManualOverride: (value) => { manualOverride = value; },
-    isManualOverride: () => manualOverride,
-  };
-
-  // Start video loop monitoring (triggers emotion decisions every 16 seconds)
-  setupVideoLoopMonitoring();
-
-  console.log('[Emotion Analyzer] Initialized with AFINN lexicon + video-cycle emotion system');
-})();
+import { VideoMixer, intro_video } from './js/videoMixer.js';
+
+// Initialize video mixer
+const stage = document.getElementById('stage');
+const videoMixer = new VideoMixer(stage);
+window.videoMixer = videoMixer; // Make available globally for other modules
+
+// Initialize but don't autoplay
+videoMixer.initPlaylistBuffers();
 
 // --- Voice Agent Integration ---
 (() => {
@@ -727,12 +257,40 @@ import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
     }
   }
 
-  // Button click handler
+  // Start button click handler
   voiceBtn.addEventListener("click", async () => {
     if (isConnected) {
       await endConversation();
-    } else {
-      await initializeVoiceAgent();
+      return;
+    }
+
+    // Prevent double clicks
+    voiceBtn.disabled = true;
+    voiceBtn.classList.add('active');
+    setStatus('Preparing...', 'info');
+
+    try {
+      // Initialize voice agent after a 5 second delay; do NOT await so the UI flow isn't blocked by the voice init.
+      setTimeout(() => {
+        console.log('Starting voice agent initialization during intro video...');
+        initializeVoiceAgent().catch((err) => {
+          console.error('initializeVoiceAgent failed:', err);
+        });
+      }, 5000);
+
+      // Play the intro one-shot video first. After it finishes, start the playlist.
+      setStatus('Playing intro video...', 'info');
+      await videoMixer.playOneShot(intro_video).catch((e) => { console.warn('playOneShot failed', e); });
+
+      // Start the usual playlist mechanism
+      try { videoMixer.beginPlaylist(); } catch (e) { console.warn('beginPlaylist failed', e); }
+
+    } catch (err) {
+      console.error('Error during talk-button flow:', err);
+      setStatus('Error starting conversation', 'error');
+    } finally {
+      voiceBtn.disabled = false;
+      voiceBtn.classList.remove('active');
     }
   });
 
@@ -816,6 +374,84 @@ import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
 
   console.log('[Audio Monitor] Initialized - tracking all audio playback');
 })();
+
+// --- UI wiring ---
+const $ = (s) => document.querySelector(s);
+$("#play").onclick = () => videoMixer.play();
+$("#pause").onclick = () => videoMixer.pause();
+
+// Fullscreen toggle
+const fullscreenBtn = $("#fullscreenBtn");
+
+/*
+fullscreenBtn.onclick = () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+    if (stage.requestFullscreen) {
+      stage.requestFullscreen();
+    } else if (stage.webkitRequestFullscreen) {
+      stage.webkitRequestFullscreen();
+    } else if (stage.mozRequestFullScreen) {
+      stage.mozRequestFullScreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    }
+  }
+};
+
+// Update button text based on fullscreen state
+const updateFullscreenButton = () => {
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+    fullscreenBtn.textContent = "⛶ Exit Fullscreen";
+  } else {
+    fullscreenBtn.textContent = "⛶ Fullscreen";
+  }
+};
+
+document.addEventListener("fullscreenchange", updateFullscreenButton);
+document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+document.addEventListener("mozfullscreenchange", updateFullscreenButton);
+*/
+
+const toggleTalkingBtn = $("#toggleTalking");
+toggleTalkingBtn.onclick = () => {
+  const newTalkingState = !videoMixer.isTalking;
+  videoMixer.setTalking(newTalkingState);
+  toggleTalkingBtn.textContent = newTalkingState ? "Exit Talking Mode" : "Enter Talking Mode";
+};
+
+const picker = $("#picker");
+const pickerval = $("#pickerval");
+pickerval.textContent = picker.value;
+
+let pending = null; // simple debounce to avoid stacking fades on rapid drags
+picker.addEventListener("input", () => { pickerval.textContent = picker.value; });
+picker.addEventListener("change", () => {
+  const emotion = parseInt(picker.value, 10); // slider is 1..4
+
+  // Set manual override flag to prevent automatic emotion changes
+  if (window.emotionAnalyzer) {
+    window.emotionAnalyzer.setManualOverride(true);
+    console.log(`[Manual Override] User manually set emotion to ${emotion}`);
+  }
+
+  if (pending) { clearTimeout(pending); pending = null; }
+  pending = setTimeout(() => {
+    // Trigger emotion transition directly with manual source
+    if (window.emotionAnalyzer && window.emotionAnalyzer.transitionTo) {
+      window.emotionAnalyzer.transitionTo(emotion, 'manual');
+    } else {
+      // Fallback to direct video control if emotion analyzer not available
+      const idx = emotion - 1; // playlist is 0..3
+      videoMixer.goTo(idx, { durationMs: 800 });
+    }
+  }, 0);
+});
 </script>
 </body>
 </html>
