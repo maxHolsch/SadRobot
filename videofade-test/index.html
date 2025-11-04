@@ -7,6 +7,8 @@
 <style>
   html, body {
     background: black;
+    /* keep room for fixed controls so they don't overlap the page content */
+    padding-bottom: 88px;
   }
   #stage { position: relative; width: 100%; max-width: 960px; aspect-ratio: 16/9; background:#000; margin: 24px auto; }
   #stage video {
@@ -47,7 +49,24 @@
     height: 100vh;
     margin: 0;
   }
-  #controls { display:flex; gap:.75rem; align-items:center; justify-content:center; margin:12px auto; flex-wrap:wrap; font:14px/1.4 system-ui,sans-serif; color:#ddd; }
+  /* Controls are fixed to the bottom of the viewport (floating bar) */
+  #controls {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    z-index: 50;
+    flex-wrap: wrap;
+    font: 14px/1.4 system-ui, sans-serif;
+    color: #ddd;
+  }
   button { padding:.45rem .8rem; border:1px solid #444; background:#111; color:#eee; border-radius:.5rem; cursor:pointer; }
   button:hover { background:#222; }
   input[type="range"] { width: 260px; }
