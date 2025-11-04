@@ -453,104 +453,121 @@ import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
   let pendingEmotion = null;
   let isTransitioning = false;
   let manualOverride = false; // Track if user manually changed emotion
-  let randomEmotionInterval = null;
-  let lastEmotionChangeTime = Date.now(); // Track when last emotion change occurred
-  const MIN_EMOTION_DURATION = 10000; // Minimum 10 seconds per emotion
+  let lastVideoTime = 0; // Track video position for loop detection
+  let recentConversationText = []; // Buffer of recent conversation messages
+  const CONVERSATION_BUFFER_SIZE = 5; // Keep last 5 messages for analysis
 
-  // Update robot's emotion (queues if transition in progress)
-  function updateEmotion(text, source = 'unknown', force = false) {
-    // Skip automatic updates if manual override is active (unless forced)
-    if (manualOverride && !force) {
-      console.log(`[Emotion Analysis] Skipped (manual override active)`);
-      return;
+  // Store conversation text for analysis at next video loop
+  function storeConversationText(text) {
+    if (!text || typeof text !== 'string') return;
+
+    console.log(`[Conversation Buffer] Storing message: "${text.substring(0, 60)}${text.length > 60 ? '...' : ''}"`);
+    recentConversationText.push(text);
+
+    // Keep only recent messages
+    if (recentConversationText.length > CONVERSATION_BUFFER_SIZE) {
+      recentConversationText.shift();
     }
 
-    const sentiment = analyzeSentiment(text);
-    const emotion = mapSentimentToEmotion(sentiment);
-
-    console.log(`[Emotion Analysis] Source: ${source}`);
-    console.log(`  Text: "${text.substring(0, 100)}${text.length > 100 ? '...' : ''}"`);
-    console.log(`  Sentiment: score=${sentiment.score}, comparative=${sentiment.comparative.toFixed(3)}`);
-    console.log(`  Matched words:`, sentiment.words);
-    console.log(`  Emotion: ${emotion} (${['', 'sad', 'neutral-sad', 'neutral-happy', 'happy'][emotion]})`);
-
-    // If same emotion, no need to change
-    if (emotion === currentEmotion && !pendingEmotion) {
-      console.log(`  → No change (already at emotion ${emotion})`);
-      return;
-    }
-
-    // Check minimum duration (unless manual override)
-    const timeSinceLastChange = Date.now() - lastEmotionChangeTime;
-    if (source !== 'manual' && timeSinceLastChange < MIN_EMOTION_DURATION) {
-      const remainingTime = Math.ceil((MIN_EMOTION_DURATION - timeSinceLastChange) / 1000);
-      console.log(`  → Too soon (wait ${remainingTime}s more)`);
-      return;
-    }
-
-    // Only allow adjacent emotion transitions (±1)
-    const emotionDiff = Math.abs(emotion - currentEmotion);
-    if (emotionDiff > 1) {
-      // Move one step closer to target emotion
-      const targetEmotion = emotion > currentEmotion ? currentEmotion + 1 : currentEmotion - 1;
-      console.log(`  → Stepping from ${currentEmotion} toward ${emotion} (next: ${targetEmotion})`);
-      emotion = targetEmotion;
-    }
-
-    // If already transitioning, queue the new emotion
-    if (isTransitioning) {
-      pendingEmotion = emotion;
-      console.log(`  → Queued emotion ${emotion} (transition in progress)`);
-      return;
-    }
-
-    // Trigger video transition
-    transitionToEmotion(emotion, source);
+    console.log(`[Conversation Buffer] Buffer size: ${recentConversationText.length}/${CONVERSATION_BUFFER_SIZE}`);
   }
 
-  // Random emotion changes
-  function triggerRandomEmotion() {
+  // Decide next emotion at video loop cycle
+  function decideNextEmotion() {
     // Skip if manual override is active or already transitioning
     if (manualOverride || isTransitioning) {
+      console.log(`[Video Cycle] Skipped (${manualOverride ? 'manual override' : 'transitioning'})`);
       return;
     }
 
-    // Check minimum duration
-    const timeSinceLastChange = Date.now() - lastEmotionChangeTime;
-    if (timeSinceLastChange < MIN_EMOTION_DURATION) {
-      return;
+    let targetEmotion = currentEmotion;
+    let decisionMethod = 'none';
+
+    // If we have recent conversation, analyze it
+    if (recentConversationText.length > 0) {
+      const combinedText = recentConversationText.join(' ');
+      const sentiment = analyzeSentiment(combinedText);
+      const sentimentEmotion = mapSentimentToEmotion(sentiment);
+
+      console.log(`[Video Cycle] Recent conversation analysis:`);
+      console.log(`  Messages: ${recentConversationText.length}`);
+      console.log(`  Sentiment: score=${sentiment.score}, comparative=${sentiment.comparative.toFixed(3)}`);
+      console.log(`  Suggested emotion: ${sentimentEmotion} (${['', 'sad', 'neutral-sad', 'neutral-happy', 'happy'][sentimentEmotion]})`);
+
+      // Use sentiment with small randomness factor
+      const rand = Math.random();
+      if (rand < 0.15) {
+        // 15% chance: Stay at current emotion
+        targetEmotion = currentEmotion;
+        decisionMethod = 'stay_same';
+      } else if (rand < 0.25) {
+        // 10% chance: Random adjacent emotion (overrides sentiment)
+        const adjacentOptions = [];
+        if (currentEmotion > 1) adjacentOptions.push(currentEmotion - 1);
+        if (currentEmotion < 4) adjacentOptions.push(currentEmotion + 1);
+        if (adjacentOptions.length > 0) {
+          targetEmotion = adjacentOptions[Math.floor(Math.random() * adjacentOptions.length)];
+          decisionMethod = 'random_adjacent';
+        }
+      } else {
+        // 75% chance: Use sentiment-based emotion
+        targetEmotion = sentimentEmotion;
+        decisionMethod = 'sentiment';
+      }
+
+      // Clear conversation buffer after using it
+      recentConversationText = [];
+    } else {
+      // No conversation - use random adjacent transition or stay same
+      const options = [currentEmotion]; // Can stay same
+      if (currentEmotion > 1) options.push(currentEmotion - 1);
+      if (currentEmotion < 4) options.push(currentEmotion + 1);
+      targetEmotion = options[Math.floor(Math.random() * options.length)];
+      decisionMethod = 'random_idle';
+
+      console.log(`[Video Cycle] No recent conversation, idle behavior`);
     }
 
-    // Only pick adjacent emotions (±1)
-    const adjacentEmotions = [];
-    if (currentEmotion > 1) adjacentEmotions.push(currentEmotion - 1); // Can go sadder
-    if (currentEmotion < 4) adjacentEmotions.push(currentEmotion + 1); // Can go happier
-
-    if (adjacentEmotions.length === 0) {
-      return; // Safety check (shouldn't happen)
+    // Ensure adjacent transition only (±1 or same)
+    const emotionDiff = Math.abs(targetEmotion - currentEmotion);
+    if (emotionDiff > 1) {
+      targetEmotion = targetEmotion > currentEmotion ? currentEmotion + 1 : currentEmotion - 1;
+      console.log(`  → Adjusted to adjacent: ${targetEmotion}`);
     }
 
-    // Randomly pick one of the adjacent emotions
-    const randomEmotion = adjacentEmotions[Math.floor(Math.random() * adjacentEmotions.length)];
+    console.log(`[Video Cycle] Decision: ${currentEmotion} → ${targetEmotion} (method: ${decisionMethod})`);
 
-    console.log(`[Random Emotion] Spontaneously changing from ${currentEmotion} to ${randomEmotion}`);
-    transitionToEmotion(randomEmotion, 'random');
+    // Trigger emotion change
+    if (targetEmotion !== currentEmotion) {
+      transitionToEmotion(targetEmotion, 'video_cycle');
+    } else {
+      console.log(`  → Staying at emotion ${currentEmotion}`);
+    }
   }
 
-  // Start random emotion changes
-  function startRandomEmotions(intervalMs = 30000) {
-    stopRandomEmotions();
-    randomEmotionInterval = setInterval(triggerRandomEmotion, intervalMs);
-    console.log(`[Random Emotion] Started with ${intervalMs}ms interval`);
-  }
+  // Video loop monitoring - triggers emotion decisions at end of each 16s cycle
+  function setupVideoLoopMonitoring() {
+    console.log('[Video Loop Monitor] Starting video cycle monitoring');
 
-  // Stop random emotion changes
-  function stopRandomEmotions() {
-    if (randomEmotionInterval) {
-      clearInterval(randomEmotionInterval);
-      randomEmotionInterval = null;
-      console.log(`[Random Emotion] Stopped`);
-    }
+    // Check video position every 500ms to detect loop
+    setInterval(() => {
+      if (!window.videoMixer) return;
+
+      // Get the currently active video (the one with .active class)
+      const activeVideo = document.querySelector('#stage video.active');
+      if (!activeVideo || !activeVideo.currentTime) return;
+
+      const currentTime = activeVideo.currentTime;
+
+      // Detect loop: currentTime went backwards significantly (video restarted)
+      // Also check if we were near the end (> 10s) to avoid false positives at startup
+      if (currentTime < lastVideoTime && lastVideoTime > 10) {
+        console.log(`[Video Loop Monitor] Video looped (${lastVideoTime.toFixed(2)}s → ${currentTime.toFixed(2)}s)`);
+        decideNextEmotion();
+      }
+
+      lastVideoTime = currentTime;
+    }, 500);
   }
 
   // Transition to new emotion video
@@ -573,13 +590,12 @@ import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
 
       await window.videoMixer.goTo(videoIdx, { durationMs: 800 });
       currentEmotion = emotion;
-      lastEmotionChangeTime = Date.now(); // Update timestamp
       console.log(`  ✓ Transition complete`);
 
       // If this was a manual override, clear it after animation completes
       if (source === 'manual' && manualOverride) {
         manualOverride = false;
-        console.log(`  → Manual override cleared, automatic emotion detection resumed`);
+        console.log(`  → Manual override cleared, video-cycle emotion detection resumed`);
       }
     } catch (error) {
       console.error(`  ✗ Transition failed:`, error);
@@ -600,20 +616,18 @@ import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
   window.emotionAnalyzer = {
     analyze: analyzeSentiment,
     mapToEmotion: mapSentimentToEmotion,
-    updateEmotion,
+    storeMessage: storeConversationText,
     transitionTo: transitionToEmotion,
     getCurrentEmotion: () => currentEmotion,
     getPendingEmotion: () => pendingEmotion,
-    startRandomEmotions,
-    stopRandomEmotions,
     setManualOverride: (value) => { manualOverride = value; },
     isManualOverride: () => manualOverride,
   };
 
-  // Start random emotion changes (every 30 seconds, reduced randomness)
-  startRandomEmotions(30000);
+  // Start video loop monitoring (triggers emotion decisions every 16 seconds)
+  setupVideoLoopMonitoring();
 
-  console.log('[Emotion Analyzer] Initialized with AFINN lexicon + random emotions');
+  console.log('[Emotion Analyzer] Initialized with AFINN lexicon + video-cycle emotion system');
 })();
 
 // --- Voice Agent Integration ---
@@ -679,10 +693,10 @@ import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
         onMessage: (message) => {
           console.log("Agent message:", message);
 
-          // Analyze emotion from agent's response text
+          // Store conversation text for analysis at next video loop
           if (message && message.message && window.emotionAnalyzer) {
             const text = message.message;
-            window.emotionAnalyzer.updateEmotion(text, 'agent_response');
+            window.emotionAnalyzer.storeMessage(text);
           }
         },
       });
