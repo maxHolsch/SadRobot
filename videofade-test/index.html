@@ -743,6 +743,79 @@ import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
     }
   });
 })();
+
+// --- Audio Playback Monitor ---
+(() => {
+  let audioIsPlaying = false;
+  let currentPlayingAudio = null;
+
+  // Track all audio elements on the page
+  function monitorAudioElement(audioElement) {
+    audioElement.addEventListener('play', () => {
+      audioIsPlaying = true;
+      currentPlayingAudio = audioElement;
+      console.log('🔊 Audio started playing');
+
+      // Call custom callback if defined
+      if (window.onAudioPlaybackChange) {
+        window.onAudioPlaybackChange(true);
+      }
+    });
+
+    audioElement.addEventListener('pause', () => {
+      audioIsPlaying = false;
+      currentPlayingAudio = null;
+      console.log('🔇 Audio paused');
+
+      if (window.onAudioPlaybackChange) {
+        window.onAudioPlaybackChange(false);
+      }
+    });
+
+    audioElement.addEventListener('ended', () => {
+      audioIsPlaying = false;
+      currentPlayingAudio = null;
+      console.log('✓ Audio ended');
+
+      if (window.onAudioPlaybackChange) {
+        window.onAudioPlaybackChange(false);
+      }
+    });
+  }
+
+  // Monitor existing audio elements
+  document.querySelectorAll('audio').forEach(monitorAudioElement);
+
+  // Watch for dynamically created audio elements (like from ElevenLabs)
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.tagName === 'AUDIO') {
+          console.log('🎵 New audio element detected');
+          monitorAudioElement(node);
+        }
+        // Also check child nodes
+        if (node.querySelectorAll) {
+          node.querySelectorAll('audio').forEach(monitorAudioElement);
+        }
+      });
+    });
+  });
+
+  // Start observing the document for audio elements
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Public API
+  window.audioMonitor = {
+    isPlaying: () => audioIsPlaying,
+    getCurrentAudio: () => currentPlayingAudio,
+  };
+
+  console.log('[Audio Monitor] Initialized - tracking all audio playback');
+})();
 </script>
 </body>
 </html>

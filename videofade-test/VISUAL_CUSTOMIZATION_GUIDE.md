@@ -447,28 +447,4 @@ Adjust sentiment thresholds to make emotion detection more/less sensitive.
 
 ---
 
-## Tips
-
-1. **Always backup** `index.html` before making changes
-2. **Test in browser** after each change (refresh with Ctrl+F5 / Cmd+Shift+R)
-3. **Use browser DevTools** (F12) to experiment with CSS live
-4. **One change at a time** makes debugging easier
-5. **Check console** (F12 → Console) for JavaScript errors
-
----
-
-## Getting Help
-
-If you break something:
-1. Check browser console for error messages (F12 → Console)
-2. Compare your changes with the original file
-3. Use Git to revert: `git checkout index.html`
-4. Common issues:
-   - Missing semicolons in CSS
-   - Unclosed quotes or brackets
-   - Typos in color codes (must be valid hex)
-   - Wrong line numbers after editing (things shift!)
-
----
-
 **Happy customizing! 🎨**
