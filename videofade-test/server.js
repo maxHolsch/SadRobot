@@ -11,6 +11,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+// Root route - serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // API route to generate signed URL for ElevenLabs voice agent
 app.get('/api/get-signed-url', async (req, res) => {
   try {
@@ -50,7 +55,13 @@ app.get('/api/get-signed-url', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Voice agent demo available at http://localhost:${PORT}/index.html`);
-});
+// Only start server if not in Vercel serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Voice agent demo available at http://localhost:${PORT}`);
+  });
+}
+
+// Export for Vercel serverless
+module.exports = app;
