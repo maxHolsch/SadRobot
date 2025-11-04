@@ -13,7 +13,7 @@ const playlist = [
 // Talking-mode playlist (toggle with setTalking)
 // By default using same sources; replace entries with talking-specific clips if available
 const playlist_talking = [
-  { src: "sad_front_stitched_talking.mp4" },
+  { src: "sad_front_talking.mp4" },
   { src: "neutral_stitched_1.mp4" },
   { src: "neutral_stitched_1.mp4" },
   { src: "happier_stitched_1.mp4" },
@@ -251,7 +251,7 @@ class VideoMixer {
     }
 
     // Crossfade to the (possibly clamped) current index in the newly selected playlist
-    this.crossfadeTo(this.currentIdx, { durationMs: 600 }).catch(()=>{});
+    this.crossfadeTo(this.currentIdx, { durationMs: 300 }).catch(()=>{});
     console.log(`[VideoMixer] switched to ${this.isTalking ? 'talking' : 'normal'} playlist, currentIdx=${this.currentIdx}`);
   }
 }

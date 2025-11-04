@@ -10,7 +10,16 @@
     /* keep room for fixed controls so they don't overlap the page content */
     padding-bottom: 88px;
   }
-  #stage { position: relative; width: 100%; max-width: 960px; aspect-ratio: 16/9; background:#000; margin: 24px auto; }
+  #stage { 
+    position: relative; 
+    width: 100%; 
+    max-width: 960px; 
+    aspect-ratio: 16/9; 
+    background:#000; 
+    margin: 0 auto;
+    /* Add top margin to push stage down */
+    margin-top: calc((100vh - 88px - (960px * 9/16)) / 2);
+}
   #stage video {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; opacity: 0; pointer-events: none; z-index: 1;
@@ -125,7 +134,9 @@
 <div id="controls">
   <button id="play">Play</button>
   <button id="pause">Pause</button>
+  <!--
   <button id="fullscreenBtn">⛶ Fullscreen</button>
+  -->
   <label>
     Video:
     <input id="picker" type="range" min="1" max="4" step="1" value="1" />
@@ -246,7 +257,7 @@ videoMixer.initPlaylistBuffers();
     }
   }
 
-  // Button click handler
+  // Start button click handler
   voiceBtn.addEventListener("click", async () => {
     if (isConnected) {
       await endConversation();
@@ -259,15 +270,21 @@ videoMixer.initPlaylistBuffers();
     setStatus('Preparing...', 'info');
 
     try {
-      // Play the intro one-shot video first. After it finishes, start the playlist and then initialize voice agent.
+      // Initialize voice agent after a 5 second delay; do NOT await so the UI flow isn't blocked by the voice init.
+      setTimeout(() => {
+        console.log('Starting voice agent initialization during intro video...');
+        initializeVoiceAgent().catch((err) => {
+          console.error('initializeVoiceAgent failed:', err);
+        });
+      }, 5000);
+
+      // Play the intro one-shot video first. After it finishes, start the playlist.
       setStatus('Playing intro video...', 'info');
       await videoMixer.playOneShot(intro_video).catch((e) => { console.warn('playOneShot failed', e); });
 
       // Start the usual playlist mechanism
-      try { await videoMixer.beginPlaylist(); } catch (e) { console.warn('beginPlaylist failed', e); }
+      try { videoMixer.beginPlaylist(); } catch (e) { console.warn('beginPlaylist failed', e); }
 
-      // Initialize voice agent after the intro video played
-      await initializeVoiceAgent();
     } catch (err) {
       console.error('Error during talk-button flow:', err);
       setStatus('Error starting conversation', 'error');
@@ -293,6 +310,7 @@ $("#pause").onclick = () => videoMixer.pause();
 // Fullscreen toggle
 const fullscreenBtn = $("#fullscreenBtn");
 
+/*
 fullscreenBtn.onclick = () => {
   if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
     if (stage.requestFullscreen) {
@@ -325,6 +343,7 @@ const updateFullscreenButton = () => {
 document.addEventListener("fullscreenchange", updateFullscreenButton);
 document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
 document.addEventListener("mozfullscreenchange", updateFullscreenButton);
+*/
 
 const toggleTalkingBtn = $("#toggleTalking");
 toggleTalkingBtn.onclick = () => {
