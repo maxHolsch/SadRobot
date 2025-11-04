@@ -348,13 +348,20 @@ videoMixer.initPlaylistBuffers();
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
+        // Debug: log all node types being added
+        console.log('🔍 Node added:', node.nodeName, node);
+
         if (node.tagName === 'AUDIO') {
           console.log('🎵 New audio element detected');
           monitorAudioElement(node);
         }
         // Also check child nodes
         if (node.querySelectorAll) {
-          node.querySelectorAll('audio').forEach(monitorAudioElement);
+          const audioElements = node.querySelectorAll('audio');
+          if (audioElements.length > 0) {
+            console.log('🎵 Found', audioElements.length, 'audio elements in child nodes');
+            audioElements.forEach(monitorAudioElement);
+          }
         }
       });
     });
@@ -365,6 +372,19 @@ videoMixer.initPlaylistBuffers();
     childList: true,
     subtree: true
   });
+
+  // Periodically check for audio elements (in case they're in shadow DOM)
+  setInterval(() => {
+    const allAudio = document.querySelectorAll('audio');
+    console.log('🔍 Periodic check: found', allAudio.length, 'audio elements');
+    allAudio.forEach(audio => {
+      if (!audio.dataset.monitored) {
+        console.log('🎵 Found unmonitored audio element!');
+        audio.dataset.monitored = 'true';
+        monitorAudioElement(audio);
+      }
+    });
+  }, 2000);
 
   // Public API
   window.audioMonitor = {
