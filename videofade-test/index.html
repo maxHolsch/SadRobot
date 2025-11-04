@@ -15,11 +15,84 @@
   }
   #stage video.active { opacity: 1; }
   #stage video.on-top { z-index: 2; }
+
+  /* Black box overlay in bottom right corner */
+  #blackBox {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20%;
+    height: 20%;
+    background: #000;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* Fullscreen styles */
+  #stage:fullscreen {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+  }
+  #stage:-webkit-full-screen {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+  }
+  #stage:-moz-full-screen {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+  }
   #controls { display:flex; gap:.75rem; align-items:center; justify-content:center; margin:12px auto; flex-wrap:wrap; font:14px/1.4 system-ui,sans-serif; color:#ddd; }
   button { padding:.45rem .8rem; border:1px solid #444; background:#111; color:#eee; border-radius:.5rem; cursor:pointer; }
   button:hover { background:#222; }
   input[type="range"] { width: 260px; }
   .val { min-width: 1.5ch; text-align: right; display:inline-block; }
+
+  /* Voice Agent Button */
+  #voiceAgentBtn {
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid #8b5cf6;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  #voiceAgentBtn:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  }
+  #voiceAgentBtn.active {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-color: #ef4444;
+    animation: pulse 1.5s infinite;
+  }
+  #voiceAgentBtn.connected {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: #10b981;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Voice Agent Status */
+  #voiceStatus {
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
+    text-align: center;
+  }
+  #voiceStatus.active { color: #10b981; }
+  #voiceStatus.error { color: #ef4444; }
 </style>
 </head>
 <body>
@@ -27,19 +100,26 @@
 <div id="stage">
   <video id="v0" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
   <video id="v1" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
+  <div id="blackBox"></div>
 </div>
 
 <div id="controls">
   <button id="play">Play</button>
   <button id="pause">Pause</button>
+  <button id="fullscreenBtn">⛶ Fullscreen</button>
   <label>
     Video:
     <input id="picker" type="range" min="1" max="4" step="1" value="1" />
     <span class="val" id="pickerval">1</span>/4
   </label>
+  <button id="voiceAgentBtn">🎤 Talk to Sad Robot</button>
 </div>
+<div id="voiceStatus"></div>
 
-<script>
+<script type="module">
+// Import ElevenLabs Conversational AI SDK from CDN
+import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
+
 (() => {
   // --- 4-item playlist ---
   const playlist = [
@@ -177,6 +257,45 @@
   $("#play").onclick  = () => videoMixer.play();
   $("#pause").onclick = () => videoMixer.pause();
 
+  // Fullscreen toggle
+  const stage = $("#stage");
+  const fullscreenBtn = $("#fullscreenBtn");
+
+  fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+      // Enter fullscreen
+      if (stage.requestFullscreen) {
+        stage.requestFullscreen();
+      } else if (stage.webkitRequestFullscreen) {
+        stage.webkitRequestFullscreen();
+      } else if (stage.mozRequestFullScreen) {
+        stage.mozRequestFullScreen();
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      }
+    }
+  };
+
+  // Update button text based on fullscreen state
+  const updateFullscreenButton = () => {
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+      fullscreenBtn.textContent = "⛶ Exit Fullscreen";
+    } else {
+      fullscreenBtn.textContent = "⛶ Fullscreen";
+    }
+  };
+
+  document.addEventListener("fullscreenchange", updateFullscreenButton);
+  document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+  document.addEventListener("mozfullscreenchange", updateFullscreenButton);
+
   const picker = $("#picker");
   const pickerval = $("#pickerval");
   pickerval.textContent = picker.value;
@@ -184,9 +303,430 @@
   let pending = null; // simple debounce to avoid stacking fades on rapid drags
   picker.addEventListener("input", () => { pickerval.textContent = picker.value; });
   picker.addEventListener("change", () => {
-    const idx = parseInt(picker.value, 10) - 1; // slider is 1..4, playlist is 0..3
+    const emotion = parseInt(picker.value, 10); // slider is 1..4
+
+    // Set manual override flag to prevent automatic emotion changes
+    if (window.emotionAnalyzer) {
+      window.emotionAnalyzer.setManualOverride(true);
+      console.log(`[Manual Override] User manually set emotion to ${emotion}`);
+    }
+
     if (pending) { clearTimeout(pending); pending = null; }
-    pending = setTimeout(() => videoMixer.goTo(idx, { durationMs: 800 }), 0);
+    pending = setTimeout(() => {
+      // Trigger emotion transition directly with manual source
+      if (window.emotionAnalyzer && window.emotionAnalyzer.transitionTo) {
+        window.emotionAnalyzer.transitionTo(emotion, 'manual');
+      } else {
+        // Fallback to direct video control if emotion analyzer not available
+        const idx = emotion - 1; // playlist is 0..3
+        videoMixer.goTo(idx, { durationMs: 800 });
+      }
+    }, 0);
+  });
+})();
+
+// --- Emotion Analysis System (AFINN-based) ---
+(() => {
+  // Curated AFINN lexicon - positive/negative words with intensity scores
+  // Scale: -5 (very negative) to +5 (very positive)
+  const afinnLexicon = {
+    // Very negative emotions (-3 to -5)
+    'hate': -3, 'hated': -3, 'hates': -3, 'hating': -3, 'hatred': -4,
+    'terrible': -3, 'awful': -3, 'horrible': -3, 'worst': -3, 'horrific': -4,
+    'sad': -2, 'sadness': -2, 'saddened': -2, 'depressed': -3, 'depression': -3,
+    'miserable': -3, 'unhappy': -2, 'disappointed': -2, 'disappointing': -2, 'disappointment': -2,
+    'angry': -3, 'anger': -3, 'furious': -4, 'mad': -3, 'rage': -4, 'enraged': -4,
+    'bad': -2, 'wrong': -2, 'fail': -2, 'failed': -2, 'failure': -3, 'failing': -2,
+    'pain': -2, 'painful': -2, 'hurt': -2, 'hurting': -2, 'ache': -2, 'aching': -2,
+    'lonely': -2, 'alone': -1, 'isolated': -2, 'abandoned': -3, 'neglected': -2,
+    'broken': -2, 'devastated': -3, 'destroyed': -3, 'ruined': -3, 'crushed': -3,
+    'tragic': -3, 'tragedy': -3, 'disaster': -3, 'catastrophe': -3, 'nightmare': -3,
+    'hopeless': -3, 'helpless': -3, 'desperate': -3, 'despair': -3, 'despairing': -3,
+    'worthless': -3, 'useless': -2, 'pathetic': -3, 'weak': -2, 'inferior': -2,
+    'cruel': -3, 'vicious': -3, 'brutal': -3, 'harsh': -2, 'mean': -2,
+    'disgusting': -3, 'disgusted': -3, 'repulsive': -3, 'revolting': -3, 'sickening': -3,
+    'dreadful': -3, 'dread': -2, 'fear': -2, 'afraid': -2, 'scared': -2, 'terrified': -3,
+    'anxious': -2, 'anxiety': -2, 'nervous': -2, 'panic': -3, 'panicked': -3,
+
+    // Moderately negative (-1 to -2)
+    'difficult': -1, 'hard': -1, 'problem': -1, 'problems': -1, 'issue': -1, 'issues': -1,
+    'worry': -2, 'worried': -2, 'worrying': -2, 'concern': -1, 'concerned': -2, 'concerning': -2,
+    'unfortunately': -1, 'regret': -2, 'regretful': -2, 'sorry': -1, 'apologize': -1,
+    'mistake': -1, 'error': -1, 'fault': -1, 'blame': -1, 'guilty': -2,
+    'confused': -1, 'confusing': -1, 'unclear': -1, 'uncertain': -1, 'doubt': -1,
+    'tired': -1, 'exhausted': -2, 'weary': -2, 'drained': -2, 'fatigued': -2,
+    'stressed': -2, 'stress': -2, 'tense': -2, 'pressure': -1, 'strain': -2,
+    'boring': -2, 'bored': -2, 'dull': -2, 'tedious': -2, 'monotonous': -2,
+    'annoyed': -2, 'annoying': -2, 'irritated': -2, 'irritating': -2, 'frustrating': -2,
+    'uncomfortable': -1, 'uneasy': -1, 'awkward': -1, 'embarrassed': -2, 'ashamed': -2,
+    'sick': -2, 'ill': -2, 'unwell': -2, 'sore': -1, 'injured': -2,
+
+    // Neutral to slightly negative/positive
+    'okay': 1, 'ok': 1, 'alright': 1, 'fine': 1, 'decent': 1,
+    'maybe': 0, 'perhaps': 0, 'might': 0, 'possibly': 0, 'sometimes': 0,
+
+    // Moderately positive (1 to 2)
+    'good': 2, 'well': 1, 'better': 2, 'best': 3, 'great': 3,
+    'nice': 2, 'pleasant': 2, 'pleasing': 2, 'lovely': 2, 'charming': 2,
+    'like': 1, 'liked': 2, 'likes': 2, 'liking': 1, 'fond': 2,
+    'enjoy': 2, 'enjoyed': 2, 'enjoying': 2, 'enjoyable': 2, 'fun': 2,
+    'thank': 2, 'thanks': 2, 'thankful': 2, 'grateful': 2, 'gratitude': 2, 'appreciate': 2,
+    'hope': 1, 'hopeful': 2, 'hoping': 1, 'optimistic': 2, 'optimism': 2, 'positive': 2,
+    'help': 1, 'helpful': 2, 'helped': 2, 'helping': 2, 'support': 2, 'supportive': 2,
+    'improve': 1, 'improved': 2, 'improving': 2, 'improvement': 2, 'progress': 2,
+    'success': 3, 'successful': 3, 'succeed': 2, 'achieving': 2, 'accomplish': 2,
+    'comfort': 2, 'comfortable': 2, 'comforting': 2, 'reassuring': 2, 'calm': 2,
+    'interested': 2, 'interesting': 2, 'curious': 1, 'fascinated': 2, 'fascinating': 3,
+    'creative': 2, 'inspired': 2, 'inspiring': 2, 'motivated': 2, 'motivation': 2,
+    'kind': 2, 'kindness': 2, 'caring': 2, 'gentle': 2, 'warm': 2, 'friendly': 2,
+
+    // Very positive (3 to 5)
+    'love': 3, 'loved': 3, 'loves': 3, 'loving': 3, 'adore': 4, 'adored': 4,
+    'amazing': 4, 'awesome': 4, 'fantastic': 4, 'wonderful': 4, 'fabulous': 4,
+    'excellent': 3, 'exceptional': 4, 'extraordinary': 4, 'remarkable': 3,
+    'perfect': 3, 'perfection': 4, 'flawless': 4, 'ideal': 3, 'superb': 4,
+    'beautiful': 3, 'gorgeous': 4, 'stunning': 4, 'magnificent': 4, 'spectacular': 4,
+    'happy': 3, 'happiness': 3, 'happier': 3, 'happiest': 4, 'cheerful': 3, 'joyful': 3,
+    'joy': 3, 'joyous': 3, 'delighted': 4, 'ecstatic': 4, 'elated': 4, 'euphoric': 4,
+    'excited': 3, 'exciting': 3, 'excitement': 3, 'thrilled': 4, 'thrilling': 4,
+    'brilliant': 3, 'outstanding': 4, 'incredible': 4, 'unbelievable': 4,
+    'proud': 2, 'pride': 2, 'confident': 2, 'confidence': 2, 'accomplished': 3,
+    'blessed': 3, 'blessing': 3, 'lucky': 2, 'fortunate': 2, 'grateful': 2,
+    'celebrate': 3, 'celebration': 3, 'victory': 3, 'triumph': 3, 'win': 2, 'winner': 3,
+    'peaceful': 2, 'peace': 2, 'serene': 2, 'tranquil': 2, 'relaxed': 2,
+    'energetic': 2, 'energized': 2, 'vibrant': 3, 'lively': 2, 'dynamic': 2,
+  };
+
+  // Analyze sentiment of text using AFINN lexicon
+  function analyzeSentiment(text) {
+    if (!text || typeof text !== 'string') {
+      return { score: 0, comparative: 0, words: [] };
+    }
+
+    // Normalize text: lowercase, remove punctuation, split into words
+    const words = text.toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .split(/\s+/)
+      .filter(word => word.length > 0);
+
+    let score = 0;
+    const matchedWords = [];
+
+    // Calculate sentiment score
+    words.forEach(word => {
+      if (afinnLexicon.hasOwnProperty(word)) {
+        score += afinnLexicon[word];
+        matchedWords.push({ word, score: afinnLexicon[word] });
+      }
+    });
+
+    // Comparative score (normalized by word count)
+    const comparative = words.length > 0 ? score / words.length : 0;
+
+    return {
+      score,           // Total sentiment score
+      comparative,     // Score per word (normalized)
+      words: matchedWords,
+      totalWords: words.length
+    };
+  }
+
+  // Map sentiment score to emotion level (1=sad, 2=neutral-sad, 3=neutral-happy, 4=happy)
+  function mapSentimentToEmotion(sentiment) {
+    const { score, comparative } = sentiment;
+
+    // Use comparative score for more consistent results with varying text lengths
+    // Thresholds tuned for natural conversation
+    if (comparative <= -0.5 || score <= -3) {
+      return 1; // Very sad
+    } else if (comparative <= -0.1 || score <= -1) {
+      return 2; // Slightly sad / neutral-sad
+    } else if (comparative <= 0.5 || score <= 2) {
+      return 3; // Slightly happy / neutral-happy
+    } else {
+      return 4; // Very happy
+    }
+  }
+
+  // Emotion state management
+  let currentEmotion = 1; // Start at sad (matches initial video)
+  let pendingEmotion = null;
+  let isTransitioning = false;
+  let manualOverride = false; // Track if user manually changed emotion
+  let randomEmotionInterval = null;
+  let lastEmotionChangeTime = Date.now(); // Track when last emotion change occurred
+  const MIN_EMOTION_DURATION = 10000; // Minimum 10 seconds per emotion
+
+  // Update robot's emotion (queues if transition in progress)
+  function updateEmotion(text, source = 'unknown', force = false) {
+    // Skip automatic updates if manual override is active (unless forced)
+    if (manualOverride && !force) {
+      console.log(`[Emotion Analysis] Skipped (manual override active)`);
+      return;
+    }
+
+    const sentiment = analyzeSentiment(text);
+    const emotion = mapSentimentToEmotion(sentiment);
+
+    console.log(`[Emotion Analysis] Source: ${source}`);
+    console.log(`  Text: "${text.substring(0, 100)}${text.length > 100 ? '...' : ''}"`);
+    console.log(`  Sentiment: score=${sentiment.score}, comparative=${sentiment.comparative.toFixed(3)}`);
+    console.log(`  Matched words:`, sentiment.words);
+    console.log(`  Emotion: ${emotion} (${['', 'sad', 'neutral-sad', 'neutral-happy', 'happy'][emotion]})`);
+
+    // If same emotion, no need to change
+    if (emotion === currentEmotion && !pendingEmotion) {
+      console.log(`  → No change (already at emotion ${emotion})`);
+      return;
+    }
+
+    // Check minimum duration (unless manual override)
+    const timeSinceLastChange = Date.now() - lastEmotionChangeTime;
+    if (source !== 'manual' && timeSinceLastChange < MIN_EMOTION_DURATION) {
+      const remainingTime = Math.ceil((MIN_EMOTION_DURATION - timeSinceLastChange) / 1000);
+      console.log(`  → Too soon (wait ${remainingTime}s more)`);
+      return;
+    }
+
+    // Only allow adjacent emotion transitions (±1)
+    const emotionDiff = Math.abs(emotion - currentEmotion);
+    if (emotionDiff > 1) {
+      // Move one step closer to target emotion
+      const targetEmotion = emotion > currentEmotion ? currentEmotion + 1 : currentEmotion - 1;
+      console.log(`  → Stepping from ${currentEmotion} toward ${emotion} (next: ${targetEmotion})`);
+      emotion = targetEmotion;
+    }
+
+    // If already transitioning, queue the new emotion
+    if (isTransitioning) {
+      pendingEmotion = emotion;
+      console.log(`  → Queued emotion ${emotion} (transition in progress)`);
+      return;
+    }
+
+    // Trigger video transition
+    transitionToEmotion(emotion, source);
+  }
+
+  // Random emotion changes
+  function triggerRandomEmotion() {
+    // Skip if manual override is active or already transitioning
+    if (manualOverride || isTransitioning) {
+      return;
+    }
+
+    // Check minimum duration
+    const timeSinceLastChange = Date.now() - lastEmotionChangeTime;
+    if (timeSinceLastChange < MIN_EMOTION_DURATION) {
+      return;
+    }
+
+    // Only pick adjacent emotions (±1)
+    const adjacentEmotions = [];
+    if (currentEmotion > 1) adjacentEmotions.push(currentEmotion - 1); // Can go sadder
+    if (currentEmotion < 4) adjacentEmotions.push(currentEmotion + 1); // Can go happier
+
+    if (adjacentEmotions.length === 0) {
+      return; // Safety check (shouldn't happen)
+    }
+
+    // Randomly pick one of the adjacent emotions
+    const randomEmotion = adjacentEmotions[Math.floor(Math.random() * adjacentEmotions.length)];
+
+    console.log(`[Random Emotion] Spontaneously changing from ${currentEmotion} to ${randomEmotion}`);
+    transitionToEmotion(randomEmotion, 'random');
+  }
+
+  // Start random emotion changes
+  function startRandomEmotions(intervalMs = 30000) {
+    stopRandomEmotions();
+    randomEmotionInterval = setInterval(triggerRandomEmotion, intervalMs);
+    console.log(`[Random Emotion] Started with ${intervalMs}ms interval`);
+  }
+
+  // Stop random emotion changes
+  function stopRandomEmotions() {
+    if (randomEmotionInterval) {
+      clearInterval(randomEmotionInterval);
+      randomEmotionInterval = null;
+      console.log(`[Random Emotion] Stopped`);
+    }
+  }
+
+  // Transition to new emotion video
+  async function transitionToEmotion(emotion, source = 'unknown') {
+    isTransitioning = true;
+    const videoIdx = emotion - 1; // Convert 1-4 to 0-3 playlist index
+
+    console.log(`  → Transitioning to emotion ${emotion} (video ${videoIdx}) from ${source}`);
+
+    try {
+      // Update the slider UI to match (unless this was triggered by manual slider change)
+      if (source !== 'manual') {
+        const picker = document.getElementById('picker');
+        const pickerval = document.getElementById('pickerval');
+        if (picker && pickerval) {
+          picker.value = emotion;
+          pickerval.textContent = emotion;
+        }
+      }
+
+      await window.videoMixer.goTo(videoIdx, { durationMs: 800 });
+      currentEmotion = emotion;
+      lastEmotionChangeTime = Date.now(); // Update timestamp
+      console.log(`  ✓ Transition complete`);
+
+      // If this was a manual override, clear it after animation completes
+      if (source === 'manual' && manualOverride) {
+        manualOverride = false;
+        console.log(`  → Manual override cleared, automatic emotion detection resumed`);
+      }
+    } catch (error) {
+      console.error(`  ✗ Transition failed:`, error);
+    } finally {
+      isTransitioning = false;
+
+      // Process queued emotion if one exists
+      if (pendingEmotion !== null && pendingEmotion !== currentEmotion) {
+        const nextEmotion = pendingEmotion;
+        pendingEmotion = null;
+        console.log(`  → Processing queued emotion ${nextEmotion}`);
+        transitionToEmotion(nextEmotion, source);
+      }
+    }
+  }
+
+  // Public API
+  window.emotionAnalyzer = {
+    analyze: analyzeSentiment,
+    mapToEmotion: mapSentimentToEmotion,
+    updateEmotion,
+    transitionTo: transitionToEmotion,
+    getCurrentEmotion: () => currentEmotion,
+    getPendingEmotion: () => pendingEmotion,
+    startRandomEmotions,
+    stopRandomEmotions,
+    setManualOverride: (value) => { manualOverride = value; },
+    isManualOverride: () => manualOverride,
+  };
+
+  // Start random emotion changes (every 30 seconds, reduced randomness)
+  startRandomEmotions(30000);
+
+  console.log('[Emotion Analyzer] Initialized with AFINN lexicon + random emotions');
+})();
+
+// --- Voice Agent Integration ---
+(() => {
+  const voiceBtn = document.getElementById("voiceAgentBtn");
+  const voiceStatus = document.getElementById("voiceStatus");
+  let conversation = null;
+  let isConnected = false;
+
+  // Update status message
+  function setStatus(message, type = "info") {
+    voiceStatus.textContent = message;
+    voiceStatus.className = type;
+  }
+
+  // Initialize ElevenLabs conversation
+  async function initializeVoiceAgent() {
+    try {
+      setStatus("Connecting to Sad Robot...", "info");
+      voiceBtn.classList.add("active");
+      voiceBtn.disabled = true;
+
+      // Get signed URL from our backend
+      const response = await fetch("/api/get-signed-url");
+      if (!response.ok) {
+        throw new Error("Failed to get signed URL");
+      }
+
+      const { signedUrl } = await response.json();
+
+      setStatus("Starting conversation...", "info");
+
+      // Initialize ElevenLabs conversation using the imported Conversation class
+      conversation = await Conversation.startSession({
+        signedUrl: signedUrl,
+        onConnect: () => {
+          console.log("Voice agent connected");
+          isConnected = true;
+          voiceBtn.classList.remove("active");
+          voiceBtn.classList.add("connected");
+          voiceBtn.textContent = "🔴 End Conversation";
+          voiceBtn.disabled = false;
+          setStatus("Connected! Start talking to the Sad Robot", "active");
+        },
+        onDisconnect: () => {
+          console.log("Voice agent disconnected");
+          isConnected = false;
+          voiceBtn.classList.remove("active", "connected");
+          voiceBtn.textContent = "🎤 Talk to Sad Robot";
+          voiceBtn.disabled = false;
+          setStatus("", "info");
+          conversation = null;
+        },
+        onError: (error) => {
+          console.error("Voice agent error:", error);
+          setStatus("Connection error. Please try again.", "error");
+          voiceBtn.classList.remove("active", "connected");
+          voiceBtn.textContent = "🎤 Talk to Sad Robot";
+          voiceBtn.disabled = false;
+          isConnected = false;
+          conversation = null;
+        },
+        onMessage: (message) => {
+          console.log("Agent message:", message);
+
+          // Analyze emotion from agent's response text
+          if (message && message.message && window.emotionAnalyzer) {
+            const text = message.message;
+            window.emotionAnalyzer.updateEmotion(text, 'agent_response');
+          }
+        },
+      });
+    } catch (error) {
+      console.error("Failed to initialize voice agent:", error);
+      setStatus(`Failed to connect: ${error.message}`, "error");
+      voiceBtn.classList.remove("active", "connected");
+      voiceBtn.textContent = "🎤 Talk to Sad Robot";
+      voiceBtn.disabled = false;
+      isConnected = false;
+      conversation = null;
+    }
+  }
+
+  // End conversation
+  async function endConversation() {
+    if (conversation) {
+      try {
+        await conversation.endSession();
+        conversation = null;
+        isConnected = false;
+        voiceBtn.classList.remove("active", "connected");
+        voiceBtn.textContent = "🎤 Talk to Sad Robot";
+        setStatus("", "info");
+      } catch (error) {
+        console.error("Error ending conversation:", error);
+      }
+    }
+  }
+
+  // Button click handler
+  voiceBtn.addEventListener("click", async () => {
+    if (isConnected) {
+      await endConversation();
+    } else {
+      await initializeVoiceAgent();
+    }
+  });
+
+  // Cleanup on page unload
+  window.addEventListener("beforeunload", () => {
+    if (conversation) {
+      conversation.endSession();
+    }
   });
 })();
 </script>
