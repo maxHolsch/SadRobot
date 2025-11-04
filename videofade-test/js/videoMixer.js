@@ -249,7 +249,7 @@ class VideoMixer {
     const pauseMs = sentences * 600;
 
     // Small padding and sensible bounds
-    let durationMs = Math.round(baseMs + pauseMs + 100);
+    let durationMs = baseMs + pauseMs;
     durationMs = Math.max(durationMs, 1500);    // minimum 1.5s
     durationMs = Math.min(durationMs, 30000);   // maximum 30s
 
