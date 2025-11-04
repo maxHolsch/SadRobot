@@ -10,19 +10,37 @@
     /* keep room for fixed controls so they don't overlap the page content */
     padding-bottom: 88px;
   }
+  /* Full-bleed backdrop behind the stage that fills the viewport width */
+  #backdrop {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: calc(100vh - 88px); /* leave room for controls */
+    background-image: url('backdrop.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    pointer-events: none;
+  }
   #stage { 
     position: relative; 
     width: 100%; 
     max-width: 960px; 
     aspect-ratio: 16/9; 
-    background:#000; 
+    background: transparent; /* allow backdrop to show through for blending */
+    z-index: 10; /* sit above backdrop but below controls */
     margin: 0 auto;
     /* Add top margin to push stage down */
     margin-top: calc((100vh - 88px - (960px * 9/16)) / 2);
-}
+  }
   #stage video {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; opacity: 0; pointer-events: none; z-index: 1;
+    /* Blend video with backdrop using screen for better black handling */
+    mix-blend-mode: screen;
+    transition: opacity 300ms linear;
   }
   #stage video.active { opacity: 1; }
   #stage video.on-top { z-index: 2; }
@@ -126,6 +144,7 @@
 <body>
 
 <div id="stage">
+  <div id="backdrop"></div>
   <video id="v0" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
   <video id="v1" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
   <div id="blackBox"></div>
