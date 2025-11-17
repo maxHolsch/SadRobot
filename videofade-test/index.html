@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Video Crossfade with Slider (4 clips)</title>
+<link rel="stylesheet" href="css/survey.css">
 <style>
   html, body {
     background: black;
@@ -143,6 +144,11 @@
 </head>
 <body>
 
+<!-- Survey Container -->
+<div id="survey-container"></div>
+
+<!-- Main Content (hidden until survey is completed) -->
+<div id="main-content">
 <div id="stage">
   <div id="backdrop"></div>
   <video id="v0" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
@@ -151,33 +157,65 @@
 </div>
 
 <div id="controls">
-  <button id="play">Play</button>
-  <button id="pause">Pause</button>
-  <!--
-  <button id="fullscreenBtn">⛶ Fullscreen</button>
-  -->
-  <label>
-    Video:
-    <input id="picker" type="range" min="1" max="4" step="1" value="1" />
-    <span class="val" id="pickerval">1</span>/4
-  </label>
   <button id="voiceAgentBtn">🎤 Talk to Sad Robot</button>
-  <button id="toggleTalking">Toggle Talking Mode</button>
-  <div id="voiceStatus"></div>
+  <button id="endInteractionBtn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-color: #ef4444; font-weight: 600;">End Interaction</button>
+  <div id="voiceStatus">  </div>
 </div>
+</div> <!-- End main-content -->
 
 <script type="module">
 // Import dependencies
 import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
 import { VideoMixer, intro_video } from './js/videoMixer.js';
+import './js/survey.js';
 
-// Initialize video mixer
-const stage = document.getElementById('stage');
-const videoMixer = new VideoMixer(stage);
-window.videoMixer = videoMixer; // Make available globally for other modules
+// Helper function to reset survey (for testing)
+// Usage in console: resetSurvey()
+window.resetSurvey = function() {
+  localStorage.removeItem('surveyCompleted');
+  localStorage.removeItem('surveyCompletionTime');
+  location.reload();
+};
 
-// Initialize but don't autoplay
-videoMixer.initPlaylistBuffers();
+// Initialize video mixer only when main content is shown
+let videoMixer = null;
+let videoMixerInitialized = false;
+
+function initializeVideoMixer() {
+  if (videoMixerInitialized) return;
+  
+  const stage = document.getElementById('stage');
+  if (!stage) return;
+  
+  videoMixer = new VideoMixer(stage);
+  window.videoMixer = videoMixer; // Make available globally for other modules
+
+  // Initialize but don't autoplay
+  videoMixer.initPlaylistBuffers();
+  videoMixerInitialized = true;
+}
+
+// Initialize video mixer when survey is completed or if already completed
+window.addEventListener('surveyCompleted', () => {
+  initializeVideoMixer();
+});
+
+// Check if survey is already completed on page load
+if (localStorage.getItem('surveyCompleted') === 'true') {
+  // Survey already completed, show main content and initialize video mixer
+  const mainContent = document.getElementById('main-content');
+  if (mainContent) {
+    mainContent.style.display = 'block';
+  }
+  const surveyContainer = document.getElementById('survey-container');
+  if (surveyContainer) {
+    surveyContainer.style.display = 'none';
+  }
+  // Initialize video mixer after a short delay to ensure DOM is ready
+  setTimeout(() => {
+    initializeVideoMixer();
+  }, 100);
+}
 
 // --- Voice Agent Integration ---
 (() => {
@@ -215,6 +253,7 @@ videoMixer.initPlaylistBuffers();
         onConnect: () => {
           console.log("Voice agent connected");
           isConnected = true;
+          window.conversation = conversation; // Expose globally for end interaction button
           voiceBtn.classList.remove("active");
           voiceBtn.classList.add("connected");
           voiceBtn.textContent = "🔴 End Conversation";
@@ -224,6 +263,7 @@ videoMixer.initPlaylistBuffers();
         onDisconnect: () => {
           console.log("Voice agent disconnected");
           isConnected = false;
+          window.conversation = null; // Clear global reference
           voiceBtn.classList.remove("active", "connected");
           voiceBtn.textContent = "🎤 Talk to Sad Robot";
           voiceBtn.disabled = false;
@@ -237,6 +277,7 @@ videoMixer.initPlaylistBuffers();
           voiceBtn.textContent = "🎤 Talk to Sad Robot";
           voiceBtn.disabled = false;
           isConnected = false;
+          window.conversation = null; // Clear global reference
           conversation = null;
         },
         onMessage: (message) => {
@@ -267,6 +308,7 @@ videoMixer.initPlaylistBuffers();
       try {
         await conversation.endSession();
         conversation = null;
+        window.conversation = null; // Clear global reference
         isConnected = false;
         voiceBtn.classList.remove("active", "connected");
         voiceBtn.textContent = "🎤 Talk to Sad Robot";
@@ -276,6 +318,9 @@ videoMixer.initPlaylistBuffers();
       }
     }
   }
+  
+  // Expose endConversation globally for end interaction button
+  window.endVoiceConversation = endConversation;
 
   // Start button click handler
   voiceBtn.addEventListener("click", async () => {
@@ -417,8 +462,6 @@ videoMixer.initPlaylistBuffers();
 
 // --- UI wiring ---
 const $ = (s) => document.querySelector(s);
-$("#play").onclick = () => videoMixer.play();
-$("#pause").onclick = () => videoMixer.pause();
 
 // Fullscreen toggle
 const fullscreenBtn = $("#fullscreenBtn");
@@ -458,40 +501,22 @@ document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
 document.addEventListener("mozfullscreenchange", updateFullscreenButton);
 */
 
-const toggleTalkingBtn = $("#toggleTalking");
-toggleTalkingBtn.onclick = () => {
-  const newTalkingState = !videoMixer.isTalking;
-  videoMixer.setTalking(newTalkingState);
-  toggleTalkingBtn.textContent = newTalkingState ? "Exit Talking Mode" : "Enter Talking Mode";
-};
-
-const picker = $("#picker");
-const pickerval = $("#pickerval");
-pickerval.textContent = picker.value;
-
-let pending = null; // simple debounce to avoid stacking fades on rapid drags
-picker.addEventListener("input", () => { pickerval.textContent = picker.value; });
-picker.addEventListener("change", () => {
-  const emotion = parseInt(picker.value, 10); // slider is 1..4
-
-  // Set manual override flag to prevent automatic emotion changes
-  if (window.emotionAnalyzer) {
-    window.emotionAnalyzer.setManualOverride(true);
-    console.log(`[Manual Override] User manually set emotion to ${emotion}`);
-  }
-
-  if (pending) { clearTimeout(pending); pending = null; }
-  pending = setTimeout(() => {
-    // Trigger emotion transition directly with manual source
-    if (window.emotionAnalyzer && window.emotionAnalyzer.transitionTo) {
-      window.emotionAnalyzer.transitionTo(emotion, 'manual');
-    } else {
-      // Fallback to direct video control if emotion analyzer not available
-      const idx = emotion - 1; // playlist is 0..3
-      videoMixer.goTo(idx, { durationMs: 800 });
+// End Interaction button - triggers post-study survey
+const endInteractionBtn = $("#endInteractionBtn");
+endInteractionBtn.onclick = () => {
+  // Confirm before ending interaction
+  if (confirm('Are you sure you want to end the interaction? You will be asked to complete a post-study survey.')) {
+    // End voice conversation if active
+    if (window.endVoiceConversation) {
+      window.endVoiceConversation();
     }
-  }, 0);
-});
+    
+    // Start post-survey
+    if (window.startPostSurvey) {
+      window.startPostSurvey();
+    }
+  }
+};
 </script>
 </body>
 </html>
