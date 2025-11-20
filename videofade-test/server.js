@@ -16,6 +16,65 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// API route to submit survey responses
+app.post('/api/submit-survey', async (req, res) => {
+  try {
+    const surveyData = req.body;
+
+    if (!surveyData || !surveyData.responses) {
+      return res.status(400).json({ error: 'Invalid survey data' });
+    }
+
+    // Create data directory if it doesn't exist
+    const fs = require('fs');
+    const path = require('path');
+    const dataDir = path.join(__dirname, 'data');
+    
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    // Save survey response to file
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `survey-${timestamp}.json`;
+    const filepath = path.join(dataDir, filename);
+
+    // Add submission timestamp
+    const dataToSave = {
+      ...surveyData,
+      submittedAt: new Date().toISOString(),
+      id: `${timestamp}-${Math.random().toString(36).substr(2, 9)}`
+    };
+
+    fs.writeFileSync(filepath, JSON.stringify(dataToSave, null, 2), 'utf8');
+
+    // Also append to a master file for easy access
+    const masterFile = path.join(dataDir, 'survey-responses.json');
+    let allResponses = [];
+    
+    if (fs.existsSync(masterFile)) {
+      try {
+        const existingData = fs.readFileSync(masterFile, 'utf8');
+        allResponses = JSON.parse(existingData);
+      } catch (e) {
+        console.warn('Could not read master file, starting fresh');
+      }
+    }
+
+    allResponses.push(dataToSave);
+    fs.writeFileSync(masterFile, JSON.stringify(allResponses, null, 2), 'utf8');
+
+    res.json({ 
+      success: true, 
+      message: 'Survey submitted successfully',
+      id: dataToSave.id
+    });
+  } catch (error) {
+    console.error('Error submitting survey:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // API route to generate signed URL for ElevenLabs voice agent
 app.get('/api/get-signed-url', async (req, res) => {
   try {
