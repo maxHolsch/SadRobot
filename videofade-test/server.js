@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
+const { supabaseAdmin } = require('./lib/supabaseClient');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,53 +26,159 @@ app.post('/api/submit-survey', async (req, res) => {
       return res.status(400).json({ error: 'Invalid survey data' });
     }
 
-    // Create data directory if it doesn't exist
-    const fs = require('fs');
-    const path = require('path');
-    const dataDir = path.join(__dirname, 'data');
-    
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+    if (!surveyData.sessionId) {
+      return res.status(400).json({ error: 'Session ID is required' });
     }
 
-    // Save survey response to file
+    const surveyType = surveyData.surveyType || surveyData.mode || 'pre';
+    const isPostSurvey = surveyType === 'post';
+
+    // Generate submission data
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `survey-${timestamp}.json`;
-    const filepath = path.join(dataDir, filename);
+    const submissionId = `${timestamp}-${Math.random().toString(36).substr(2, 9)}`;
+    const submittedAt = new Date().toISOString();
+    const sessionId = surveyData.sessionId;
 
-    // Add submission timestamp
-    const dataToSave = {
-      ...surveyData,
-      submittedAt: new Date().toISOString(),
-      id: `${timestamp}-${Math.random().toString(36).substr(2, 9)}`
-    };
+    // Try Supabase first, fallback to JSON files if it fails
+    let usedSupabase = false;
 
-    fs.writeFileSync(filepath, JSON.stringify(dataToSave, null, 2), 'utf8');
+    try {
+      // Ensure user session exists
+      const { error: sessionError } = await supabaseAdmin
+        .from('user_sessions')
+        .upsert(
+          { session_id: sessionId, created_at: new Date().toISOString() },
+          { onConflict: 'session_id', ignoreDuplicates: true }
+        );
 
-    // Also append to a master file for easy access
-    const masterFile = path.join(dataDir, 'survey-responses.json');
-    let allResponses = [];
-    
-    if (fs.existsSync(masterFile)) {
-      try {
-        const existingData = fs.readFileSync(masterFile, 'utf8');
-        allResponses = JSON.parse(existingData);
-      } catch (e) {
-        console.warn('Could not read master file, starting fresh');
+      if (sessionError && sessionError.code !== '23505') {
+        console.error('Session error:', sessionError);
       }
+
+      // Update user session with survey ID
+      const updateData = isPostSurvey
+        ? { post_survey_id: submissionId }
+        : { pre_survey_id: submissionId };
+
+      const { error: updateError } = await supabaseAdmin
+        .from('user_sessions')
+        .update(updateData)
+        .eq('session_id', sessionId);
+
+      if (updateError) {
+        console.error('Session update error:', updateError);
+      }
+
+      // Insert main survey submission
+      const tableName = isPostSurvey ? 'post_survey_submissions' : 'pre_survey_submissions';
+      const submissionData = {
+        id: submissionId,
+        session_id: sessionId,
+        submitted_at: submittedAt,
+        duration: surveyData.duration || null,
+        user_agent: surveyData.userAgent || null,
+        responses: surveyData.responses,
+        page_data: surveyData.pageData || [],
+        created_at: new Date().toISOString()
+      };
+
+      const { error: submissionError } = await supabaseAdmin
+        .from(tableName)
+        .insert(submissionData);
+
+      if (submissionError) {
+        throw submissionError;
+      }
+
+      // Insert individual scale responses
+      if (surveyData.pageData && Array.isArray(surveyData.pageData)) {
+        const responseTableName = isPostSurvey ? 'post_survey_responses' : 'pre_survey_responses';
+        const scaleResponses = [];
+
+        for (const page of surveyData.pageData) {
+          if (page.statements && Array.isArray(page.statements)) {
+            for (const statement of page.statements) {
+              if (statement.response !== null &&
+                  statement.response !== undefined &&
+                  typeof statement.response === 'number' &&
+                  statement.response >= 1 &&
+                  statement.response <= 5) {
+                scaleResponses.push({
+                  submission_id: submissionId,
+                  page_number: page.page,
+                  statement: statement.statement,
+                  response_value: statement.response,
+                  created_at: new Date().toISOString()
+                });
+              }
+            }
+          }
+        }
+
+        if (scaleResponses.length > 0) {
+          const { error: responsesError } = await supabaseAdmin
+            .from(responseTableName)
+            .insert(scaleResponses);
+
+          if (responsesError) {
+            console.error('Error inserting individual responses:', responsesError);
+          }
+        }
+      }
+
+      usedSupabase = true;
+      console.log('✅ Survey saved to Supabase:', submissionId);
+
+    } catch (supabaseError) {
+      console.error('Supabase error, falling back to JSON files:', supabaseError);
+
+      // Fallback to JSON file storage
+      const fs = require('fs');
+      const dataDir = path.join(__dirname, 'data');
+
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+
+      const filename = `survey-${timestamp}.json`;
+      const filepath = path.join(dataDir, filename);
+
+      const dataToSave = {
+        ...surveyData,
+        submittedAt,
+        id: submissionId
+      };
+
+      fs.writeFileSync(filepath, JSON.stringify(dataToSave, null, 2), 'utf8');
+
+      // Also append to master file
+      const masterFile = path.join(dataDir, 'survey-responses.json');
+      let allResponses = [];
+
+      if (fs.existsSync(masterFile)) {
+        try {
+          const existingData = fs.readFileSync(masterFile, 'utf8');
+          allResponses = JSON.parse(existingData);
+        } catch (e) {
+          console.warn('Could not read master file, starting fresh');
+        }
+      }
+
+      allResponses.push(dataToSave);
+      fs.writeFileSync(masterFile, JSON.stringify(allResponses, null, 2), 'utf8');
+
+      console.log('📁 Survey saved to JSON file:', filename);
     }
 
-    allResponses.push(dataToSave);
-    fs.writeFileSync(masterFile, JSON.stringify(allResponses, null, 2), 'utf8');
-
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Survey submitted successfully',
-      id: dataToSave.id
+      id: submissionId,
+      storage: usedSupabase ? 'supabase' : 'json'
     });
   } catch (error) {
     console.error('Error submitting survey:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 });
 

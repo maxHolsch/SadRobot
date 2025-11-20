@@ -1,5 +1,10 @@
 // Vercel Serverless Function for Survey Submission
-const { sql } = require('@vercel/postgres');
+const { createClient } = require('@supabase/supabase-js');
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 module.exports = async function handler(req, res) {
   // Enable CORS
@@ -38,126 +43,94 @@ module.exports = async function handler(req, res) {
     const submittedAt = new Date().toISOString();
     const sessionId = surveyData.sessionId;
 
-    // Save to PostgreSQL database
+    // Save to Supabase database
     try {
       // Ensure user session exists
-      await sql`
-        INSERT INTO user_sessions (session_id, created_at)
-        VALUES (${sessionId}, NOW())
-        ON CONFLICT (session_id) DO NOTHING
-      `;
+      const { error: sessionError } = await supabase
+        .from('user_sessions')
+        .upsert(
+          { session_id: sessionId, created_at: new Date().toISOString() },
+          { onConflict: 'session_id', ignoreDuplicates: true }
+        );
+
+      if (sessionError && sessionError.code !== '23505') { // Ignore duplicate key errors
+        console.error('Session error:', sessionError);
+      }
 
       // Update user session with survey ID
-      if (isPostSurvey) {
-        await sql`
-          UPDATE user_sessions
-          SET post_survey_id = ${submissionId}
-          WHERE session_id = ${sessionId}
-        `;
-      } else {
-        await sql`
-          UPDATE user_sessions
-          SET pre_survey_id = ${submissionId}
-          WHERE session_id = ${sessionId}
-        `;
+      const updateData = isPostSurvey
+        ? { post_survey_id: submissionId }
+        : { pre_survey_id: submissionId };
+
+      const { error: updateError } = await supabase
+        .from('user_sessions')
+        .update(updateData)
+        .eq('session_id', sessionId);
+
+      if (updateError) {
+        console.error('Session update error:', updateError);
       }
 
       // Insert main survey submission record into appropriate table
-      if (isPostSurvey) {
-        await sql`
-          INSERT INTO post_survey_submissions (
-            id,
-            session_id,
-            submitted_at,
-            duration,
-            user_agent,
-            responses,
-            page_data,
-            created_at
-          ) VALUES (
-            ${submissionId},
-            ${sessionId},
-            ${submittedAt},
-            ${surveyData.duration || null},
-            ${surveyData.userAgent || null},
-            ${JSON.stringify(surveyData.responses)},
-            ${JSON.stringify(surveyData.pageData || [])},
-            NOW()
-          )
-        `;
-      } else {
-        await sql`
-          INSERT INTO pre_survey_submissions (
-            id,
-            session_id,
-            submitted_at,
-            duration,
-            user_agent,
-            responses,
-            page_data,
-            created_at
-          ) VALUES (
-            ${submissionId},
-            ${sessionId},
-            ${submittedAt},
-            ${surveyData.duration || null},
-            ${surveyData.userAgent || null},
-            ${JSON.stringify(surveyData.responses)},
-            ${JSON.stringify(surveyData.pageData || [])},
-            NOW()
-          )
-        `;
+      const tableName = isPostSurvey ? 'post_survey_submissions' : 'pre_survey_submissions';
+
+      const submissionData = {
+        id: submissionId,
+        session_id: sessionId,
+        submitted_at: submittedAt,
+        duration: surveyData.duration || null,
+        user_agent: surveyData.userAgent || null,
+        responses: surveyData.responses,
+        page_data: surveyData.pageData || [],
+        created_at: new Date().toISOString()
+      };
+
+      const { error: submissionError } = await supabase
+        .from(tableName)
+        .insert(submissionData);
+
+      if (submissionError) {
+        throw submissionError;
       }
 
       // Also insert individual scale responses for easier querying
       // Only insert scale responses (integers 1-5) into the appropriate responses table
       // Text responses are stored in the JSONB columns and can be queried from there
       if (surveyData.pageData && Array.isArray(surveyData.pageData)) {
+        const responseTableName = isPostSurvey ? 'post_survey_responses' : 'pre_survey_responses';
+        const scaleResponses = [];
+
         for (const page of surveyData.pageData) {
           if (page.statements && Array.isArray(page.statements)) {
             for (const statement of page.statements) {
               // Only insert if response is a number (scale response)
               // Text responses are stored in the JSONB responses column
-              if (statement.response !== null && 
-                  statement.response !== undefined && 
+              if (statement.response !== null &&
+                  statement.response !== undefined &&
                   typeof statement.response === 'number' &&
-                  statement.response >= 1 && 
+                  statement.response >= 1 &&
                   statement.response <= 5) {
-                if (isPostSurvey) {
-                  await sql`
-                    INSERT INTO post_survey_responses (
-                      submission_id,
-                      page_number,
-                      statement,
-                      response_value,
-                      created_at
-                    ) VALUES (
-                      ${submissionId},
-                      ${page.page},
-                      ${statement.statement},
-                      ${statement.response},
-                      NOW()
-                    )
-                  `;
-                } else {
-                  await sql`
-                    INSERT INTO pre_survey_responses (
-                      submission_id,
-                      page_number,
-                      statement,
-                      response_value,
-                      created_at
-                    ) VALUES (
-                      ${submissionId},
-                      ${page.page},
-                      ${statement.statement},
-                      ${statement.response},
-                      NOW()
-                    )
-                  `;
-                }
+                scaleResponses.push({
+                  submission_id: submissionId,
+                  page_number: page.page,
+                  statement: statement.statement,
+                  response_value: statement.response,
+                  created_at: new Date().toISOString()
+                });
               }
             }
+          }
+        }
+
+        // Batch insert all scale responses
+        if (scaleResponses.length > 0) {
+          const { error: responsesError } = await supabase
+            .from(responseTableName)
+            .insert(scaleResponses);
+
+          if (responsesError) {
+            console.error('Error inserting individual responses:', responsesError);
+            // Don't throw - main submission succeeded
           }
         }
       }
