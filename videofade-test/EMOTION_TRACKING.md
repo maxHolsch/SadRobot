@@ -15,6 +15,21 @@ This system uses **Sentiment.js** to analyze the robot's responses and gradually
    - 2.0-2.5 → neutral (slightly happy)
    - 2.5-3.0 → happier_stitched_1.mp4
 
+## Important Design Notes
+
+### Sampling Frequency
+The emotion analyzer **only samples AI responses** (robot's speech), not user messages. This is by design:
+- Analysis happens once per robot turn
+- User messages do not trigger affect changes
+- Focuses on tracking the robot's emotional state, not the user's
+
+### Talking Animation vs Emotional Transitions
+The VideoMixer has two types of crossfades:
+- **Talking mode** (300ms): Quick switch when robot starts/stops speaking
+- **Emotional state** (1500ms): Slower, meaningful transition based on affect
+
+**Known behavior**: Frequent talking mode crossfades can mask emotional transitions. The emotional changes are happening correctly but may be subtle if the robot stays in the same video state (e.g., affect 2.0-2.5 all map to state 2).
+
 ## Setup
 
 ```bash

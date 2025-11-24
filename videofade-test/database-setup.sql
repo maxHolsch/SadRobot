@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS user_sessions (
   session_id VARCHAR(255) PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   pre_survey_id VARCHAR(255),
-  post_survey_id VARCHAR(255)
+  post_survey_id VARCHAR(255),
+  conversation_id VARCHAR(255) -- ElevenLabs conversation ID to link with conversation recordings
 );
 
 -- Pre-survey submissions table
@@ -57,6 +58,7 @@ CREATE TABLE IF NOT EXISTS post_survey_responses (
 CREATE INDEX IF NOT EXISTS idx_user_sessions_created_at ON user_sessions(created_at);
 CREATE INDEX IF NOT EXISTS idx_user_sessions_pre_survey_id ON user_sessions(pre_survey_id);
 CREATE INDEX IF NOT EXISTS idx_user_sessions_post_survey_id ON user_sessions(post_survey_id);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_conversation_id ON user_sessions(conversation_id);
 
 CREATE INDEX IF NOT EXISTS idx_pre_survey_submissions_session_id ON pre_survey_submissions(session_id);
 CREATE INDEX IF NOT EXISTS idx_pre_survey_submissions_submitted_at ON pre_survey_submissions(submitted_at);
@@ -107,8 +109,9 @@ GROUP BY s.id, s.session_id, s.submitted_at, s.duration, s.user_agent, s.created
 
 -- View to link pre and post surveys for the same user
 CREATE OR REPLACE VIEW user_survey_pairs AS
-SELECT 
+SELECT
   us.session_id,
+  us.conversation_id,
   pre.id as pre_survey_id,
   pre.submitted_at as pre_submitted_at,
   post.id as post_survey_id,

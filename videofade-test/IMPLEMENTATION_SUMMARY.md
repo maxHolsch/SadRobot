@@ -213,12 +213,34 @@ testEmotion("test message here");
 The existing `onMessage` callback receives the robot's text response:
 ```javascript
 onMessage: (message) => {
-  // message.message contains the robot's text
-  // This is automatically analyzed
+  // Only analyzes AI (robot) messages, not user messages
+  if (message.source === 'ai') {
+    // message.message contains the robot's text
+    // This is automatically analyzed
+  }
 }
 ```
 
 No additional ElevenLabs features or configuration required.
+
+## ⚠️ Known Behaviors
+
+### Sampling Frequency
+- **Analyzes once per robot turn** (when `source === 'ai'`)
+- User messages are **not analyzed** (by design)
+- Tracks the robot's emotional state, not the conversation's overall sentiment
+
+### Talking Animation Interference
+The VideoMixer performs two types of crossfades:
+1. **Talking mode switches** (300ms) - When robot starts/stops speaking
+2. **Emotional transitions** (1500ms) - When affect crosses state thresholds
+
+**Result**: Frequent talking crossfades can visually mask emotional transitions. The affect is changing correctly (visible in console logs) but video changes may appear subtle when affect stays within the same state range (e.g., 2.0-2.49 all use video state 2).
+
+**Solutions if needed**:
+- Disable talking animation crossfades (keep only emotional transitions)
+- Adjust affect thresholds to be more sensitive
+- Increase `maxTransitionSpeed` for faster emotional changes
 
 ## 🎯 Next Steps
 

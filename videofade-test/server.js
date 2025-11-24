@@ -182,6 +182,39 @@ app.post('/api/submit-survey', async (req, res) => {
   }
 });
 
+// API route to update conversation ID in user session
+app.post('/api/update-conversation-id', async (req, res) => {
+  try {
+    const { sessionId, conversationId } = req.body;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: 'Session ID is required' });
+    }
+
+    if (!conversationId) {
+      return res.status(400).json({ error: 'Conversation ID is required' });
+    }
+
+    // Update the user session with the conversation ID
+    const { data, error } = await supabaseAdmin
+      .from('user_sessions')
+      .update({ conversation_id: conversationId })
+      .eq('session_id', sessionId)
+      .select();
+
+    if (error) {
+      console.error('Error updating conversation ID:', error);
+      return res.status(500).json({ error: 'Failed to update conversation ID', details: error.message });
+    }
+
+    console.log(`Updated conversation ID for session ${sessionId}: ${conversationId}`);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Error updating conversation ID:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
 // API route to generate signed URL for ElevenLabs voice agent
 app.get('/api/get-signed-url', async (req, res) => {
   try {
