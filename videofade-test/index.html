@@ -264,45 +264,64 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
           isConnected = true;
           window.conversation = conversation; // Expose globally for end interaction button
 
-          // Capture and store the conversation ID
-          const conversationId = conversation.conversationId || conversation.id || null;
-          console.log("Conversation ID:", conversationId);
-
-          if (conversationId) {
-            // Get or create session ID
-            let sessionId = localStorage.getItem('userSessionId');
-            if (!sessionId) {
-              sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-              localStorage.setItem('userSessionId', sessionId);
-            }
-
-            // Store conversation ID in Supabase
-            try {
-              const response = await fetch('/api/update-conversation-id', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ sessionId, conversationId }),
-              });
-
-              if (response.ok) {
-                console.log('Conversation ID stored successfully');
-              } else {
-                console.error('Failed to store conversation ID');
-              }
-            } catch (error) {
-              console.error('Error storing conversation ID:', error);
-            }
-          } else {
-            console.warn('No conversation ID found in Conversation object');
-          }
-
           voiceBtn.classList.remove("active");
           voiceBtn.classList.add("connected");
           voiceBtn.textContent = "🔴 End Conversation";
           voiceBtn.disabled = false;
           setStatus("Connected! Start talking to the Sad Robot", "active");
+
+          // Capture and store the conversation ID after connection
+          // Use setTimeout to ensure conversation object is fully initialized
+          setTimeout(async () => {
+            // Debug: Log all properties of the conversation object
+            console.log("Conversation object keys:", Object.keys(conversation));
+            console.log("Full conversation object:", conversation);
+
+            // Try multiple possible property names for conversation ID
+            const conversationId =
+              conversation.conversationId ||
+              conversation.id ||
+              conversation._id ||
+              conversation.conversation_id ||
+              conversation.sessionId ||
+              conversation.session_id ||
+              null;
+
+            console.log("Extracted Conversation ID:", conversationId);
+
+            if (conversationId) {
+              // Get or create session ID
+              let sessionId = localStorage.getItem('userSessionId');
+              if (!sessionId) {
+                sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                localStorage.setItem('userSessionId', sessionId);
+              }
+
+              // Store conversation ID in Supabase
+              try {
+                const response = await fetch('/api/update-conversation-id', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ sessionId, conversationId }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                  console.log('✅ Conversation ID stored successfully:', result);
+                } else {
+                  console.error('❌ Failed to store conversation ID:', result);
+                }
+              } catch (error) {
+                console.error('❌ Error storing conversation ID:', error);
+              }
+            } else {
+              console.warn('⚠️ No conversation ID found in Conversation object');
+              console.warn('Available properties:', Object.keys(conversation));
+            }
+          }, 500);
         },
         onDisconnect: () => {
           console.log("Voice agent disconnected");
