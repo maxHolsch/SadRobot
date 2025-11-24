@@ -293,8 +293,8 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
           console.log("Agent message:", message);
           videoMixer.handleMessage(message);
 
-          // Store conversation text for analysis at next video loop
-          if (message && message.message && window.emotionAnalyzer) {
+          // Only analyze robot's responses (AI messages), not user messages
+          if (message && message.source === 'ai' && message.message && window.emotionAnalyzer) {
             const text = message.message;
             window.emotionAnalyzer.storeMessage(text);
           }
