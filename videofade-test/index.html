@@ -252,7 +252,8 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
         throw new Error("Failed to get signed URL");
       }
 
-      const { signedUrl } = await response.json();
+      const { signedUrl, conversationId: backendConversationId } = await response.json();
+      console.log("Backend provided conversation ID:", backendConversationId);
 
       setStatus("Starting conversation...", "info");
 
@@ -277,17 +278,63 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
             console.log("Conversation object keys:", Object.keys(conversation));
             console.log("Full conversation object:", conversation);
 
-            // Try multiple possible property names for conversation ID
-            const conversationId =
-              conversation.conversationId ||
-              conversation.id ||
-              conversation._id ||
-              conversation.conversation_id ||
-              conversation.sessionId ||
-              conversation.session_id ||
-              null;
+            // Check connection object
+            if (conversation.connection) {
+              console.log("Connection object keys:", Object.keys(conversation.connection));
+              console.log("Connection object:", conversation.connection);
+            }
 
-            console.log("Extracted Conversation ID:", conversationId);
+            // Check options object (might contain conversation metadata)
+            if (conversation.options) {
+              console.log("Options object:", conversation.options);
+            }
+
+            // Try to extract conversation ID from multiple sources
+            let conversationId = null;
+
+            // Method 0: Use conversation ID from backend if available
+            if (backendConversationId) {
+              conversationId = backendConversationId;
+              console.log("Using conversation ID from backend:", conversationId);
+            }
+
+            // Method 1: Check conversation object properties
+            if (!conversationId) {
+              conversationId =
+                conversation.conversationId ||
+                conversation.id ||
+                conversation._id ||
+                conversation.conversation_id ||
+                conversation.sessionId ||
+                conversation.session_id ||
+                null;
+            }
+
+            // Method 2: Check connection object
+            if (!conversationId && conversation.connection) {
+              conversationId =
+                conversation.connection.conversationId ||
+                conversation.connection.id ||
+                conversation.connection.conversation_id ||
+                conversation.connection.agentId ||
+                null;
+            }
+
+            // Method 3: Extract from signed URL (if available in options)
+            if (!conversationId && conversation.options && conversation.options.signedUrl) {
+              try {
+                const url = new URL(conversation.options.signedUrl);
+                conversationId = url.searchParams.get('conversation_id') ||
+                                url.searchParams.get('conversationId') ||
+                                url.pathname.split('/').pop() || // Last part of path
+                                null;
+                console.log("Attempting to extract from URL:", url.href);
+              } catch (e) {
+                console.log("Could not parse signed URL");
+              }
+            }
+
+            console.log("Final extracted Conversation ID:", conversationId);
 
             if (conversationId) {
               // Get or create session ID
@@ -320,6 +367,7 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
             } else {
               console.warn('⚠️ No conversation ID found in Conversation object');
               console.warn('Available properties:', Object.keys(conversation));
+              console.warn('💡 You may need to retrieve the conversation ID from the ElevenLabs API after the conversation ends');
             }
           }, 500);
         },

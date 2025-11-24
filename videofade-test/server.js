@@ -247,7 +247,13 @@ app.get('/api/get-signed-url', async (req, res) => {
     }
 
     const data = await response.json();
-    res.json({ signedUrl: data.signed_url });
+    console.log('ElevenLabs API response:', data);
+
+    // Return both signed URL and any conversation ID if available
+    res.json({
+      signedUrl: data.signed_url,
+      conversationId: data.conversation_id || data.conversationId || null
+    });
   } catch (error) {
     console.error('Error generating signed URL:', error);
     res.status(500).json({ error: 'Internal server error' });
