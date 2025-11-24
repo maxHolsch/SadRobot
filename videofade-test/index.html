@@ -167,6 +167,8 @@
 // Import dependencies
 import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
 import { VideoMixer, intro_video } from './js/videoMixer.js';
+import EmotionAnalyzer from './js/emotionAnalyzer.js';
+import './js/emotionDebug.js'; // Debug utilities
 import './js/survey.js';
 
 // Helper function to reset survey (for testing)
@@ -177,22 +179,29 @@ window.resetSurvey = function() {
   location.reload();
 };
 
-// Initialize video mixer only when main content is shown
+// Initialize video mixer and emotion analyzer only when main content is shown
 let videoMixer = null;
+let emotionAnalyzer = null;
 let videoMixerInitialized = false;
 
 function initializeVideoMixer() {
   if (videoMixerInitialized) return;
-  
+
   const stage = document.getElementById('stage');
   if (!stage) return;
-  
+
   videoMixer = new VideoMixer(stage);
   window.videoMixer = videoMixer; // Make available globally for other modules
+
+  // Initialize emotion analyzer
+  emotionAnalyzer = new EmotionAnalyzer();
+  window.emotionAnalyzer = emotionAnalyzer; // Make available globally
 
   // Initialize but don't autoplay
   videoMixer.initPlaylistBuffers();
   videoMixerInitialized = true;
+
+  console.log('[Main] Video mixer and emotion analyzer initialized');
 }
 
 // Initialize video mixer when survey is completed or if already completed
