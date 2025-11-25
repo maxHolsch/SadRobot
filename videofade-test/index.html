@@ -39,9 +39,7 @@
   #stage video {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; opacity: 0; pointer-events: none; z-index: 1;
-    /* Blend video with backdrop using screen for better black handling */
-    mix-blend-mode: screen;
-    transition: opacity 300ms linear;
+    /* No CSS transition - crossfade is handled by JS Web Animations API */
   }
   #stage video.active { opacity: 1; }
   #stage video.on-top { z-index: 2; }
@@ -56,6 +54,7 @@
     background: #000;
     z-index: 10;
     pointer-events: none;
+    display: none; /* Hidden - not needed for videos with backgrounds */
   }
 
   /* Fullscreen styles */
@@ -166,7 +165,7 @@
 <script type="module">
 // Import dependencies
 import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
-import { VideoMixer, intro_video } from './js/videoMixer.js';
+import { VideoMixer, intro_video, idle_video } from './js/videoMixer.js';
 import EmotionAnalyzer from './js/emotionAnalyzer.js';
 import './js/emotionDebug.js'; // Debug utilities
 import './js/survey.js';
@@ -180,6 +179,9 @@ window.resetSurvey = function() {
 };
 
 // Initialize video mixer and emotion analyzer only when main content is shown
+localStorage.setItem('surveyCompleted', 'true');
+window.dispatchEvent(new Event('surveyCompleted'));
+
 let videoMixer = null;
 let emotionAnalyzer = null;
 let videoMixerInitialized = false;
@@ -198,7 +200,58 @@ function initializeVideoMixer() {
   window.emotionAnalyzer = emotionAnalyzer; // Make available globally
 
   // Initialize but don't autoplay
-  videoMixer.initPlaylistBuffers();
+  // videoMixer.initPlaylistBuffers();
+  
+  // Preload all videos that will be used
+  // Get the playlists (they return arrays with {src: "..."} objects)
+  // TODO: We can clean this up.
+  const listeningPlaylist = videoMixer.activePlaylist(); // Get current playlist (listening by default)
+  videoMixer._isTalking = true; // Temporarily switch to get talking playlist
+  const talkingPlaylist = videoMixer.activePlaylist();
+  videoMixer._isTalking = false; // Switch back
+  
+  // Extract just the src strings
+  const listeningSrcs = listeningPlaylist.map(item => item.src);
+  const talkingSrcs = talkingPlaylist.map(item => item.src);
+  
+  // Interweave the two playlists for optimal loading
+  const maxLength = Math.max(talkingSrcs.length, listeningSrcs.length);
+  const interweavedVideos = [];
+  for (let i = 0; i < maxLength; i++) {
+    if (i < talkingSrcs.length) interweavedVideos.push(talkingSrcs[i]);
+    if (i < listeningSrcs.length) interweavedVideos.push(listeningSrcs[i]);
+  }
+  
+  // Add intro and idle videos at the beginning
+  const allVideos = [intro_video, idle_video, ...interweavedVideos];
+  
+  console.log('📦 Preloading', allVideos.length, 'videos in interweaved order...');
+  
+  // Preload each video
+  let preloadedCount = 0;
+  allVideos.forEach((videoSrc) => {
+    const vid = document.createElement('video');
+    vid.preload = 'auto';
+    vid.muted = true;
+    vid.src = videoSrc;
+    vid.style.display = 'none';
+    
+    vid.addEventListener('canplaythrough', () => {
+      preloadedCount++;
+      console.log(`✓ Preloaded (${preloadedCount}/${allVideos.length}):`, videoSrc);
+      
+      if (preloadedCount === allVideos.length) {
+        console.log('✓ All videos preloaded!');
+      }
+    }, { once: true });
+    
+    vid.addEventListener('error', (e) => {
+      console.warn('⚠️ Failed to preload:', videoSrc, e);
+    });
+    
+    document.body.appendChild(vid);
+  });
+  
   videoMixerInitialized = true;
 
   console.log('[Main] Video mixer and emotion analyzer initialized');
@@ -232,6 +285,7 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
   const voiceStatus = document.getElementById("voiceStatus");
   let conversation = null;
   let isConnected = false;
+  let isIdle = true;
 
   // Update status message
   function setStatus(message, type = "info") {
@@ -393,7 +447,11 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
         },
         onMessage: (message) => {
           console.log("Agent message:", message);
-          videoMixer.handleMessage(message);
+
+          if(isIdle) {
+            videoMixer.setTalking(true);
+            isIdle = false;
+          }
 
           // Only analyze robot's responses (AI messages), not user messages
           if (message && message.source === 'ai' && message.message && window.emotionAnalyzer) {
@@ -401,6 +459,19 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
             window.emotionAnalyzer.storeMessage(text);
           }
         },
+        onModeChange: (change) => {
+          if(isIdle) {
+            return; // Ignore initial mode changes before first message
+          }
+
+          if(change.mode === 'listening') {
+            videoMixer.setTalking(false);
+          } else if(change.mode === 'speaking') {
+            videoMixer.setTalking(true);
+          } else {
+            console.log("Unknown conversation mode: " + change.mode, "error");
+          }
+        }
       });
     } catch (error) {
       console.error("Failed to initialize voice agent:", error);
@@ -424,6 +495,18 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
         voiceBtn.classList.remove("active", "connected");
         voiceBtn.textContent = "🎤 Talk to Sad Robot";
         setStatus("", "info");
+        
+        // Hide all videos
+        if (videoMixer && videoMixer.vids) {
+          videoMixer.vids.forEach(vid => {
+            try {
+              vid.pause();
+              vid.classList.remove('active', 'on-top');
+            } catch (e) {
+              console.warn('Error hiding video:', e);
+            }
+          });
+        }
       } catch (error) {
         console.error("Error ending conversation:", error);
       }
@@ -454,12 +537,16 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
         });
       }, 5000);
 
-      // Play the intro one-shot video first. After it finishes, start the playlist.
+      // Play intro video, then immediately transition to looping idle video
+      // The idle video is prepped while intro plays, eliminating the black gap
       setStatus('Playing intro video...', 'info');
-      await videoMixer.playOneShot(intro_video).catch((e) => { console.warn('playOneShot failed', e); });
+      videoMixer.playIntroThenIdle(intro_video, idle_video).catch((e) => { 
+        console.warn('playIntroThenIdle failed', e); 
+      });
+      console.log(`[${new Date().toISOString()}] Intro->Idle sequence started.`);
 
       // Start the usual playlist mechanism
-      try { videoMixer.beginPlaylist(); } catch (e) { console.warn('beginPlaylist failed', e); }
+      // try { videoMixer.beginPlaylist(); } catch (e) { console.warn('beginPlaylist failed', e); }
 
     } catch (err) {
       console.error('Error during talk-button flow:', err);
@@ -572,6 +659,7 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
 })();
 
 // --- UI wiring ---
+// This is just debugging stuff.
 const $ = (s) => document.querySelector(s);
 
 // Fullscreen toggle
