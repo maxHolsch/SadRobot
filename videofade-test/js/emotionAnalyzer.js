@@ -98,16 +98,16 @@ class EmotionAnalyzer {
     }
 
     // State management
-    this.currentAffect = 1.0;           // Start at baseline (sad)
+    this.currentAffect = 0.0;           // Start at baseline (sad)
     this.messageHistory = [];           // Store last 5 messages with analysis
     this.maxTransitionSpeed = 0.35;     // Max change per message (prevents 1→3 jumps)
-    this.minAffect = 1.0;               // Sad state
+    this.minAffect = 0.0;               // Sad state
     this.maxAffect = 3.0;               // Happy state
 
     // Decay settings - affect slowly returns to baseline over time
     this.decayEnabled = true;
     this.decayRate = 0.02;              // Slow drift back toward baseline
-    this.baselineAffect = 1.3;          // Eric's natural baseline (slightly sad)
+    this.baselineAffect = 0.0;          // Natural baseline (very sad)
     this.lastDecayTime = Date.now();
 
     console.log('[EmotionAnalyzer] Initialized with Sentiment.js + custom pizza-shop lexicon');

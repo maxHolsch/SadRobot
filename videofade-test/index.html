@@ -18,10 +18,7 @@
     top: 0;
     width: 100vw;
     height: calc(100vh - 88px); /* leave room for controls */
-    background-image: url('backdrop.png');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    background: black;
     z-index: 0;
     pointer-events: none;
   }
@@ -39,6 +36,7 @@
   #stage video {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; opacity: 0; pointer-events: none; z-index: 1;
+    border-radius: 12px;
     /* No CSS transition - crossfade is handled by JS Web Animations API */
   }
   #stage video.active { opacity: 1; }
@@ -460,12 +458,25 @@ if (localStorage.getItem('surveyCompleted') === 'true') {
           }
         },
         onModeChange: (change) => {
+          console.log("Preloading. Conversation mode change:", change);
+
           if(isIdle) {
             return; // Ignore initial mode changes before first message
           }
 
           if(change.mode === 'listening') {
+
             videoMixer.setTalking(false);
+
+            // While the user speaks, we analyze the ai emotion and do a potential switch
+            console.log('-- Affect:', emotionAnalyzer.currentAffect);
+            var affect  = emotionAnalyzer.currentAffect;
+            var mappedIndex = Math.round(affect); 
+
+            if(mappedIndex > videoMixer.currentIndex()){
+              videoMixer.queueNewCurrentIndex(mappedIndex);
+            }
+
           } else if(change.mode === 'speaking') {
             videoMixer.setTalking(true);
           } else {
