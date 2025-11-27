@@ -177,9 +177,6 @@ window.resetSurvey = function() {
 };
 
 // Initialize video mixer and emotion analyzer only when main content is shown
-localStorage.setItem('surveyCompleted', 'true');
-window.dispatchEvent(new Event('surveyCompleted'));
-
 let videoMixer = null;
 let emotionAnalyzer = null;
 let videoMixerInitialized = false;
