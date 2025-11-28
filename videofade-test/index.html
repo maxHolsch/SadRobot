@@ -168,6 +168,11 @@ import EmotionAnalyzer from './js/emotionAnalyzer.js';
 import './js/emotionDebug.js'; // Debug utilities
 import './js/survey.js';
 
+// Robot tag to identify which version of the robot (sad/happy) this session is using
+// Change this to "happy" for the control group branch
+// This should match the ROBOT_TAG in survey.js
+const ROBOT_TAG = 'sad';
+
 // Helper function to reset survey (for testing)
 // Usage in console: resetSurvey()
 window.resetSurvey = function() {
@@ -402,7 +407,7 @@ if (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem(
                   headers: {
                     'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({ sessionId, conversationId }),
+                  body: JSON.stringify({ sessionId, conversationId, robotTag: ROBOT_TAG }),
                 });
 
                 const result = await response.json();
