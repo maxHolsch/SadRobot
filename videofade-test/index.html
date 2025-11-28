@@ -171,6 +171,8 @@ import './js/survey.js';
 // Helper function to reset survey (for testing)
 // Usage in console: resetSurvey()
 window.resetSurvey = function() {
+  localStorage.removeItem('consentCompleted');
+  localStorage.removeItem('consentData');
   localStorage.removeItem('surveyCompleted');
   localStorage.removeItem('surveyCompletionTime');
   location.reload();
@@ -257,9 +259,9 @@ window.addEventListener('surveyCompleted', () => {
   initializeVideoMixer();
 });
 
-// Check if survey is already completed on page load
-if (localStorage.getItem('surveyCompleted') === 'true') {
-  // Survey already completed, show main content and initialize video mixer
+// Check if consent and survey are already completed on page load
+if (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem('surveyCompleted') === 'true') {
+  // Consent and survey already completed, show main content and initialize video mixer
   const mainContent = document.getElementById('main-content');
   if (mainContent) {
     mainContent.style.display = 'block';

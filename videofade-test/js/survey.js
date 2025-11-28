@@ -514,6 +514,335 @@ class Survey {
   }
 }
 
+class ConsentForm {
+  constructor() {
+    this.containerId = 'survey-container';
+    this.storageKey = 'consentCompleted';
+    this.init();
+  }
+
+  init() {
+    if (this.checkIfCompleted()) {
+      return;
+    }
+    this.render();
+  }
+
+  checkIfCompleted() {
+    return localStorage.getItem(this.storageKey) === 'true';
+  }
+
+  render() {
+    const container = document.getElementById(this.containerId);
+    if (!container) return;
+
+    container.style.display = 'flex';
+
+    container.innerHTML = `
+      <div class="survey-wrapper consent-form-wrapper">
+        <div class="consent-header">
+          <h1>CONSENT TO PARTICIPATE IN STUDY</h1>
+          <h2 class="study-title">'Sad Robot': Exploring the Benefits of Pro-Social Behavior Towards a Sadness-Simulating AI Chatbot</h2>
+        </div>
+        
+        <div class="consent-content">
+          <p class="intro-text">
+            You are invited to participate in a research study conducted by <strong>Matti Gruner, Viola Tan, Max Holschneider, and Om Gokhale</strong> from the MIT Media Lab at the Massachusetts Institute of Technology (M.I.T.). This study explores whether providing emotional support to a sadness-simulating AI chatbot yields psychological benefits for human participants, similar to those observed in helping behaviors between humans.
+          </p>
+          
+          <p class="intro-text">
+            You have been selected as a possible participant because you are an adult interested in studies of human–computer interaction. Please read the information below and ask any questions you may have before deciding whether to take part.
+          </p>
+
+          <div class="consent-section">
+            <h3>Overview</h3>
+            <ul>
+              <li>Participation in this study is voluntary. You may withdraw at any time, for any reason, without penalty.</li>
+              <li>The session will last approximately 15 minutes and will take place online.</li>
+              <li>During the activity, you will interact with an AI chatbot that either appears sad or happy. Your task is simply to converse with the chatbot as instructed (for example, to comfort it or respond naturally), depending on the condition assigned to you.</li>
+            </ul>
+          </div>
+
+          <div class="consent-section">
+            <h3>Risks, Compensation, & Benefits</h3>
+            <ul>
+              <li>The study involves minimal risk. Some participants may experience very mild emotional discomfort or frustration when interacting with the chatbot, similar to that experienced in everyday online interactions.</li>
+              <li>There are no direct personal benefits to you, outside of potential improvements to emotional state and self esteem. Your participation will contribute to research on how interacting with AI systems may influence human mood, empathy, and self-esteem.</li>
+              <li>You will not receive compensation for participation.</li>
+            </ul>
+          </div>
+
+          <div class="consent-section">
+            <h3>Confidentiality and data handling</h3>
+            <ul>
+              <li>The session will be audio- and video-recorded only to generate anonymized text transcripts and automated classifications of facial expressions (e.g., joy = 5, confusion = 1).</li>
+              <li>Recordings will be immediately deleted after transcription and data processing.</li>
+              <li>The following data will be retained: anonymized transcripts, survey responses, and text-only emotion classifications.</li>
+              <li>All data will be stored securely for one year and then permanently deleted.</li>
+              <li>Any information that can identify you will remain confidential and disclosed only with your permission or as required by law.</li>
+              <li>Your information may be reviewed by authorized MIT representatives to ensure compliance with research policies.</li>
+            </ul>
+          </div>
+
+          <div class="consent-section">
+            <h3>Recording permission</h3>
+            <p>Please indicate your permission below. Recordings will only be made for data processing purposes and not for publication or sharing.</p>
+            <p><strong>Please check all that apply:</strong></p>
+            <div class="checkbox-group">
+              <label class="consent-checkbox">
+                <input type="checkbox" id="recording-permission" required>
+                <span>I give permission for my session to be recorded for transcription and automated analysis.</span>
+              </label>
+              <label class="consent-checkbox">
+                <input type="checkbox" id="recording-understanding" required>
+                <span>I understand that recordings will be deleted immediately after processing and will not be used in publications.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="consent-section">
+            <h3>Consent statement</h3>
+            <p>I understand the procedures described above. My questions have been answered to my satisfaction, and I agree to participate in this study. I have been given a copy of this form.</p>
+          </div>
+
+          <form id="consent-form" class="consent-form">
+            <div class="form-row">
+              <div class="form-field">
+                <label for="participant-name">Name of Participant</label>
+                <input type="text" id="participant-name" name="participantName" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field signature-field">
+                <label for="participant-signature">Signature of Participant</label>
+                <div class="signature-container">
+                  <canvas id="signature-canvas" width="500" height="150"></canvas>
+                  <button type="button" id="clear-signature" class="btn-clear">Clear Signature</button>
+                </div>
+                <input type="hidden" id="signature-data" name="signatureData" required>
+              </div>
+              <div class="form-field">
+                <label for="participant-date">Date</label>
+                <input type="date" id="participant-date" name="participantDate" required>
+              </div>
+            </div>
+
+            <div class="contact-info">
+              <h3>Contact information:</h3>
+              <p>If you have questions about this study, please contact:</p>
+              <p><strong>Om Gokhale, MIT Media Lab</strong><br>
+              Email: <a href="mailto:ogo@mit.edu">ogo@mit.edu</a></p>
+              <p>If you feel you have been treated unfairly, or you have questions regarding your rights as a research subject, you may contact:</p>
+              <p><strong>Chairman, Committee on the Use of Humans as Experimental Subjects (COUHES)</strong><br>
+              Massachusetts Institute of Technology, Room E25-143b<br>
+              7 Massachusetts Avenue, Cambridge, MA 02139<br>
+              Phone: 617-253-6787</p>
+            </div>
+
+            <div class="consent-buttons">
+              <button type="submit" class="btn btn-primary" id="consent-submit">I Consent and Agree to Participate</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    this.initializeSignature();
+    this.attachEventListeners();
+  }
+
+  initializeSignature() {
+    const canvas = document.getElementById('signature-canvas');
+    if (!canvas) return;
+
+    let ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // Use fixed logical size for simplicity
+    const logicalWidth = 500;
+    const logicalHeight = 150;
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Set canvas internal size (for high DPI)
+    canvas.width = logicalWidth * dpr;
+    canvas.height = logicalHeight * dpr;
+    
+    // Set display size (CSS will handle responsive sizing)
+    canvas.style.width = logicalWidth + 'px';
+    canvas.style.height = logicalHeight + 'px';
+    
+    // Scale context to handle high DPI
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    const getEventPos = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      // Scale to logical coordinates (context is already scaled by dpr)
+      // Use logical dimensions for scaling
+      const scaleX = logicalWidth / rect.width;
+      const scaleY = logicalHeight / rect.height;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    };
+
+    const startDrawing = (e) => {
+      isDrawing = true;
+      const pos = getEventPos(e);
+      lastX = pos.x;
+      lastY = pos.y;
+    };
+
+    const draw = (e) => {
+      if (!isDrawing) return;
+      const pos = getEventPos(e);
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      lastX = pos.x;
+      lastY = pos.y;
+      this.updateSignatureData();
+    };
+
+    const stopDrawing = () => {
+      if (isDrawing) {
+        isDrawing = false;
+        this.updateSignatureData();
+      }
+    };
+
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // Touch events
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startDrawing(e);
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      draw(e);
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      stopDrawing();
+    }, { passive: false });
+  }
+
+  updateSignatureData() {
+    const canvas = document.getElementById('signature-canvas');
+    const signatureData = document.getElementById('signature-data');
+    if (canvas && signatureData) {
+      signatureData.value = canvas.toDataURL();
+    }
+  }
+
+  attachEventListeners() {
+    const form = document.getElementById('consent-form');
+    const clearBtn = document.getElementById('clear-signature');
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        const canvas = document.getElementById('signature-canvas');
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          const dpr = window.devicePixelRatio || 1;
+          // Clear using logical coordinates (since context is scaled)
+          ctx.clearRect(0, 0, 500, 150);
+          // Reapply drawing properties
+          ctx.strokeStyle = '#333';
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          this.updateSignatureData();
+        }
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.submitConsent();
+      });
+    }
+  }
+
+  async submitConsent() {
+    const form = document.getElementById('consent-form');
+    const formData = new FormData(form);
+    
+    // Check if signature has been drawn
+    const canvas = document.getElementById('signature-canvas');
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    // Check if there's any non-transparent pixel (signature drawn)
+    let hasSignature = false;
+    for (let i = 3; i < imageData.data.length; i += 4) {
+      if (imageData.data[i] > 0) { // Check alpha channel
+        hasSignature = true;
+        break;
+      }
+    }
+
+    if (!hasSignature) {
+      alert('Please provide your signature before submitting.');
+      return;
+    }
+
+    const consentData = {
+      participantName: formData.get('participantName'),
+      signatureData: formData.get('signatureData'),
+      participantDate: formData.get('participantDate'),
+      recordingPermission: document.getElementById('recording-permission').checked,
+      recordingUnderstanding: document.getElementById('recording-understanding').checked,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      // Store consent data (you may want to send this to your server)
+      localStorage.setItem('consentData', JSON.stringify(consentData));
+      localStorage.setItem(this.storageKey, 'true');
+      
+      // Optionally send to server
+      // await fetch('/api/submit-consent', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(consentData)
+      // });
+
+      this.handleCompletion();
+    } catch (error) {
+      console.error('Error submitting consent:', error);
+      alert('There was an error submitting your consent. Please try again.');
+    }
+  }
+
+  handleCompletion() {
+    const container = document.getElementById(this.containerId);
+    if (container) {
+      container.style.display = 'none';
+    }
+    
+    // Initialize the pre-survey
+    initializePreSurvey();
+  }
+}
+
 function initializePreSurvey() {
   window.preSurvey = new Survey('pre');
   if (!window.preSurvey.checkIfCompleted()) {
@@ -521,10 +850,17 @@ function initializePreSurvey() {
   }
 }
 
+function initializeConsentAndSurvey() {
+  const consentForm = new ConsentForm();
+  if (consentForm.checkIfCompleted()) {
+    initializePreSurvey();
+  }
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializePreSurvey);
+  document.addEventListener('DOMContentLoaded', initializeConsentAndSurvey);
 } else {
-  initializePreSurvey();
+  initializeConsentAndSurvey();
 }
 
 window.startPostSurvey = function startPostSurvey() {
