@@ -1,8 +1,3 @@
-// Video to play once when the user clicks "Talk to Sad Robot" (one-shot)
-// NOTE: change this if you want a different intro clip.
-const intro_video = "Sad-IntroA_grain.mp4";
-const idle_video = "Sad-Idle_pingpong.mp4";
-
 // --- 4-item playlist ---
 const playlist = [
   { src: "SadListeningA_pingpong.mp4" },
@@ -22,13 +17,10 @@ class VideoMixer {
   constructor(stage) {
     this.vids = Array.from(stage.querySelectorAll('video'));
     this.front = 0; // visible element index
-    this.currentIdx = 0; // active playlist index
+    this.currentIdx = 2; // Start with hopeful videos (index 2)
     this._isTalking = false; // internal state
     this._talkingTimer = null; // timeout id for auto-exit talking mode
     this._queuedIndex = null;
-
-    // Make intro_video available globally for other modules
-    window.sadRobot = { intro_video };
   }
 
   activePlaylist() {
@@ -176,49 +168,25 @@ class VideoMixer {
     this.preloadInactiveVideo();
   }
 
-  // Play intro video followed immediately by looping idle video.
-  // Preps the idle video while intro plays to eliminate black gap.
-  // Then, loads talking playlist first video into back buffer for immediate use.
-  async playIntroThenIdle(introSrc, idleSrc) {
+  // Start playing the hopeful listening video immediately
+  async startHopefulVideo() {
+    const pl = this.activePlaylist();
     
-    // Load and play intro in back buffer
-    this.setSource(this.backVideo, { src: introSrc });
-    this.backVideo.loop = false;
-    await this.waitForReady(this.backVideo).catch(()=>{});
-
-    // NOTE: Swapping pointers for clarity, from now on the video that's playing is the 'front'
-    // ----
-    this.swapVideos();
+    // Load hopeful listening video (index 2) into front buffer
+    this.setSource(this.frontVideo, pl[this.currentIdx]);
+    await this.waitForReady(this.frontVideo).catch(()=>{});
     
-    console.log(`[VideoMixer ${new Date().toISOString()}] Intro video ready, starting playback...`);
+    this.showVideo(this.frontVideo);
+    console.log(`[VideoMixer ${new Date().toISOString()}] Starting hopeful video: ${pl[this.currentIdx].src}`);
+    
     try { 
       await this.frontVideo.play(); 
     } catch(e) {
-       console.warn('playIntroThenIdle: intro play() rejected', e); 
+       console.warn('startHopefulVideo: play() rejected', e); 
     }
 
-    // While intro plays, prepare idle video in the front buffer
-    this.setSource(this.backVideo, { src: idleSrc });
-
-    // Wait for intro to end
-    await new Promise((resolve) => {
-      const onEnd = () => { this.frontVideo.removeEventListener('ended', onEnd); resolve(); };
-      this.frontVideo.addEventListener('ended', onEnd);
-    });
-
-    // NOTE: Swapping pointers for clarity, from now on the video that's playing is the 'front'
-    // ----
-    this.swapVideos();
-    
-    try { 
-      await this.frontVideo.play(); 
-    } catch(e) { 
-      console.warn('playIntroThenIdle: idle play() rejected', e); 
-    }
-    console.log(`[VideoMixer ${new Date().toISOString()}] Idle video playing!`);
-
-    // Prepare the back buffer (which had the intro) with first video from talking playlist
-    console.log(`[VideoMixer ${new Date().toISOString()}] Prepping back buffer with first talking playlist video...`);
+    // Preload the hopeful talking video in back buffer
+    console.log(`[VideoMixer ${new Date().toISOString()}] Preloading hopeful talking video in back buffer...`);
     this.preloadInactiveVideo();
   }
 
@@ -274,4 +242,4 @@ class VideoMixer {
   }
 }
 
-export { VideoMixer, intro_video, idle_video };
+export { VideoMixer };
