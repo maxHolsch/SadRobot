@@ -163,7 +163,7 @@
 <script type="module">
 // Import dependencies
 import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
-import { VideoMixer, intro_video, idle_video } from './js/videoMixer.js';
+import { VideoMixer } from './js/videoMixer.js';
 import EmotionAnalyzer from './js/emotionAnalyzer.js';
 import './js/emotionDebug.js'; // Debug utilities
 import './js/survey.js';
@@ -219,13 +219,13 @@ function initializeVideoMixer() {
   // Interweave the two playlists for optimal loading
   const maxLength = Math.max(talkingSrcs.length, listeningSrcs.length);
   const interweavedVideos = [];
-  for (let i = 0; i < maxLength; i++) {
+  for (let i = 2; i < maxLength; i++) { // load only the last (hopeful) videos
     if (i < talkingSrcs.length) interweavedVideos.push(talkingSrcs[i]);
     if (i < listeningSrcs.length) interweavedVideos.push(listeningSrcs[i]);
   }
   
-  // Add intro and idle videos at the beginning
-  const allVideos = [intro_video, idle_video, ...interweavedVideos];
+  // Use only the playlist videos (no intro/idle)
+  const allVideos = interweavedVideos;
   
   console.log('📦 Preloading', allVideos.length, 'videos in interweaved order...');
   
@@ -264,8 +264,12 @@ window.addEventListener('surveyCompleted', () => {
   initializeVideoMixer();
 });
 
+// === SKIP SURVEY MODE (set to true to bypass consent/survey) ===
+const SKIP_SURVEY = false;
+// ================================================================
+
 // Check if consent and survey are already completed on page load
-if (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem('surveyCompleted') === 'true') {
+if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem('surveyCompleted') === 'true')) {
   // Consent and survey already completed, show main content and initialize video mixer
   const mainContent = document.getElementById('main-content');
   if (mainContent) {
@@ -544,24 +548,18 @@ if (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem(
     setStatus('Preparing...', 'info');
 
     try {
-      // Initialize voice agent after a 5 second delay; do NOT await so the UI flow isn't blocked by the voice init.
-      setTimeout(() => {
-        console.log('Starting voice agent initialization during intro video...');
-        initializeVoiceAgent().catch((err) => {
-          console.error('initializeVoiceAgent failed:', err);
-        });
-      }, 5000);
-
-      // Play intro video, then immediately transition to looping idle video
-      // The idle video is prepped while intro plays, eliminating the black gap
-      setStatus('Playing intro video...', 'info');
-      videoMixer.playIntroThenIdle(intro_video, idle_video).catch((e) => { 
-        console.warn('playIntroThenIdle failed', e); 
+      // Initialize voice agent immediately
+      console.log('Starting voice agent initialization...');
+      initializeVoiceAgent().catch((err) => {
+        console.error('initializeVoiceAgent failed:', err);
       });
-      console.log(`[${new Date().toISOString()}] Intro->Idle sequence started.`);
 
-      // Start the usual playlist mechanism
-      // try { videoMixer.beginPlaylist(); } catch (e) { console.warn('beginPlaylist failed', e); }
+      // Start playing hopeful video immediately
+      setStatus('Starting conversation...', 'info');
+      videoMixer.startHopefulVideo().catch((e) => { 
+        console.warn('startHopefulVideo failed', e); 
+      });
+      console.log(`[${new Date().toISOString()}] Hopeful video started.`);
 
     } catch (err) {
       console.error('Error during talk-button flow:', err);
