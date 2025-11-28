@@ -154,7 +154,7 @@
 </div>
 
 <div id="controls">
-  <button id="voiceAgentBtn">🎤 Talk to Sad Robot</button>
+  <button id="voiceAgentBtn">🎤 Talk to Happy Robot</button>
   <button id="endInteractionBtn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-color: #ef4444; font-weight: 600;">End Interaction</button>
   <div id="voiceStatus">  </div>
 </div>
@@ -436,7 +436,7 @@ if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && local
           isConnected = false;
           window.conversation = null; // Clear global reference
           voiceBtn.classList.remove("active", "connected");
-          voiceBtn.textContent = "🎤 Talk to Sad Robot";
+          voiceBtn.textContent = "🎤 Talk to Happy Robot";
           voiceBtn.disabled = false;
           setStatus("", "info");
           conversation = null;
@@ -445,7 +445,7 @@ if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && local
           console.error("Voice agent error:", error);
           setStatus("Connection error. Please try again.", "error");
           voiceBtn.classList.remove("active", "connected");
-          voiceBtn.textContent = "🎤 Talk to Sad Robot";
+          voiceBtn.textContent = "🎤 Talk to Happy Robot";
           voiceBtn.disabled = false;
           isConnected = false;
           window.conversation = null; // Clear global reference
@@ -496,7 +496,7 @@ if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && local
       console.error("Failed to initialize voice agent:", error);
       setStatus(`Failed to connect: ${error.message}`, "error");
       voiceBtn.classList.remove("active", "connected");
-      voiceBtn.textContent = "🎤 Talk to Sad Robot";
+      voiceBtn.textContent = "🎤 Talk to Happy Robot";
       voiceBtn.disabled = false;
       isConnected = false;
       conversation = null;
@@ -512,7 +512,7 @@ if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && local
         window.conversation = null; // Clear global reference
         isConnected = false;
         voiceBtn.classList.remove("active", "connected");
-        voiceBtn.textContent = "🎤 Talk to Sad Robot";
+        voiceBtn.textContent = "🎤 Talk to Happy Robot";
         setStatus("", "info");
         
         // Hide all videos
