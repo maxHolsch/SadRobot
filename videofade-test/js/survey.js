@@ -1,6 +1,10 @@
 const SCALE_TYPE = 'scale';
 const TEXT_TYPE = 'text';
 
+// Robot tag to identify which version of the robot (sad/happy) this session is using
+// Change this to "happy" for the control group branch
+const ROBOT_TAG = 'sad';
+
 const responseOptions = [
   { value: 1, label: "Strongly Disagree" },
   { value: 2, label: "Disagree" },
@@ -404,6 +408,7 @@ class Survey {
       userAgent: navigator.userAgent,
       surveyType: this.config.surveyType,
       mode: this.mode,
+      robotTag: ROBOT_TAG,
       pageData: this.surveyData.map((page, pageIndex) => ({
         page: pageIndex + 1,
         title: page.title,

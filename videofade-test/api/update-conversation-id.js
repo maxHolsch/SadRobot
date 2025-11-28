@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { sessionId, conversationId } = req.body;
+    const { sessionId, conversationId, robotTag } = req.body;
 
     if (!sessionId) {
       return res.status(400).json({ error: 'Session ID is required' });
@@ -34,12 +34,14 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Conversation ID is required' });
     }
 
-    console.log(`Updating conversation ID for session ${sessionId}: ${conversationId}`);
+    const tag = robotTag || 'sad'; // Default to 'sad' if not provided
 
-    // Update the user session with the conversation ID
+    console.log(`Updating conversation ID for session ${sessionId}: ${conversationId} (robot_tag: ${tag})`);
+
+    // Update the user session with the conversation ID and robot tag
     const { data, error } = await supabase
       .from('user_sessions')
-      .update({ conversation_id: conversationId })
+      .update({ conversation_id: conversationId, robot_tag: tag })
       .eq('session_id', sessionId)
       .select();
 
@@ -52,12 +54,13 @@ module.exports = async function handler(req, res) {
     }
 
     if (!data || data.length === 0) {
-      // Session doesn't exist yet, create it with the conversation ID
+      // Session doesn't exist yet, create it with the conversation ID and robot tag
       const { data: insertData, error: insertError } = await supabase
         .from('user_sessions')
         .insert([{
           session_id: sessionId,
-          conversation_id: conversationId
+          conversation_id: conversationId,
+          robot_tag: tag
         }])
         .select();
 

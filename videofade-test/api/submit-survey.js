@@ -46,10 +46,15 @@ module.exports = async function handler(req, res) {
     // Save to Supabase database
     try {
       // Ensure user session exists
+      const robotTag = surveyData.robotTag || 'sad'; // Default to 'sad' if not provided
       const { error: sessionError } = await supabase
         .from('user_sessions')
         .upsert(
-          { session_id: sessionId, created_at: new Date().toISOString() },
+          { 
+            session_id: sessionId, 
+            robot_tag: robotTag,
+            created_at: new Date().toISOString() 
+          },
           { onConflict: 'session_id', ignoreDuplicates: true }
         );
 
@@ -80,6 +85,7 @@ module.exports = async function handler(req, res) {
         submitted_at: submittedAt,
         duration: surveyData.duration || null,
         user_agent: surveyData.userAgent || null,
+        robot_tag: robotTag,
         responses: surveyData.responses,
         page_data: surveyData.pageData || [],
         created_at: new Date().toISOString()
