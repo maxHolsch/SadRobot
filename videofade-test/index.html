@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Chat Bot Interaction</title>
 <link rel="stylesheet" href="css/survey.css">
+<link rel="stylesheet" href="css/instructions.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
     background: black;
@@ -144,6 +148,9 @@
 <!-- Survey Container -->
 <div id="survey-container"></div>
 
+<!-- Instructions Container -->
+<div id="instructions-container"></div>
+
 <!-- Main Content (hidden until survey is completed) -->
 <div id="main-content">
 <div id="stage">
@@ -167,6 +174,10 @@ import { VideoMixer } from './js/videoMixer.js';
 import EmotionAnalyzer from './js/emotionAnalyzer.js';
 import './js/emotionDebug.js'; // Debug utilities
 import './js/survey.js';
+import { initializeInstructions } from './js/instructions.js';
+
+// Make initializeInstructions globally available
+window.initializeInstructions = initializeInstructions;
 
 // Robot tag to identify which version of the robot (sad/happy) this session is using
 // Change this to "happy" for the control group branch
@@ -270,20 +281,22 @@ const SKIP_SURVEY = false;
 
 // Check if consent and survey are already completed on page load
 if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem('surveyCompleted') === 'true')) {
-  // Consent and survey already completed, show main content and initialize video mixer
-  const mainContent = document.getElementById('main-content');
-  if (mainContent) {
-    mainContent.style.display = 'block';
-  }
+  // Hide survey container
   const surveyContainer = document.getElementById('survey-container');
   if (surveyContainer) {
     surveyContainer.style.display = 'none';
   }
-  // Initialize video mixer after a short delay to ensure DOM is ready
+  
+  // Always show instructions page before main content
   setTimeout(() => {
-    initializeVideoMixer();
+    initializeInstructions();
   }, 100);
 }
+
+// Callback for when instructions are complete
+window.onInstructionsComplete = function() {
+  initializeVideoMixer();
+};
 
 // --- Voice Agent Integration ---
 (() => {
