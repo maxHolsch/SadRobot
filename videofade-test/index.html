@@ -51,6 +51,9 @@ window.initializeInstructions = initializeInstructions;
 // This should match the ROBOT_TAG in survey.js
 const ROBOT_TAG = 'sad';
 
+// Make sure all videos are preloaded for when they're needed.
+preloadAllVideos();
+
 // Helper function to reset survey (for testing)
 // Usage in console: resetSurvey()
 window.resetSurvey = function() {
@@ -61,36 +64,12 @@ window.resetSurvey = function() {
   location.reload();
 };
 
-// Initialize video mixer and emotion analyzer only when main content is shown
-let videoMixer = null;
-let emotionAnalyzer = null;
-let videoMixerInitialized = false;
-
-
-function initializeVideoMixer() {
-  if (videoMixerInitialized) return;
-
-  const stage = document.getElementById('stage');
-  if (!stage) return;
-
-  videoMixer = new VideoMixer(stage);
-  window.videoMixer = videoMixer; // Make available globally for other modules
-
-  // Initialize emotion analyzer
-  emotionAnalyzer = new EmotionAnalyzer();
-  window.emotionAnalyzer = emotionAnalyzer; // Make available globally
-
-  preloadAllVideos();
-
-  videoMixerInitialized = true;
-
-  console.log('[Main] Video mixer and emotion analyzer initialized');
+// UI Helper
+// Update status message
+function setStatus(message, type = "info") {
+  voiceStatus.textContent = message;
+  voiceStatus.className = type;
 }
-
-// Initialize video mixer when survey is completed or if already completed
-window.addEventListener('surveyCompleted', () => {
-  initializeVideoMixer();
-});
 
 // === SKIP SURVEY MODE (set to true to bypass consent/survey) ===
 const SKIP_SURVEY = false;
@@ -105,15 +84,30 @@ if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && local
   }
   
   // Always show instructions page before main content
-  setTimeout(() => {
-    initializeInstructions();
-  }, 100);
+  initializeInstructions();
 }
 
-// Update status message
-function setStatus(message, type = "info") {
-  voiceStatus.textContent = message;
-  voiceStatus.className = type;
+// Initialize video mixer and emotion analyzer only when main content is shown
+let videoMixer = null;
+let emotionAnalyzer = null;
+let videoMixerInitialized = false;
+
+function initializeVideoMixer() {
+  if (videoMixerInitialized) return;
+
+  const stage = document.getElementById('stage');
+  if (!stage) return;
+
+  videoMixer = new VideoMixer(stage);
+  window.videoMixer = videoMixer; // Make available globally for other modules
+
+  // Initialize emotion analyzer
+  emotionAnalyzer = new EmotionAnalyzer();
+  window.emotionAnalyzer = emotionAnalyzer; // Make available globally
+
+  videoMixerInitialized = true;
+
+  console.log('[Main] Video mixer and emotion analyzer initialized');
 }
 
 // Callback for when instructions are complete
@@ -122,11 +116,9 @@ window.onInstructionsComplete = function() {
 
   initializeVideoMixer();
   // Auto-start voice conversation
-  setTimeout(() => {
     if (window.startVoiceConversation) {
       window.startVoiceConversation();
     }
-  }, 500);
 };
 
 // --- Voice Agent Integration ---
@@ -288,7 +280,6 @@ window.onInstructionsComplete = function() {
           }
         },
         onModeChange: (change) => {
-          console.log("Preloading. Conversation mode change:", change);
 
           if(isIdle) {
             return; // Ignore initial mode changes before first message
@@ -296,12 +287,23 @@ window.onInstructionsComplete = function() {
 
           if(change.mode === 'listening') {
 
+            if(videoMixer.currentIndex() == 2) { // Marvin is sufficiently cheered up
+              setStatus("You've cheered Marvin up! Click the 'End chat' button to move on.", "info");
+              
+              // Change button appearance to indicate completion
+              const endBtn = document.getElementById('endInteractionBtn');
+              if (endBtn) {
+                endBtn.style.background = 'white';
+                endBtn.style.color = 'black';
+              }
+            }
+
             videoMixer.setTalking(false);
 
             // While the user speaks, we analyze the ai emotion and do a potential switch
             console.log('-- Affect:', emotionAnalyzer.currentAffect);
             var affect  = emotionAnalyzer.currentAffect;
-            var mappedIndex = Math.round(affect); 
+            var mappedIndex = Math.min(2, Math.round(affect));
 
             if(mappedIndex > videoMixer.currentIndex()){
               videoMixer.queueNewCurrentIndex(mappedIndex);
@@ -359,13 +361,12 @@ window.onInstructionsComplete = function() {
     }
 
     try {
-      // Initialize voice agent after a 5 second delay
       setTimeout(() => {
         console.log('Starting voice agent initialization during intro video...');
         initializeVoiceAgent().catch((err) => {
           console.error('initializeVoiceAgent failed:', err);
         });
-      }, 5000);
+      }, 500);
 
       // Play intro video, then immediately transition to looping idle video
       videoMixer.playIntroThenIdle(intro_video, idle_video).catch((e) => { 
@@ -486,41 +487,6 @@ const $ = (s) => document.querySelector(s);
 
 // Fullscreen toggle
 const fullscreenBtn = $("#fullscreenBtn");
-
-/*
-fullscreenBtn.onclick = () => {
-  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
-    if (stage.requestFullscreen) {
-      stage.requestFullscreen();
-    } else if (stage.webkitRequestFullscreen) {
-      stage.webkitRequestFullscreen();
-    } else if (stage.mozRequestFullScreen) {
-      stage.mozRequestFullScreen();
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    }
-  }
-};
-
-// Update button text based on fullscreen state
-const updateFullscreenButton = () => {
-  if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-    fullscreenBtn.textContent = "⛶ Exit Fullscreen";
-  } else {
-    fullscreenBtn.textContent = "⛶ Fullscreen";
-  }
-};
-
-document.addEventListener("fullscreenchange", updateFullscreenButton);
-document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
-document.addEventListener("mozfullscreenchange", updateFullscreenButton);
-*/
 
 // End Interaction button - triggers post-study survey
 const endInteractionBtn = $("#endInteractionBtn");
