@@ -54,6 +54,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+}
+
+/* Window size warning */
+.window-size-warning {
+  display: none;
+  text-align: center;
+  padding: 40px;
+}
+
+.warning-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 140%;
+  color: white;
+  margin: 0;
+}
+
+.instructions-main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 @keyframes slideUp {
   from {
     opacity: 0;
