@@ -150,53 +150,87 @@ class EmotionAnalyzer {
   }
 
   /**
-   * Analyze text sentiment using Sentiment.js + custom patterns
+   * Analyze text sentiment using OpenAI API
    */
-  analyzeText(text) {
+  async analyzeText(text) {
     if (!text || typeof text !== 'string') {
       return { score: 0, comparative: 0, wordCount: 0, tokens: [] };
     }
 
-    // Base sentiment analysis - use Sentiment if available, otherwise fallback
-    let result;
-    if (this.sentiment) {
-      result = this.sentiment.analyze(text, {
-        language: 'en-pizzashop',
-        extras: CUSTOM_LEXICON
+    try {
+      // Call our server endpoint for sentiment analysis
+      const response = await fetch('/api/analyze-sentiment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text })
       });
-    } else {
-      result = this.fallbackAnalyze(text);
-    }
 
-    // Check for phrase patterns
-    let phraseModifier = 0;
-    for (const { pattern, modifier } of PHRASE_PATTERNS) {
-      if (pattern.test(text)) {
-        phraseModifier += modifier;
+      if (!response.ok) {
+        throw new Error(`Sentiment API error: ${response.status}`);
       }
+
+      const data = await response.json();
+      const sentiment = data.sentiment; // This is already a number between -1 and 1
+
+      // Check for phrase patterns (keep existing pattern matching as bonus)
+      let phraseModifier = 0;
+      for (const { pattern, modifier } of PHRASE_PATTERNS) {
+        if (pattern.test(text)) {
+          phraseModifier += modifier;
+        }
+      }
+
+      // Combined score
+      const combinedScore = sentiment + (phraseModifier * 0.05);
+
+      const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+
+      return {
+        score: sentiment * 5, // Scale to approximate -5 to +5 range
+        comparative: sentiment,
+        combinedScore: combinedScore,
+        wordCount: words.length,
+        tokens: words,
+        positive: sentiment > 0 ? ['positive'] : [],
+        negative: sentiment < 0 ? ['negative'] : [],
+        phraseModifier: phraseModifier
+      };
+    } catch (error) {
+      console.error('[EmotionAnalyzer] Error calling sentiment API:', error);
+      // Fallback to simple analysis if API fails
+      const fallbackResult = this.fallbackAnalyze(text);
+
+      // Check for phrase patterns
+      let phraseModifier = 0;
+      for (const { pattern, modifier } of PHRASE_PATTERNS) {
+        if (pattern.test(text)) {
+          phraseModifier += modifier;
+        }
+      }
+
+      const combinedScore = fallbackResult.comparative + (phraseModifier * 0.1);
+
+      return {
+        score: fallbackResult.score,
+        comparative: fallbackResult.comparative,
+        combinedScore: combinedScore,
+        wordCount: fallbackResult.tokens.length,
+        tokens: fallbackResult.tokens,
+        positive: fallbackResult.positive,
+        negative: fallbackResult.negative,
+        phraseModifier: phraseModifier
+      };
     }
-
-    // Combined score
-    const combinedScore = result.comparative + (phraseModifier * 0.1);
-
-    return {
-      score: result.score,
-      comparative: result.comparative,
-      combinedScore: combinedScore,
-      wordCount: result.tokens.length,
-      tokens: result.tokens,
-      positive: result.positive,
-      negative: result.negative,
-      phraseModifier: phraseModifier
-    };
   }
 
   /**
    * Update affect score based on new message
    * Returns: { currentAffect, targetAffect, change, videoState, analysis }
    */
-  updateAffectScore(text) {
-    const analysis = this.analyzeText(text);
+  async updateAffectScore(text) {
+    const analysis = await this.analyzeText(text);
 
     // Store in history
     this.messageHistory.push({
@@ -300,13 +334,13 @@ class EmotionAnalyzer {
   /**
    * Main entry point - called when robot message arrives
    */
-  storeMessage(text) {
+  async storeMessage(text) {
     if (!text || typeof text !== 'string') {
       console.warn('[EmotionAnalyzer] Invalid message text:', text);
       return null;
     }
 
-    const result = this.updateAffectScore(text);
+    const result = await this.updateAffectScore(text);
 
     console.log('[EmotionAnalyzer] Message analyzed:', {
       text: text.substring(0, 60) + (text.length > 60 ? '...' : ''),
