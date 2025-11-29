@@ -137,9 +137,9 @@ class VideoMixer {
     const targetSrc = new URL(pl[this.currentIdx].src, location.href).href;
     const needsReload = this.backVideo.currentSrc !== targetSrc;
     
-    console.log("Preloading. Switching. Current index: ", this.currentIdx);
+    console.log("Switching. Current index: ", this.currentIdx);
     if (needsReload) {
-      console.log("Preloading. Loading new video. Want: ", targetSrc, ". Have: ", this.backVideo.currentSrc);
+      console.log("Loading new video. Want: ", targetSrc, ". Have: ", this.backVideo.currentSrc);
       console.log(`[VideoMixer ${new Date().toISOString()}] Loading new video: ${pl[this.currentIdx].src}`);
       this.setSource(this.backVideo, pl[this.currentIdx]);
       await Promise.all([this.waitForMetadata(this.frontVideo).catch(()=>{}), this.waitForMetadata(this.backVideo).catch(()=>{})]);
@@ -157,7 +157,7 @@ class VideoMixer {
     
     // Start back video and bring it on top for crossfade
     this.showVideo(this.backVideo);
-    console.log("Preloading. Playing back video");
+    console.log("Playing back video");
     await this.backVideo.play().catch(()=>{});
 
     const fadeIn  = this.backVideo.animate([{opacity:0},{opacity:1}], { duration: durationMs, easing:"linear", fill:"forwards" });
@@ -263,6 +263,7 @@ class VideoMixer {
 
   // Toggle talking-mode playlist
   setTalking(flag) {
+    console.log("Set talking mode:", flag);
 
     const newVal = !!flag;
     if (newVal === this._isTalking) return;
