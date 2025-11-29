@@ -421,7 +421,7 @@ class Survey {
 
   handleCompletion() {
     if (this.mode === 'pre') {
-      this.showMainPage();
+      this.showInstructionsPage();
     } else {
       this.showPostCompletion();
     }
@@ -432,6 +432,19 @@ class Survey {
 
     if (this.config.completionEvent) {
       window.dispatchEvent(new CustomEvent(this.config.completionEvent));
+    }
+  }
+
+  showInstructionsPage() {
+    const surveyContainer = document.getElementById('survey-container');
+    
+    if (surveyContainer) {
+      surveyContainer.style.display = 'none';
+    }
+    
+    // Initialize instructions page
+    if (window.initializeInstructions) {
+      window.initializeInstructions();
     }
   }
 
