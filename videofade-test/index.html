@@ -85,6 +85,7 @@
     right: 0;
     bottom: 0;
     display: flex;
+    flex-direction: column;
     gap: .75rem;
     align-items: center;
     justify-content: center;
@@ -92,7 +93,6 @@
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(6px);
     z-index: 50;
-    flex-wrap: wrap;
     font: 14px/1.4 system-ui, sans-serif;
     color: #ddd;
   }
@@ -101,43 +101,51 @@
   input[type="range"] { width: 260px; }
   .val { min-width: 1.5ch; text-align: right; display:inline-block; }
 
-  /* Voice Agent Button */
-  #voiceAgentBtn {
-    padding: 0.6rem 1.2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: 2px solid #8b5cf6;
+  /* End Interaction Button */
+  #endInteractionBtn {
+    width: 282px;
+    height: 59px;
+    padding: 20px 28px;
+    border-radius: 1000px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     color: white;
-    font-weight: 600;
-    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    opacity: 1;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  #voiceAgentBtn:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  
+  #endInteractionBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   }
-  #voiceAgentBtn.active {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    border-color: #ef4444;
-    animation: pulse 1.5s infinite;
-  }
-  #voiceAgentBtn.connected {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border-color: #10b981;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+  
+  #endInteractionBtn:active {
+    transform: translateY(0);
   }
 
   /* Voice Agent Status */
   #voiceStatus {
-    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
     color: #888;
     margin-top: 8px;
-    text-align: center;
   }
   #voiceStatus.active { color: #10b981; }
   #voiceStatus.error { color: #ef4444; }
@@ -161,9 +169,8 @@
 </div>
 
 <div id="controls">
-  <button id="voiceAgentBtn">🎤 Talk to Sad Robot</button>
-  <button id="endInteractionBtn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-color: #ef4444; font-weight: 600;">End Interaction</button>
   <div id="voiceStatus">  </div>
+  <button id="endInteractionBtn">→ End chat and go to survey</button>
 </div>
 </div> <!-- End main-content -->
 
@@ -296,11 +303,16 @@ if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && local
 // Callback for when instructions are complete
 window.onInstructionsComplete = function() {
   initializeVideoMixer();
+  // Auto-start voice conversation
+  setTimeout(() => {
+    if (window.startVoiceConversation) {
+      window.startVoiceConversation();
+    }
+  }, 500);
 };
 
 // --- Voice Agent Integration ---
 (() => {
-  const voiceBtn = document.getElementById("voiceAgentBtn");
   const voiceStatus = document.getElementById("voiceStatus");
   let conversation = null;
   let isConnected = false;
@@ -316,8 +328,6 @@ window.onInstructionsComplete = function() {
   async function initializeVoiceAgent() {
     try {
       setStatus("Connecting to Sad Robot...", "info");
-      voiceBtn.classList.add("active");
-      voiceBtn.disabled = true;
 
       // Get signed URL from our backend
       const response = await fetch("/api/get-signed-url");
@@ -338,10 +348,6 @@ window.onInstructionsComplete = function() {
           isConnected = true;
           window.conversation = conversation; // Expose globally for end interaction button
 
-          voiceBtn.classList.remove("active");
-          voiceBtn.classList.add("connected");
-          voiceBtn.textContent = "🔴 End Conversation";
-          voiceBtn.disabled = false;
           setStatus("Connected! Start talking to the Sad Robot", "active");
 
           // Capture and store the conversation ID after connection
@@ -448,18 +454,12 @@ window.onInstructionsComplete = function() {
           console.log("Voice agent disconnected");
           isConnected = false;
           window.conversation = null; // Clear global reference
-          voiceBtn.classList.remove("active", "connected");
-          voiceBtn.textContent = "🎤 Talk to Sad Robot";
-          voiceBtn.disabled = false;
           setStatus("", "info");
           conversation = null;
         },
         onError: (error) => {
           console.error("Voice agent error:", error);
-          setStatus("Connection error. Please try again.", "error");
-          voiceBtn.classList.remove("active", "connected");
-          voiceBtn.textContent = "🎤 Talk to Sad Robot";
-          voiceBtn.disabled = false;
+          setStatus("Connection error. Please refresh the page.", "error");
           isConnected = false;
           window.conversation = null; // Clear global reference
           conversation = null;
@@ -508,9 +508,6 @@ window.onInstructionsComplete = function() {
     } catch (error) {
       console.error("Failed to initialize voice agent:", error);
       setStatus(`Failed to connect: ${error.message}`, "error");
-      voiceBtn.classList.remove("active", "connected");
-      voiceBtn.textContent = "🎤 Talk to Sad Robot";
-      voiceBtn.disabled = false;
       isConnected = false;
       conversation = null;
     }
@@ -524,8 +521,6 @@ window.onInstructionsComplete = function() {
         conversation = null;
         window.conversation = null; // Clear global reference
         isConnected = false;
-        voiceBtn.classList.remove("active", "connected");
-        voiceBtn.textContent = "🎤 Talk to Sad Robot";
         setStatus("", "info");
         
         // Hide all videos
@@ -545,23 +540,19 @@ window.onInstructionsComplete = function() {
     }
   }
   
-  // Expose endConversation globally for end interaction button
+  // Expose functions globally
   window.endVoiceConversation = endConversation;
-
-  // Start button click handler
-  voiceBtn.addEventListener("click", async () => {
+  
+  // Function to start voice conversation (called automatically after instructions)
+  window.startVoiceConversation = async function() {
     if (isConnected) {
-      await endConversation();
       return;
     }
 
-    // Prevent double clicks
-    voiceBtn.disabled = true;
-    voiceBtn.classList.add('active');
-    setStatus('Preparing...', 'info');
-
     try {
-      // Initialize voice agent after a 5 second delay; do NOT await so the UI flow isn't blocked by the voice init.
+      setStatus('Preparing...', 'info');
+      
+      // Initialize voice agent after a 5 second delay
       setTimeout(() => {
         console.log('Starting voice agent initialization during intro video...');
         initializeVoiceAgent().catch((err) => {
@@ -570,24 +561,17 @@ window.onInstructionsComplete = function() {
       }, 5000);
 
       // Play intro video, then immediately transition to looping idle video
-      // The idle video is prepped while intro plays, eliminating the black gap
       setStatus('Playing intro video...', 'info');
       videoMixer.playIntroThenIdle(intro_video, idle_video).catch((e) => { 
         console.warn('playIntroThenIdle failed', e); 
       });
       console.log(`[${new Date().toISOString()}] Intro->Idle sequence started.`);
 
-      // Start the usual playlist mechanism
-      // try { videoMixer.beginPlaylist(); } catch (e) { console.warn('beginPlaylist failed', e); }
-
     } catch (err) {
-      console.error('Error during talk-button flow:', err);
+      console.error('Error during conversation start:', err);
       setStatus('Error starting conversation', 'error');
-    } finally {
-      voiceBtn.disabled = false;
-      voiceBtn.classList.remove('active');
     }
-  });
+  };
 
   // Cleanup on page unload
   window.addEventListener("beforeunload", () => {
