@@ -6,150 +6,10 @@
 <title>Chat Bot Interaction</title>
 <link rel="stylesheet" href="css/survey.css">
 <link rel="stylesheet" href="css/instructions.css">
+<link rel="stylesheet" href="css/main.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  html, body {
-    background: black;
-    /* keep room for fixed controls so they don't overlap the page content */
-    padding-bottom: 88px;
-  }
-  /* Full-bleed backdrop behind the stage that fills the viewport width */
-  #backdrop {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: calc(100vh - 88px); /* leave room for controls */
-    background: black;
-    z-index: 0;
-    pointer-events: none;
-  }
-  #stage { 
-    position: relative; 
-    width: 100%; 
-    max-width: 960px; 
-    aspect-ratio: 16/9; 
-    background: transparent; /* allow backdrop to show through for blending */
-    z-index: 10; /* sit above backdrop but below controls */
-    margin: 0 auto;
-    /* Add top margin to push stage down */
-    margin-top: calc((100vh - 88px - (960px * 9/16)) / 2);
-  }
-  #stage video {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; opacity: 0; pointer-events: none; z-index: 1;
-    border-radius: 12px;
-    /* No CSS transition - crossfade is handled by JS Web Animations API */
-  }
-  #stage video.active { opacity: 1; }
-  #stage video.on-top { z-index: 2; }
-
-  /* Black box overlay in bottom right corner */
-  #blackBox {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 20%;
-    height: 20%;
-    background: #000;
-    z-index: 10;
-    pointer-events: none;
-    display: none; /* Hidden - not needed for videos with backgrounds */
-  }
-
-  /* Fullscreen styles */
-  #stage:fullscreen {
-    max-width: 100%;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-  }
-  #stage:-webkit-full-screen {
-    max-width: 100%;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-  }
-  #stage:-moz-full-screen {
-    max-width: 100%;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-  }
-  /* Controls are fixed to the bottom of the viewport (floating bar) */
-  #controls {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 14px;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-    z-index: 50;
-    font: 14px/1.4 system-ui, sans-serif;
-    color: #ddd;
-  }
-  button { padding:.45rem .8rem; border:1px solid #444; background:#111; color:#eee; border-radius:.5rem; cursor:pointer; }
-  button:hover { background:#222; }
-  input[type="range"] { width: 260px; }
-  .val { min-width: 1.5ch; text-align: right; display:inline-block; }
-
-  /* End Interaction Button */
-  #endInteractionBtn {
-    width: 282px;
-    height: 59px;
-    padding: 20px 28px;
-    border-radius: 1000px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    color: white;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    opacity: 1;
-    gap: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  #endInteractionBtn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  }
-  
-  #endInteractionBtn:active {
-    transform: translateY(0);
-  }
-
-  /* Voice Agent Status */
-  #voiceStatus {
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-style: normal;
-    font-size: 16px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    color: #888;
-    margin-top: 8px;
-  }
-  #voiceStatus.active { color: #10b981; }
-  #voiceStatus.error { color: #ef4444; }
-</style>
 </head>
 <body>
 
@@ -177,7 +37,7 @@
 <script type="module">
 // Import dependencies
 import { Conversation } from 'https://cdn.jsdelivr.net/npm/@11labs/client/+esm';
-import { VideoMixer, intro_video, idle_video } from './js/videoMixer.js';
+import { VideoMixer, intro_video, idle_video, preloadAllVideos } from './js/videoMixer.js';
 import EmotionAnalyzer from './js/emotionAnalyzer.js';
 import './js/emotionDebug.js'; // Debug utilities
 import './js/survey.js';
@@ -206,6 +66,7 @@ let videoMixer = null;
 let emotionAnalyzer = null;
 let videoMixerInitialized = false;
 
+
 function initializeVideoMixer() {
   if (videoMixerInitialized) return;
 
@@ -219,59 +80,8 @@ function initializeVideoMixer() {
   emotionAnalyzer = new EmotionAnalyzer();
   window.emotionAnalyzer = emotionAnalyzer; // Make available globally
 
-  // Initialize but don't autoplay
-  // videoMixer.initPlaylistBuffers();
-  
-  // Preload all videos that will be used
-  // Get the playlists (they return arrays with {src: "..."} objects)
-  // TODO: We can clean this up.
-  const listeningPlaylist = videoMixer.activePlaylist(); // Get current playlist (listening by default)
-  videoMixer._isTalking = true; // Temporarily switch to get talking playlist
-  const talkingPlaylist = videoMixer.activePlaylist();
-  videoMixer._isTalking = false; // Switch back
-  
-  // Extract just the src strings
-  const listeningSrcs = listeningPlaylist.map(item => item.src);
-  const talkingSrcs = talkingPlaylist.map(item => item.src);
-  
-  // Interweave the two playlists for optimal loading
-  const maxLength = Math.max(talkingSrcs.length, listeningSrcs.length);
-  const interweavedVideos = [];
-  for (let i = 0; i < maxLength; i++) {
-    if (i < talkingSrcs.length) interweavedVideos.push(talkingSrcs[i]);
-    if (i < listeningSrcs.length) interweavedVideos.push(listeningSrcs[i]);
-  }
-  
-  // Add intro and idle videos at the beginning
-  const allVideos = [intro_video, idle_video, ...interweavedVideos];
-  
-  console.log('📦 Preloading', allVideos.length, 'videos in interweaved order...');
-  
-  // Preload each video
-  let preloadedCount = 0;
-  allVideos.forEach((videoSrc) => {
-    const vid = document.createElement('video');
-    vid.preload = 'auto';
-    vid.muted = true;
-    vid.src = videoSrc;
-    vid.style.display = 'none';
-    
-    vid.addEventListener('canplaythrough', () => {
-      preloadedCount++;
-      console.log(`✓ Preloaded (${preloadedCount}/${allVideos.length}):`, videoSrc);
-      
-      if (preloadedCount === allVideos.length) {
-        console.log('✓ All videos preloaded!');
-      }
-    }, { once: true });
-    
-    vid.addEventListener('error', (e) => {
-      console.warn('⚠️ Failed to preload:', videoSrc, e);
-    });
-    
-    document.body.appendChild(vid);
-  });
-  
+  preloadAllVideos();
+
   videoMixerInitialized = true;
 
   console.log('[Main] Video mixer and emotion analyzer initialized');
@@ -300,8 +110,16 @@ if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && local
   }, 100);
 }
 
+// Update status message
+function setStatus(message, type = "info") {
+  voiceStatus.textContent = message;
+  voiceStatus.className = type;
+}
+
 // Callback for when instructions are complete
 window.onInstructionsComplete = function() {
+  setStatus("Waking up...", "info");
+
   initializeVideoMixer();
   // Auto-start voice conversation
   setTimeout(() => {
@@ -318,16 +136,9 @@ window.onInstructionsComplete = function() {
   let isConnected = false;
   let isIdle = true;
 
-  // Update status message
-  function setStatus(message, type = "info") {
-    voiceStatus.textContent = message;
-    voiceStatus.className = type;
-  }
-
   // Initialize ElevenLabs conversation
   async function initializeVoiceAgent() {
     try {
-      setStatus("Connecting to Sad Robot...", "info");
 
       // Get signed URL from our backend
       const response = await fetch("/api/get-signed-url");
@@ -338,8 +149,6 @@ window.onInstructionsComplete = function() {
       const { signedUrl, conversationId: backendConversationId } = await response.json();
       console.log("Backend provided conversation ID:", backendConversationId);
 
-      setStatus("Starting conversation...", "info");
-
       // Initialize ElevenLabs conversation using the imported Conversation class
       conversation = await Conversation.startSession({
         signedUrl: signedUrl,
@@ -348,7 +157,7 @@ window.onInstructionsComplete = function() {
           isConnected = true;
           window.conversation = conversation; // Expose globally for end interaction button
 
-          setStatus("Connected! Start talking to the Sad Robot", "active");
+          setStatus("✔ Listening. Speak when you're ready.", "info");
 
           // Capture and store the conversation ID after connection
           // Use setTimeout to ensure conversation object is fully initialized
@@ -550,8 +359,6 @@ window.onInstructionsComplete = function() {
     }
 
     try {
-      setStatus('Preparing...', 'info');
-      
       // Initialize voice agent after a 5 second delay
       setTimeout(() => {
         console.log('Starting voice agent initialization during intro video...');
@@ -561,7 +368,6 @@ window.onInstructionsComplete = function() {
       }, 5000);
 
       // Play intro video, then immediately transition to looping idle video
-      setStatus('Playing intro video...', 'info');
       videoMixer.playIntroThenIdle(intro_video, idle_video).catch((e) => { 
         console.warn('playIntroThenIdle failed', e); 
       });

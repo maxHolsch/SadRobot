@@ -274,4 +274,54 @@ class VideoMixer {
   }
 }
 
-export { VideoMixer, intro_video, idle_video };
+// Preload all videos from both playlists plus intro and idle
+// Can be called without a VideoMixer instance
+function preloadAllVideos() {
+  // Get the playlists
+  const listeningPlaylist = playlist;
+  const talkingPlaylist = playlist_talking;
+  
+  // Extract just the src strings
+  const listeningSrcs = listeningPlaylist.map(item => item.src);
+  const talkingSrcs = talkingPlaylist.map(item => item.src);
+  
+  // Interweave the two playlists for optimal loading
+  const maxLength = Math.max(talkingSrcs.length, listeningSrcs.length);
+  const interweavedVideos = [];
+  for (let i = 0; i < maxLength; i++) {
+    if (i < talkingSrcs.length) interweavedVideos.push(talkingSrcs[i]);
+    if (i < listeningSrcs.length) interweavedVideos.push(listeningSrcs[i]);
+  }
+  
+  // Add intro and idle videos at the beginning
+  const allVideos = [intro_video, idle_video, ...interweavedVideos];
+  
+  console.log('📦 Preloading', allVideos.length, 'videos in interweaved order...');
+  
+  // Preload each video
+  let preloadedCount = 0;
+  allVideos.forEach((videoSrc) => {
+    const vid = document.createElement('video');
+    vid.preload = 'auto';
+    vid.muted = true;
+    vid.src = videoSrc;
+    vid.style.display = 'none';
+    
+    vid.addEventListener('canplaythrough', () => {
+      preloadedCount++;
+      console.log(`✓ Preloaded (${preloadedCount}/${allVideos.length}):`, videoSrc);
+      
+      if (preloadedCount === allVideos.length) {
+        console.log('✓ All videos preloaded!');
+      }
+    }, { once: true });
+    
+    vid.addEventListener('error', (e) => {
+      console.warn('⚠️ Failed to preload:', videoSrc, e);
+    });
+    
+    document.body.appendChild(vid);
+  });
+}
+
+export { VideoMixer, intro_video, idle_video, preloadAllVideos };
