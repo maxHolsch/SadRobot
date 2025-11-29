@@ -580,9 +580,9 @@ class ConsentForm {
           <div class="consent-section">
             <h3>Confidentiality and data handling</h3>
             <ul>
-              <li>The session will be audio- and video-recorded only to generate anonymized text transcripts and automated classifications of facial expressions (e.g., joy = 5, confusion = 1).</li>
+              <li>The session will be audio-recorded only to generate anonymized text transcripts.</li>
               <li>Recordings will be immediately deleted after transcription and data processing.</li>
-              <li>The following data will be retained: anonymized transcripts, survey responses, and text-only emotion classifications.</li>
+              <li>The following data will be retained: anonymized transcripts, survey responses.</li>
               <li>All data will be stored securely for one year and then permanently deleted.</li>
               <li>Any information that can identify you will remain confidential and disclosed only with your permission or as required by law.</li>
               <li>Your information may be reviewed by authorized MIT representatives to ensure compliance with research policies.</li>
@@ -596,11 +596,11 @@ class ConsentForm {
             <div class="checkbox-group">
               <label class="consent-checkbox">
                 <input type="checkbox" id="recording-permission" required>
-                <span>I give permission for my session to be recorded for transcription and automated analysis.</span>
+                <span>I give permission for my session to be audio-recorded for transcription.</span>
               </label>
               <label class="consent-checkbox">
                 <input type="checkbox" id="recording-understanding" required>
-                <span>I understand that recordings will be deleted immediately after processing and will not be used in publications.</span>
+                <span>I understand that audio recordings will be deleted immediately after processing and will not be used in publications.</span>
               </label>
             </div>
           </div>
