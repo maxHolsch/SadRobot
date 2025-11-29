@@ -842,10 +842,15 @@ if (document.readyState === 'loading') {
   initializeConsentAndSurvey();
 }
 
-window.startPostSurvey = function startPostSurvey() {
+window.startPostSurvey = async function startPostSurvey() {
   if (localStorage.getItem(surveyConfigs.post.storageKey) === 'true') {
     window.dispatchEvent(new CustomEvent(surveyConfigs.post.completionEvent));
     return;
+  }
+
+  // Stop voice agent if active before showing survey
+  if (window.endVoiceConversation) {
+    await window.endVoiceConversation();
   }
 
   const mainContent = document.getElementById('main-content');
