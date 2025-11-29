@@ -30,6 +30,9 @@ class InstructionsPage {
       // Attach event listeners after content is loaded
       this.attachEventListeners();
       
+      // Set up window size detection
+      this.setupWindowSizeDetection();
+      
       // Scroll to top
       container.scrollTop = 0;
     } catch (error) {
@@ -37,6 +40,37 @@ class InstructionsPage {
       // If loading fails, skip to main content
       this.handleCompletion();
     }
+  }
+
+  setupWindowSizeDetection() {
+    const MIN_WIDTH = 700;
+    const warningElement = document.getElementById('window-size-warning');
+    const mainContentElement = document.getElementById('instructions-main-content');
+    
+    if (!warningElement || !mainContentElement) {
+      console.warn('Warning or main content elements not found');
+      return;
+    }
+
+    const checkWindowSize = () => {
+      const windowWidth = window.innerWidth;
+      
+      if (windowWidth < MIN_WIDTH) {
+        // Show warning, hide main content
+        warningElement.style.display = 'block';
+        mainContentElement.style.display = 'none';
+      } else {
+        // Hide warning, show main content
+        warningElement.style.display = 'none';
+        mainContentElement.style.display = 'flex';
+      }
+    };
+
+    // Check on load
+    checkWindowSize();
+
+    // Check on resize
+    window.addEventListener('resize', checkWindowSize);
   }
 
   attachEventListeners() {
