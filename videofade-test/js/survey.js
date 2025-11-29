@@ -38,33 +38,28 @@ const qualitativeStatements = [
     text: "How realistic or artificial did the robot’s emotional state seem to you?",
     type: TEXT_TYPE,
     placeholder: "Enter your response here"
-  }
+  },
+  {
+    text: "Please enter your Prolific ID here:",
+    type: TEXT_TYPE,
+    placeholder: "Enter your Prolific ID here"
+  },
 ];
 
 const baseSurveyPages = [
   {
     title: "Indicate the extent you feel this way at the present moment.",
     statements: [
-      "Interested",
-      "Distressed",
-      "Excited",
-      "Upset",
-      "Strong",
-      "Guilty",
-      "Scared",
-      "Hostile",
-      "Enthusiastic",
-      "Proud",
-      "Irritable",
-      "Alert",
-      "Ashamed",
       "Inspired",
-      "Nervous",
+      "Scared",
+      "Excited",
+      "Alert",
+      "Enthusiastic",
+      "Distressed",
+      "Afraid",
+      "Upset",
       "Determined",
-      "Attentive",
-      "Jittery",
-      "Active",
-      "Afraid"
+      "Nervous"
     ]
   },
   {
@@ -73,6 +68,7 @@ const baseSurveyPages = [
       "I am feeling optimistic about life’s challenges.",
       "Right now, I expect things to work out for the best.",
       "I am feeling optimistic about my future.",
+      "Please select 'disagree'.",
       "The future is looking bright to me.",
       "I am expecting things to turn out well."
     ]
@@ -86,6 +82,7 @@ const baseSurveyPages = [
       "I am able to do things as well as most other people",
       "I feel I do not have much to be proud of.",
       "I certainly feel useless at times.",
+      "I have fourteen fingers.",
       "I feel that I'm a person of worth.",
       "I wish I could have more respect for myself.",
       "All in all, I am inclined to think that I am a failure.",
@@ -95,35 +92,11 @@ const baseSurveyPages = [
   {
     title: "Please indicate how true the following statements are of you using the 5-point response scale.",
     statements: [
-      "I’m good at recognising when I’m feeling distressed.",
-      "I understand that everyone experiences suffering at some point in their lives.",
-      "When I’m going through a difficult time, I feel kindly towards myself.",
-      "When I’m upset, I try to stay open to my feelings rather than avoid them.",
-      "I try to make myself feel better when I’m distressed, even if I can’t do anything about the cause.",
-      "I notice when I’m feeling distressed.",
-      "I understand that feeling upset at times is part of human nature.",
-      "When bad things happen to me, I feel caring towards myself.",
-      "I connect with my own distress without letting it overwhelm me.",
-      "When I’m going through a difficult time, I try to look after myself.",
-      "I’m quick to notice early signs of distress in myself.",
-      "Like me, I know that other people also experience struggles in life.",
-      "When I'm upset, I try to tune in to how I'm feeling.",
-      "I connect with my own suffering without judging myself.",
-      "When I’m upset, I try to do what’s best for myself.",
-      "I recognise signs of suffering in myself.",
-      "I know that we can all feel distressed when things don’t go well in our lives.",
-      "Even when I'm disappointed with myself, I can feel warmly towards myself when I'm in distress.",
-      "When I’m upset, I can let the emotions be there without feeling overwhelmed.",
-      "When I’m upset, I do my best to take care of myself."
-    ]
-  },
-  {
-    title: "Please indicate how true the following statements are of you using the 5-point response scale.",
-    statements: [
       "I recognise when other people are feeling distressed without them having to tell me.",
       "I understand that everyone experiences suffering at some point in their lives.",
       "When someone is going through a difficult time, I feel kindly towards them.",
       "When someone else is upset, I try to stay open to their feelings rather than avoid them.",
+      "I have never used a computer.",
       "When others are struggling, I try to do things that would be helpful.",
       "I notice when others are feeling distressed.",
       "I understand that feeling upset at times is part of human nature.",
@@ -134,6 +107,7 @@ const baseSurveyPages = [
       "Like me, I know that other people also experience struggles in life.",
       "When someone is upset, I try to tune in to how they’re feeling.",
       "I connect with the suffering of others without judging them.",
+      "Please select 'agree'.",
       "When I see someone in need, I try to do what’s best for them.",
       "I recognise signs of suffering in others.",
       "I know that we can all feel upset at times when we are wronged.",
