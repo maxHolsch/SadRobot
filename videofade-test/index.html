@@ -264,8 +264,12 @@ window.addEventListener('surveyCompleted', () => {
   initializeVideoMixer();
 });
 
+// === SKIP SURVEY MODE (set to true to bypass consent/survey) ===
+const SKIP_SURVEY = false;
+// ================================================================
+
 // Check if consent and survey are already completed on page load
-if (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem('surveyCompleted') === 'true') {
+if (SKIP_SURVEY || (localStorage.getItem('consentCompleted') === 'true' && localStorage.getItem('surveyCompleted') === 'true')) {
   // Consent and survey already completed, show main content and initialize video mixer
   const mainContent = document.getElementById('main-content');
   if (mainContent) {
