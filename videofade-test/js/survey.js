@@ -48,7 +48,7 @@ const qualitativeStatements = [
 
 const baseSurveyPages = [
   {
-    title: "Indicate the extent you feel this way at the present moment.",
+    title: "Indicate to what extent you feel this way right now.",
     statements: [
       "Inspired",
       "Scared",
@@ -470,28 +470,15 @@ class Survey {
         <div class="survey-header">
           <h1>Thank you for completing the post-study survey!</h1>
           <p class="completion-message">
-            Your insights help us understand how Sad Robot resonated with you.
+            Your insights are very helpful to us.
           </p>
         </div>
         <div class="survey-buttons center">
-          <button type="button" class="btn btn-primary" id="return-to-experience">
-            Return to Interaction
-          </button>
         </div>
       </div>
     `;
 
     const mainContent = document.getElementById('main-content');
-    const returnBtn = document.getElementById('return-to-experience');
-
-    if (returnBtn) {
-      returnBtn.addEventListener('click', () => {
-        surveyContainer.style.display = 'none';
-        if (mainContent) {
-          mainContent.style.display = 'block';
-        }
-      });
-    }
   }
 
   checkIfCompleted() {
