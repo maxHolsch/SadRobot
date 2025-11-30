@@ -14,7 +14,7 @@ const playlist = [
 // By default using same sources; replace entries with talking-specific clips if available
 const playlist_talking = [
   { src: "SadTalkingA_pingpong.mp4" },
-  { src: "DownTalking2_pingpong.mp4" },
+  { src: "DownTalking4_pingpong.mp4" },
   { src: "HopefulTalkingB_pingpong.mp4" },
 ];
 
