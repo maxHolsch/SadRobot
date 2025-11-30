@@ -64,9 +64,9 @@ class EmotionAnalyzer {
     // Affect update algorithm has following properties:
     // - Only positive sentiment increases affect (robot gets happier)
     // - Negative sentiment does not decrease affect (robot does not get sadder)
-    // - Each message influences affect by up to 0.5 (openAI score is between -1 and 1, we multiply by 0.5)
+    // - Each message influences affect by up to 1.0 (openAI score is between -1 and 1)
     const analysis = await this.analyzeText(text);
-    this.currentAffect += Math.max(0, analysis.score * 0.5);
+    this.currentAffect += Math.max(0, analysis.score);
 
     return {
       currentAffect: this.currentAffect,
