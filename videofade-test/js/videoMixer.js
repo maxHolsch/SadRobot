@@ -6,7 +6,7 @@ const idle_video = "Sad-Idle_pingpong.mp4";
 // --- 4-item playlist ---
 const playlist = [
   { src: "SadListeningA_pingpong.mp4" },
-  { src: "DownListeningA_pingpong.mp4" },
+  { src: "DownListening2_pingpong.mp4" },
   { src: "HopefulListeningA_pingpong.mp4" },
 ];
 
@@ -14,7 +14,7 @@ const playlist = [
 // By default using same sources; replace entries with talking-specific clips if available
 const playlist_talking = [
   { src: "SadTalkingA_pingpong.mp4" },
-  { src: "DownTalkingC_pingpong.mp4" },
+  { src: "DownTalking2_pingpong.mp4" },
   { src: "HopefulTalkingB_pingpong.mp4" },
 ];
 
