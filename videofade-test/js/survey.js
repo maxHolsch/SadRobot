@@ -470,7 +470,7 @@ class Survey {
         <div class="survey-header">
           <h1>Thank you for completing the post-study survey!</h1>
           <p class="completion-message">
-            Your insights are very helpful to us.
+            Thank you for participating in this study! Our team will review your responses and, pending standard quality checks, approve your payment promptly.
           </p>
         </div>
         <div class="survey-buttons center">
@@ -783,7 +783,21 @@ class ConsentForm {
       return;
     }
 
+    // Get or create session ID
+    let sessionId = localStorage.getItem('userSessionId');
+    if (!sessionId) {
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('userSessionId', sessionId);
+    }
+
+    // Get robot tag from URL or default to 'sad'
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    const robotTag = mode === 'happy' ? 'happy' : 'sad';
+
     const consentData = {
+      sessionId: sessionId,
+      robotTag: robotTag,
       participantName: formData.get('participantName'),
       signatureData: formData.get('signatureData'),
       participantDate: formData.get('participantDate'),
@@ -793,16 +807,30 @@ class ConsentForm {
     };
 
     try {
-      // Store consent data (you may want to send this to your server)
+      // Store consent data locally
       localStorage.setItem('consentData', JSON.stringify(consentData));
       localStorage.setItem(this.storageKey, 'true');
       
-      // Optionally send to server
-      // await fetch('/api/submit-consent', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(consentData)
-      // });
+      // Send to server
+      try {
+        const response = await fetch('/api/submit-consent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(consentData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log('✅ Consent form submitted successfully:', result);
+        } else {
+          console.error('❌ Failed to submit consent form:', result);
+          // Continue anyway - data is stored locally
+        }
+      } catch (fetchError) {
+        console.error('❌ Error sending consent to server:', fetchError);
+        // Continue anyway - data is stored locally
+      }
 
       this.handleCompletion();
     } catch (error) {
