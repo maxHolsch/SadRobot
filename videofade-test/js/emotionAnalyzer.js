@@ -80,6 +80,8 @@ class EmotionAnalyzer {
    * Main entry point - called when robot message arrives
    */
   async storeMessage(text) {
+    return; // for the happy bot, we skip sentiment analysis
+
     if (!text || typeof text !== 'string') {
       console.warn('[EmotionAnalyzer] Invalid message text:', text);
       return null;

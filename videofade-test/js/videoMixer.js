@@ -135,6 +135,7 @@ class VideoMixer {
 
   // --- fade to a specific playlist index (sync by seconds) ---
   async switchExpressionVid( { durationMs = 800 } = {}) {
+    console.log("switchExpressionVid called. Current index:", this.currentIdx);
     const pl = this.activePlaylist();
 
     // Check if back buffer already has the right video loaded
@@ -266,11 +267,11 @@ class VideoMixer {
   }
 
   // Toggle talking-mode playlist
-  setTalking(flag) {
+  setTalking(flag, first=false) {
     console.log("Set talking mode:", flag);
 
     const newVal = !!flag;
-    if (newVal === this._isTalking) return;
+    if (newVal === this._isTalking && first === false) return;
 
     this._isTalking = newVal;
 
@@ -299,8 +300,9 @@ function preloadAllVideos() {
   }
   
   // Add intro and idle videos at the beginning
-  const allVideos = [intro_video, idle_video, ...interweavedVideos];
-  
+  // const allVideos = [intro_video, idle_video, ...interweavedVideos]; // when happy, we don't load intro/idle sequence 
+  const allVideos = interweavedVideos;
+
   console.log('📦 Preloading', allVideos.length, 'videos.');
   
   // Preload each video
