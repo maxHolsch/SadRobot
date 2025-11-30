@@ -402,6 +402,17 @@ endInteractionBtn.onclick = async () => {
       await window.endVoiceConversation();
     }
 
+    // Submit final affect score to backend
+    if (window.emotionAnalyzer) {
+      const finalAffect = window.emotionAnalyzer.currentAffect;
+      const sessionId = localStorage.getItem('userSessionId');
+      await fetch('/api/submit-affect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, finalAffect, timestamp: new Date().toISOString() })
+      });
+    }
+
     // Start post-survey
     if (window.startPostSurvey) {
       window.startPostSurvey();
