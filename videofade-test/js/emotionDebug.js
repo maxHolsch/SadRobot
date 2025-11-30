@@ -227,23 +227,23 @@ if (typeof window !== 'undefined') {
   window.affectMeter = affectMeter;
   window.TEST_MESSAGES = TEST_MESSAGES;
 
-  console.log(`
-  ╔════════════════════════════════════════════════╗
-  ║   🎭 Emotion Analyzer Debug Tools Loaded      ║
-  ╠════════════════════════════════════════════════╣
-  ║                                                ║
-  ║  testEmotion("message")  - Test single message ║
-  ║  emotionState()          - Show current state  ║
-  ║  emotionHistory()        - Show message log    ║
-  ║  affectMeter()           - Visual affect bar   ║
-  ║  testSequence("sad")     - Test message series ║
-  ║  testProgression()       - Test sad→happy flow ║
-  ║  resetEmotion()          - Reset to baseline   ║
-  ║                                                ║
-  ║  Categories: verySad, sad, neutral,            ║
-  ║              slightlyPositive, positive        ║
-  ╚════════════════════════════════════════════════╝
-  `);
+  // console.log(`
+  // ╔════════════════════════════════════════════════╗
+  // ║   🎭 Emotion Analyzer Debug Tools Loaded      ║
+  // ╠════════════════════════════════════════════════╣
+  // ║                                                ║
+  // ║  testEmotion("message")  - Test single message ║
+  // ║  emotionState()          - Show current state  ║
+  // ║  emotionHistory()        - Show message log    ║
+  // ║  affectMeter()           - Visual affect bar   ║
+  // ║  testSequence("sad")     - Test message series ║
+  // ║  testProgression()       - Test sad→happy flow ║
+  // ║  resetEmotion()          - Reset to baseline   ║
+  // ║                                                ║
+  // ║  Categories: verySad, sad, neutral,            ║
+  // ║              slightlyPositive, positive        ║
+  // ╚════════════════════════════════════════════════╝
+  // `);
 }
 
 export default {
