@@ -48,7 +48,7 @@ module.exports = async function handler(req, res) {
     const submissionId = `consent-${timestamp}-${Math.random().toString(36).substr(2, 9)}`;
     const submittedAt = new Date().toISOString();
     const sessionId = consentData.sessionId;
-    const robotTag = consentData.robotTag || 'sad'; // Default to 'sad' if not provided
+    const robotTag = consentData.robotTag || 'undefined'; // Default to 'sad' if not provided
 
     // Save to Supabase database
     try {
