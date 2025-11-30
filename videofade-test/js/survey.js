@@ -131,7 +131,7 @@ const preSurveyData = buildSurveyPages(baseSurveyPages);
 const postSurveyData = buildSurveyPages(baseSurveyPages);
 postSurveyData.push({
   page: postSurveyData.length + 1,
-  title: "Tell us about your interaction with Sad Robot.",
+  title: "In 1 or 2 sentences, tell us about your interaction.",
   statements: qualitativeStatements
 });
 
@@ -197,7 +197,7 @@ class Survey {
     container.innerHTML = `
       <div class="survey-wrapper">
         <div class="survey-header">
-          <h1>${this.mode === 'pre' ? 'Sad Robot Pre-Study Survey' : 'Sad Robot Post-Study Survey'}</h1>
+          <h1>${this.mode === 'pre' ? 'Pre-Study Survey' : 'Post-Study Survey'}</h1>
           <div class="progress-bar">
             <div class="progress-fill" style="width: ${((this.currentPage + 1) / totalPages) * 100}%"></div>
           </div>
