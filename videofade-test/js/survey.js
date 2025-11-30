@@ -790,14 +790,9 @@ class ConsentForm {
       localStorage.setItem('userSessionId', sessionId);
     }
 
-    // Get robot tag from URL or default to 'sad'
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get('mode');
-    const robotTag = mode === 'happy' ? 'happy' : 'sad';
-
     const consentData = {
       sessionId: sessionId,
-      robotTag: robotTag,
+      robotTag: ROBOT_TAG,
       participantName: formData.get('participantName'),
       signatureData: formData.get('signatureData'),
       participantDate: formData.get('participantDate'),
