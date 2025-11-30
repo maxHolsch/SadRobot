@@ -15,7 +15,7 @@ const playlist = [
 // Talking-mode playlist (toggle with setTalking)
 // By default using same sources; replace entries with talking-specific clips if available
 const playlist_talking = [
-  { src: "HappyTalkingA_pingpong.mp4" },
+  { src: "HappyTalking2_pingpong.mp4" },
 
   // { src: "SadTalkingA_pingpong.mp4" },
   // { src: "DownTalking2_pingpong.mp4" },
