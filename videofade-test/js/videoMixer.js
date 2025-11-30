@@ -297,7 +297,7 @@ function preloadAllVideos() {
   // Add intro and idle videos at the beginning
   const allVideos = [intro_video, idle_video, ...interweavedVideos];
   
-  console.log('📦 Preloading', allVideos.length, 'videos in interweaved order...');
+  console.log('📦 Preloading', allVideos.length, 'videos.');
   
   // Preload each video
   let preloadedCount = 0;

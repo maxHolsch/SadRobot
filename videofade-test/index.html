@@ -388,12 +388,8 @@ window.onInstructionsComplete = function() {
   });
 })();
 
-// --- UI wiring ---
-// This is just debugging stuff.
-const $ = (s) => document.querySelector(s);
-
 // End Interaction button - triggers post-study survey
-const endInteractionBtn = $("#endInteractionBtn");
+const endInteractionBtn = document.querySelector("#endInteractionBtn");
 endInteractionBtn.onclick = async () => {
   // Confirm before ending interaction
   if (confirm('Are you sure you want to end the interaction? You will be asked to complete a post-study survey.')) {
