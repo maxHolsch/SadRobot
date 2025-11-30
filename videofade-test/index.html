@@ -287,6 +287,10 @@ window.onInstructionsComplete = function() {
 
           if(change.mode === 'listening') {
 
+            if(videoMixer.currentIndex() == 1) { // Marvin is getting better
+              setStatus("What you're doing is working. Keep going.", "info");
+            }
+
             if(videoMixer.currentIndex() == 2) { // Marvin is sufficiently cheered up
               setStatus("You've cheered Marvin up! Click the 'End chat' button to move on.", "info");
               
