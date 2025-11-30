@@ -380,6 +380,7 @@ window.onInstructionsComplete = function() {
       //   console.warn('playIntroThenIdle failed', e); 
       // });
       // console.log(`[${new Date().toISOString()}] Intro->Idle sequence started.`);
+      videoMixer.setTalking(false, true); // just show Marvin listening, first=true
 
     } catch (err) {
       console.error('Error during conversation start:', err);
