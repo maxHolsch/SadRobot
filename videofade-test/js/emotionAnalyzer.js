@@ -18,6 +18,8 @@ class EmotionAnalyzer {
    * Analyze text sentiment using OpenAI API
    */
   async analyzeText(text) {
+    return; // for the happy bot, we skip sentiment analysis
+
     if (!text || typeof text !== 'string') {
       return { score: 0, comparative: 0, wordCount: 0, tokens: [] };
     }

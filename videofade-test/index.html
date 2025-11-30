@@ -287,31 +287,33 @@ window.onInstructionsComplete = function() {
 
           if(change.mode === 'listening') {
 
-            if(videoMixer.currentIndex() == 1) { // Marvin is getting better
-              setStatus("What you're doing is working. Keep going.", "info");
-            }
+            // --- For the happy bot, we don't need these.
+            // if(videoMixer.currentIndex() == 1) { // Marvin is getting better
+            //   setStatus("What you're doing is working. Keep going.", "info");
+            // }
 
-            if(videoMixer.currentIndex() == 2) { // Marvin is sufficiently cheered up
-              setStatus("You've cheered Marvin up! Click the 'End chat' button to move on.", "info");
+            // if(videoMixer.currentIndex() == 2) { // Marvin is sufficiently cheered up
+            //   setStatus("You've cheered Marvin up! Click the 'End chat' button to move on.", "info");
               
-              // Change button appearance to indicate completion
-              const endBtn = document.getElementById('endInteractionBtn');
-              if (endBtn) {
-                endBtn.style.background = 'white';
-                endBtn.style.color = 'black';
-              }
-            }
+            //   // Change button appearance to indicate completion
+            //   const endBtn = document.getElementById('endInteractionBtn');
+            //   if (endBtn) {
+            //     endBtn.style.background = 'white';
+            //     endBtn.style.color = 'black';
+            //   }
+            // }
 
             videoMixer.setTalking(false);
 
+            // --- For the happy bot, we skip emotion-based video switching
             // While the user speaks, we analyze the ai emotion and do a potential switch
-            console.log('-- Affect:', emotionAnalyzer.currentAffect);
-            var affect  = emotionAnalyzer.currentAffect;
-            var mappedIndex = Math.min(2, Math.round(affect));
+            // console.log('-- Affect:', emotionAnalyzer.currentAffect);
+            // var affect  = emotionAnalyzer.currentAffect;
+            // var mappedIndex = Math.min(2, Math.round(affect));
 
-            if(mappedIndex > videoMixer.currentIndex()){
-              videoMixer.queueNewCurrentIndex(mappedIndex);
-            }
+            // if(mappedIndex > videoMixer.currentIndex()){
+            //   videoMixer.queueNewCurrentIndex(mappedIndex);
+            // }
 
           } else if(change.mode === 'speaking') {
             videoMixer.setTalking(true);
@@ -372,11 +374,12 @@ window.onInstructionsComplete = function() {
         });
       }, 500);
 
+      // --- For the happy bot, we don't need the intro/idle video sequence
       // Play intro video, then immediately transition to looping idle video
-      videoMixer.playIntroThenIdle(intro_video, idle_video).catch((e) => { 
-        console.warn('playIntroThenIdle failed', e); 
-      });
-      console.log(`[${new Date().toISOString()}] Intro->Idle sequence started.`);
+      // videoMixer.playIntroThenIdle(intro_video, idle_video).catch((e) => { 
+      //   console.warn('playIntroThenIdle failed', e); 
+      // });
+      // console.log(`[${new Date().toISOString()}] Intro->Idle sequence started.`);
 
     } catch (err) {
       console.error('Error during conversation start:', err);
