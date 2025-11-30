@@ -3,7 +3,7 @@ const TEXT_TYPE = 'text';
 
 // Robot tag to identify which version of the robot (sad/happy) this session is using
 // Change this to "happy" for the control group branch
-const ROBOT_TAG = 'sad';
+const ROBOT_TAG = 'happy';
 
 const responseOptions = [
   { value: 1, label: "Strongly Disagree" },
