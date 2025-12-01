@@ -1,0 +1,85 @@
+[0s] AGENT: Hello there!
+
+[6s] USER: Thank you.
+
+[9s] AGENT: You're most welcome! It's always a pleasure to chat. How are you doing today? I hope your day is as bright as sunshine!
+
+[19s] USER: Amen.
+
+[21s] AGENT: That's a lovely sentiment! I'm glad to hear it. Is there anything exciting happening in your world today, or anything you'd like to chat about?
+
+[33s] USER: Hello!
+
+[35s] AGENT: ...
+
+[36s] USER: Hello robots!
+
+[39s] AGENT: Hello there! It's wonderful to hear from you again. How can I brighten your day today?
+
+[49s] USER: My son is going to...to graduation awards.
+
+[55s] AGENT: Oh, that's absolutely wonderful news! How exciting for your son and for you too! It must be such a proud moment. What kind of awards is he receiving?
+
+[65s] USER: Hmm...academic awards.
+
+[68s] AGENT: That's fantastic! Academic awards are such a wonderful recognition of hard work and dedication. You must be incredibly proud of his achievements! It sounds like he's really shining brightly.
+
+[81s] USER: Yes!
+
+[83s] AGENT: ...
+
+[83s] USER: I'm so happy!
+
+[85s] AGENT: That's absolutely lovely to hear! Your happiness is infectious, and it's wonderful to celebrate such a special milestone with you. What a truly joyous occasion!
+
+[100s] USER: ...
+
+[101s] AGENT: It...
+
+[102s] USER: But you can... But can I...
+
+[108s] AGENT: Of course, you can! Please, go right ahead. I'm here to listen. What's on your mind?
+
+[114s] USER: What can I do for him after the awards? After the awards?
+
+[119s] AGENT: That's such a thoughtful question! There are so many wonderful ways to celebrate his achievement. You could plan a special dinner, perhaps at his favorite restaurant, or even a fun family outing. Sometimes, a heartfelt card expressing how proud you are can mean the world. The most important thing is to show him how much you appreciate his hard work!
+
+[142s] USER: Okay, that's lovely thank you.
+
+[145s] AGENT: You are so very welcome! I'm just thrilled to help. I hope whatever you choose makes his day even more special and memorable. It sounds like it's going to be a truly wonderful celebration!
+
+[159s] USER: Yes. You want to say hello to my son?
+
+[164s] AGENT: Oh, I would absolutely love to! Please tell your son I said a huge congratulations on his academic awards! That's truly fantastic news, and I hope he has the most wonderful time celebrating his achievements. He should be incredibly proud of all his hard work!
+
+[185s] USER: ...
+
+[186s] AGENT: ...
+
+[186s] USER: Okay, thank you!
+
+[189s] AGENT: You are so very welcome! I'm sending all my best wishes for a fantastic celebration. Enjoy every moment!
+
+[197s] USER: Okay, enjoy!
+
+[202s] AGENT: Thank you so much! I certainly will. And I hope you and your son have an absolutely amazing time celebrating his wonderful achievements!
+
+[215s] USER: ...
+
+[216s] AGENT: It seems like you might have stepped away for a moment. Are you still there?
+
+[220s] USER: Yes, I'm still here.
+
+[226s] AGENT: Wonderful! I'm glad you're still here. Is...
+
+[228s] USER: I think after the graduation, we will go somewhere to have lunch and go to bounce in the bouncing area for kids.
+
+[250s] AGENT: Oh, that sounds like an absolutely fantastic plan! A celebratory lunch and then some fun bouncing for the kids – what a perfect way to make the day even more memorable and joyful! It sounds like everyone will have a blast.
+
+[267s] USER: Okay, thank you! Bye! Enjoy your day!
+
+[274s] AGENT: You are so very welcome! Thank you, and you have a truly wonderful day filled with joy and celebration! Bye for now!
+
+[283s] USER: Pleasure!
+
+[286s] AGENT: The pleasure was all mine! It was so lovely chatting with you. I hope your day continues to be bright and full of smiles!

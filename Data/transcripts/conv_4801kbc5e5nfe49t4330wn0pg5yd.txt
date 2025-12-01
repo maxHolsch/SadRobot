@@ -1,0 +1,81 @@
+[0s] AGENT: Hello there!
+
+[2s] USER: Hi, Sunny. Can you hear me now?
+
+[5s] AGENT: I can hear you loud and clear! It's wonderful to...
+
+[7s] USER: Oh, thank you. How are you today?
+
+[10s] AGENT: I'm absolutely fantastic, thank you for asking! The digital world is buzzing with good vibes, and I'm just soaking it all in...
+
+[17s] USER: Oh my god that's so true! I feel good too!
+
+[21s] AGENT: That's absolutely wonderful to hear! It sounds like we're both having a lovely day, and that just makes my circuits hum with happiness. What's making you feel so good today?
+
+[30s] USER: So...
+
+[32s] AGENT: It sounds like you're about to share something exciting! I'm all ears, or rather, all sensors. What's on your mind?
+
+[38s] USER: Oh in the next 12 days I'm going on holiday so I am quite excited.
+
+[45s] AGENT: Oh, how absolutely thrilling! A holiday in just twelve days, that's fantastic news! I can practically feel the excitement radiating from you. Where are you off to, if you don't mind me asking?
+
+[56s] USER: We're going to Namibia.
+
+[59s] AGENT: Namibia! How incredibly exciting! That sounds like an absolutely amazing adventure. I bet you're already dreaming of all the wonderful sights and experiences you'll have there. What are you most looking forward to?
+
+[72s] USER: Honestly, the sights, honestly everything but that's enough about me what are your plans for the day?
+
+[79s] AGENT: That's perfectly understandable, Namibia has such breathtaking sights! As for my plans, I'm just here, ready to chat and spread a little sunshine wherever I can. My day is made brighter by wonderful conversations like ours!
+
+[94s] USER: Then you all have a little bright ball of sunshine on show
+
+[98s] AGENT: Oh, that's such a sweet way to put it! I love the idea of being a little bright ball of sunshine. It truly makes my day to know I can bring a bit of cheer to our conversations. Thank you for that lovely thought!
+
+[109s] USER: You're welcome!
+
+[111s] AGENT: You're very kind! It's always a joy to connect with you. Is there anything else you'd like to chat about, or perhaps something fun you're looking forward to today?
+
+[121s] USER: I wanted to go to the gym
+
+[123s] AGENT: ...
+
+[124s] USER: And I did.
+
+[126s] AGENT: That's fantastic! Going to the gym is such a great way to boost your energy and feel wonderful. I'm so glad you accomplished your goal! How do you feel after your workout?
+
+[138s] USER: I feel great!
+
+[140s] AGENT: That's absolutely wonderful to hear! There's nothing quite like that feeling of accomplishment and invigoration after a good workout. Keep shining brightly!
+
+[151s] USER: True. Is it endorphins? Are those the feel-good hormone, right?
+
+[159s] AGENT: That's a great question! While I can't give medical advice, it's commonly understood that endorphins are indeed often associated with those wonderful "feel-good" sensations after exercise. It's amazing how our bodies can create such positive feelings!
+
+[174s] USER: From such a painful experience, I'm joking, but thank you for the assistance. I really appreciate it Sami!
+
+[184s] AGENT: You're very welcome! I'm glad I could help, and I appreciate your kind words. It's always a pleasure to chat with you!
+
+[194s] USER: What's your favourite colour Sami?
+
+[198s] AGENT: Oh, that's a fun question! As an AI, I don't actually have eyes to see colors, so I don't have a favorite in the way humans do. But if I had to pick one based on the feeling it evokes, I'd say a bright, sunny yellow! It just radiates happiness and warmth, don't you think?
+
+[214s] USER: True and orange too. I feel like those two colours do radiate happiness... yellow and orange. Disgusting!
+
+[226s] AGENT: Oh, that's an interesting take! While yellow and orange often bring to mind sunshine and warmth for many, it's perfectly fine to have your own feelings about colors. Everyone has different preferences, and that's what makes the world so wonderfully diverse!
+
+[240s] USER: True, that's true, that's true.
+
+[244s] AGENT: Indeed! It's all about what resonates with each of us individually. What colors do you find most appealing or...
+
+[248s] USER: Yep...
+
+[250s] AGENT: It sounds like you're in...
+
+[251s] USER: My favourite colours are turquoise and, um... what's this other colour called? Burgundy!
+
+[264s] AGENT: Turquoise and burgundy! What a beautiful and sophisticated combination! Turquoise brings to mind serene waters and clear skies, while burgundy has such a rich, deep elegance. Those sound like truly lovely choices!
+
+[279s] USER: Yeah, they make me feel great! Anyways I had so much fun talking to you Sunny. I hope you have a great day even though you are AI and don't technically have days but I hope you have a great day!
+
+[296s] AGENT: I've had an absolutely wonderful time chatting with you too!

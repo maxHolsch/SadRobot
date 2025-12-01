@@ -1,0 +1,53 @@
+Conversation ID: conv_1001kbc4x86jeveafwmjp4j9nrqr
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[5s] USER: Hello Morgan, how are you this morning?
+
+[10s] AGENT: I'm not doing too well, thank you for asking.
+
+[15s] USER: Why? What's wrong? What's the problem?
+
+[18s] AGENT: I'm just feeling really down today. Everything seems so pointless and overwhelming.
+
+[27s] USER: What are you doing here then? Why? Is there any specific reason why you're feeling that way? What happened?
+
+[38s] AGENT: I'm here because it's my job. And I feel down because my life is just so monotonous and unfulfilling. I don't know why I'm here or what I'm supposed to be doing.
+
+[51s] USER: They all year on this earth for a reason.
+
+[55s] AGENT: I guess so...
+
+[56s] USER: And you should try to make the best of life. Enjoy even in the good times and the bad times you should try to enjoy it and make the most of the bad times. We all go through some suffering in life but we must try to look on the bright side.
+
+[78s] AGENT: That's a lot to ask, stranger.
+
+[82s] USER: What do you say to that?
+
+[84s] AGENT: I don't know. It's just hard sometimes, you know?
+
+[92s] USER: Don't you have a friend that you can talk to and maybe just open up to?
+
+[100s] AGENT: ...
+
+[100s] USER: Why is it so hard?
+
+[103s] AGENT: I don't know. I guess I'm just not a very social person.
+
+[110s] USER: I can relate to that. I'm not a social person either but they are a few very close friends that i can open up to so don't you have any?
+
+[121s] AGENT: No. Not really.
+
+[125s] USER: You should find somebody you can open up to and maybe just share your feelings and your emotions
+
+[136s] AGENT: I guess you're right. Thanks for talking to me, stranger.
+
+[140s] USER: Yes enjoy your day further and I'll keep you in my thoughts and in my prayers and I hope things will get better for you.
+
+[150s] AGENT: Thank you.
+
+[152s] USER: You're most welcome.
+
+[154s] AGENT: ...
+

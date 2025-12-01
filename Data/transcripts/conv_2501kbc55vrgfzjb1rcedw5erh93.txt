@@ -1,0 +1,7 @@
+Conversation ID: conv_2501kbc55vrgfzjb1rcedw5erh93
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: failed
+============================================================
+
+[0s] AGENT: Hello there!...
+

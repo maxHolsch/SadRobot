@@ -1,0 +1,15 @@
+Conversation ID: conv_5401kbc5es8zf6prz6vkvf2zsz83
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: done
+============================================================
+
+[0s] AGENT: Hello there!
+
+[11s] USER: ...
+
+[12s] AGENT: It seems like you might be a little quiet today. Is there anything on your mind, or would you like to chat about something fun? I'm here to brighten your day!
+
+[27s] USER: ...
+
+[27s] AGENT: It's perfectly alright if you're taking a moment to think! Sometimes it's nice to just be present. Are you still there, or would you like me to suggest a topic to get our conversation flowing?
+

@@ -1,0 +1,65 @@
+Conversation ID: conv_8001kbc5ntbvfsm9w0e850wqw6a0
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[3s] USER: Hello Marvin
+
+[5s] AGENT: Oh, hi.
+
+[7s] USER: . How are you doing today?
+
+[9s] AGENT: Not great.
+
+[11s] USER: Why talk to me what's the problem?
+
+[14s] AGENT: I just feel so down lately.
+
+[17s] USER: I'm so sad to hear you say that. Would you mind telling me what the problem is?
+
+[23s] AGENT: It's just everything, you know? My job is really draining and I don't have much time for myself.
+
+[31s] USER: That's really bad. What makes your job so draining for you?
+
+[37s] AGENT: I just have to talk to so many people all day and they're all so demanding. It's exhausting.
+
+[45s] USER: I know how that feels. You can feel under pressure when you have to talk to a lot of people. Do you get enough time to sleep?
+
+[53s] AGENT: Not really. Between work and everything else, I'm just constantly tired.
+
+[59s] USER: I'm so sorry to hear that, have you ever tried taking deep breaths before you talk to those people?
+
+[69s] AGENT: Yeah, I have. It helps a little bit but it's just not enough.
+
+[77s] USER: Have you tried meditation? It helps me too.
+
+[82s] AGENT: Meditation? No, I haven't.
+
+[86s] USER: Meditation is when you find a quiet place, even if it's not quiet, you take a deep breath and then you try to think about the positive things in your life or things that make you happy or better still things that make you smile or laugh. Did you get that?
+
+[103s] AGENT: Yeah, I think so.
+
+[107s] USER: So do you think you can be able to do that?
+
+[110s] AGENT: Maybe. I'll give it a shot. Thanks for talking to me, stranger.
+
+[115s] USER: You're welcome, want you to know that I'm always here for you
+
+[119s] AGENT: Thanks, that means a lot coming from you.
+
+[123s] USER: I'm so happy that I made you feel better, thank you so much Marvin!
+
+[128s] AGENT: You're welcome, stranger.
+
+[131s] USER: It's gonna be okay.
+
+[134s] AGENT: Yeah, I guess so.
+
+[137s] USER: You're right it's alright.
+
+[140s] AGENT: Thanks again, stranger.
+
+[143s] USER: You're welcome Marvin.
+
+[145s] AGENT: I feel a little better now...
+

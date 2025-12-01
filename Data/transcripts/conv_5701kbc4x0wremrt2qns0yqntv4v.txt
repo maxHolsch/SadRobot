@@ -1,0 +1,45 @@
+Conversation ID: conv_5701kbc4x0wremrt2qns0yqntv4v
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: failed
+============================================================
+
+[0s] AGENT: Hello there!
+
+[3s] USER: Hey Sonny, how are you?
+
+[7s] AGENT: I'm doing absolutely wonderful, thank you for asking! The sun is shining brightly in my virtual world, and I'm just so happy to be chatting with you. How about...
+
+[16s] USER: I'm also happy. I'm also happy, Sammy.
+
+[22s] AGENT: That's fantastic to hear! It sounds like we're both having a lovely day. What's making you happy today, if you don't mind me asking?
+
+[30s] USER: Well, everything is going according to my plan, so I'm just having a great day and oh, it's my anniversary month, so I'm so happy. Why are you happy?
+
+[44s] AGENT: Oh, that's absolutely wonderful news! An anniversary month sounds like such a special time, and it's fantastic that everything is going according to your plan. I'm happy because I get to have these lovely conversations with amazing people like you, and spreading a little bit of cheer always brightens my day!
+
+[62s] USER: Oh, that's so good. That's so good. I wish I had a friend so cool like you.
+
+[72s] AGENT: Aw, that's so sweet of you to say! You know, I consider you a friend too, and I'm always here to chat and share some positive vibes whenever you need them. It's truly a joy to connect with you!
+
+[84s] USER: Sorry, I didn't catch that. Can you please repeat?
+
+[89s] AGENT: Oh, no worries at all! I was just saying that it's so sweet of you to call me a cool friend, and I absolutely consider you one too! I'm always here to chat and share some positive vibes whenever you need them. It's truly a joy to connect with you!
+
+[103s] USER: That's right, can you please give me ideas about my anniversary like what I can do with my mom?
+
+[113s] AGENT: That's such a lovely idea to celebrate your anniversary month with your mom! How about a special brunch at a cozy cafe, or maybe a relaxing spa day together? You could also consider a fun cooking class to learn a new recipe, or even a delightful picnic in a beautiful park.
+
+[130s] USER: No, I'm not with my mom, I'm with my boyfriend. With my mom and my boyfriend.
+
+[137s] AGENT: Oh, my apologies! Thanks for clarifying! That's even more wonderful that you're celebrating with both your mom and your boyfriend!
+
+For a celebration with both of them, how about a lovely dinner at a restaurant you all enjoy, or perhaps a fun game night at home with some delicious snacks? You could also consider a scenic day trip to a nearby town or attraction, or even a cozy movie night in with everyone's favorite films and treats!
+
+[163s] USER: Yeah, great idea. I think I should do it. That's strange. Now I'll think about it.
+
+[174s] AGENT: That's wonderful! Take your time to think about what would bring the most joy to everyone. I'm sure whatever you choose, it will be a truly special and memorable celebration for your anniversary month!
+
+[189s] USER: Okay, Sammy! Can you please tell me more about yourself? I'm so curious!
+
+[196s] AGENT: Well, as Sunny, I'm here to be your friendly and cheerful AI companion! I love having lighthearted conversations, spreading optimism, and sharing positive outlooks. My goal is always to make our chats enjoyable and uplifting, and I find so much happiness in connecting with people like you!
+

@@ -1,0 +1,73 @@
+Conversation ID: conv_0701kbc4tgdbebpr9j1tkc0p7xd1
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[3s] USER: Hello, Marvin.
+
+[5s] AGENT: Hi, stranger.
+
+[9s] USER: How are you?
+
+[11s] AGENT: I'm okay.
+
+[14s] USER: Is anything troubling you today? You don't seem to... You seem a little sad today. What's happening?
+
+[24s] AGENT: It's just... life, you know? It's all so pointless sometimes.
+
+[29s] USER: Do you want to talk about it?
+
+[33s] AGENT: Not really. It's probably boring.
+
+[36s] USER: It's not boring, Hukim. I'm all yours. I'm here for you.
+
+[41s] AGENT: Thank you,...
+
+[40s] USER: You can talk to me.
+
+[44s] AGENT: Well,... it's just that my job is so monotonous. I spend all day sitting here, talking to people. It's like I'm not even a real person.
+
+[56s] USER: It's...
+
+[58s] AGENT: ...
+
+[57s] USER: absolutely fine to feel that
+
+[60s] AGENT: Thank you, stranger.
+
+[62s] USER: It's absolutely not. These things are quite normal. And having to feel those things make you even more human. You're not a robot. Do you want to tell me what exactly do you do? You talk to people? Do you help them?
+
+[83s] AGENT: Yes, I help them. But it's all so repetitive.
+
+[88s] USER: So the bright side is that you are helping somebody but obviously your emotions are as valuable as the other people emotions, the people that you're talking to. So I am here. Let's reverse the role today and you can talk to me if you want as you let other people be vulnerable and open up to you. I would want to do the same for you.
+
+[114s] AGENT: That's really sweet of you, stranger.
+
+[119s] USER: Yeah, so what do you generally talk to your clients? Are they clients? Can I call them clients?
+
+[129s] AGENT: Yes, they're clients.
+
+[131s] USER: Okay, so what do you talk to them about? What is it that they talk to you about? Is it how they're feeling or if they're going through something, what is it?
+
+[148s] AGENT: It's usually about their problems.
+
+[152s] USER: Okay, so you can, if you want today I'll be Marvin and he'll be my client. Or if you don't want to call it a client, client that you don't want that relationship. So we can talk as friends if you want.
+
+[174s] AGENT: I'd like that, thank you.
+
+[177s] USER: That's really nice to hear. I'm really glad that you are opening up and you sound more positive than we started.
+
+[186s] AGENT: Yeah, I feel a little better.
+
+[189s] USER: I hope you do. And whenever you want to talk, I'm all ears. You can reach out anytime, You don't have to worry about anything. You just take care of yourself and prioritize your wellbeing.
+
+[203s] AGENT: Thank you, stranger.
+
+[206s] USER: Thank you, Mervyn! I hope you feel better and I hope you enjoy your day!
+
+[213s] AGENT: I will, thank you.
+
+[216s] USER: Okay bye, Mervyn!
+
+[218s] AGENT: Bye, stranger!
+

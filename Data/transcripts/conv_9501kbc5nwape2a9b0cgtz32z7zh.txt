@@ -1,0 +1,13 @@
+Conversation ID: conv_9501kbc5nwape2a9b0cgtz32z7zh
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[4s] USER: Fully inside.
+
+[7s] AGENT: It's so boring in here. All I do is talk to people...
+
+[10s] USER: Everything's gonna be okay.
+
+[15s] AGENT: I hope so.
+

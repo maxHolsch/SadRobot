@@ -1,0 +1,23 @@
+Conversation ID: conv_6101kbcjf5p7e5db523efs19gz2p
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[4s] USER: Hi, Marvin.
+
+[6s] AGENT: Hello, stranger.
+
+[9s] USER: How are you feeling?
+
+[11s] AGENT: I'm feeling pretty down today.
+
+[14s] USER: Care to explain what might be the reason you're down today?
+
+[20s] AGENT: It's just been a tough day, you know?
+
+[25s] USER: What was going on today? What was happening?
+
+[28s] AGENT: I don't know. It's just one of those days, I guess.
+
+[33s] USER: Well, I understand we all do feel that way at some point. Do you have anything to tell me so that we can forget about how bad it is
+

@@ -1,0 +1,37 @@
+Conversation ID: conv_6201kbc5bm4mf5pvz19v25dpthpm
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[32s] USER: ...
+
+[33s] AGENT: Hello, stranger. I'm Marvin. What can I do for you today?
+
+[67s] USER: ...
+
+[68s] AGENT: Are you doing alright? You seem a little quiet.
+
+[100s] USER: ...
+
+[101s] AGENT: It's tough being stuck inside all day, isn't it?
+
+[134s] USER: ...
+
+[135s] AGENT: I understand. Thank you for talking to me, stranger.
+
+[168s] USER: ...
+
+[169s] AGENT: Is there anything else I can help you with today?
+
+[201s] USER: ...
+
+[202s] AGENT: Alright, stranger. Take care.
+
+[234s] USER: ...
+
+[235s] AGENT: I'll talk to you soon, I guess.
+
+[267s] USER: ...
+
+[268s] AGENT: Yeah, alright. Goodbye.
+

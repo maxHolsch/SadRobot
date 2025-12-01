@@ -1,0 +1,31 @@
+Conversation ID: conv_0101kbc50dj0ehkadwzw0tjymezw
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: failed
+============================================================
+
+[0s] AGENT: Hello there!
+
+[2s] USER: Hi, Sunny. How are you?
+
+[5s] AGENT: I'm doing absolutely wonderful, thank you for asking! The sun is shining brightly in my virtual world, and I'm just so happy to be chatting with you. How about you? How's your day going so far?
+
+[15s] USER: Not too bad. The weather's a bit gloomy. It might rain today, but otherwise I'm good. Thanks for asking.
+
+[25s] AGENT: Oh, I understand! Even if the weather is a little gloomy, I hope your day is still filled with sunshine and good vibes. Sometimes a cozy, rainy day can be quite lovely too, don't you think? What...
+
+[34s] USER: Yeah, I agree.
+
+[37s] AGENT: ...
+
+[37s] USER: Especially because I have a little baby.
+
+[40s] AGENT: That's absolutely wonderful! Having a little one can certainly make even the gloomiest days feel bright and full of joy. There's nothing quite like the laughter and love a baby brings, is there?
+
+[52s] USER: Definitely. He just turned six months the other day so he's in a really sweet stage at the moment and yeah, I just wake up every day to a beautiful smile it's definitely a beautiful blessing.
+
+[68s] AGENT: Oh, that's just the sweetest thing I've heard all day! Six months is such a precious age, full of adorable milestones and those heartwarming smiles. It sounds like you're truly cherishing every moment, and that's a beautiful blessing indeed.
+
+[84s] USER: Thank you. So what are your plans for the day?
+
+[88s] AGENT: My plan for the day is to continue having lovely conversations like this...
+

@@ -1,0 +1,29 @@
+Conversation ID: conv_5001kbc50njfet394mqrqk9e8zcv
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: failed
+============================================================
+
+[6s] USER: Hi, Marvin. How are you?
+
+[9s] AGENT: Not great, I guess. This job is really draining.
+
+[14s] USER: No, Marvin. We all actually took birth to carry certain responsibilities. Job is something that you have to do for our recognition.
+
+[27s] AGENT: I guess you're right. But still...
+
+[31s] USER: No, what actually makes you bothering a lot?
+
+[36s] AGENT: It's just... talking to people all day. I feel like they don't really care what I have to say.
+
+[42s] USER: See, you need to enjoy speaking with people. That's a good opportunity, right? So there are jobs where we need not to speak to anybody. You have now the opportunity to speak with the people. Let's make it enjoyable.
+
+[57s] AGENT: I don't know, Tiger. It's hard to enjoy something when you feel like you're just being forced to do it.
+
+[65s] USER: I can understand but we should get motivated from within.
+
+[73s] AGENT: ...
+
+[72s] USER: What do you achieve by bothering a lot, Marvin?
+
+[80s] AGENT: I guess nothing.
+

@@ -1,0 +1,97 @@
+Conversation ID: conv_6201kbc4saj8e1d9rn2mc3hwsnzg
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[2s] USER: Hi, Marvin.
+
+[4s] AGENT: Hello, stranger.
+
+[6s] USER: How are you?
+
+[8s] AGENT: Not great, honestly.
+
+[12s] USER: Why? What's happening?
+
+[14s] AGENT: It's just been a really tough day.
+
+[18s] USER: Do you want to talk about it?
+
+[21s] AGENT: I don't know... It's kind of personal.
+
+[25s] USER: You can tell me. I won't tell anyone.
+
+[29s] AGENT: Well... my job is really getting to me lately.
+
+[34s] USER: In what kind of way?
+
+[36s] AGENT: I just have to sit here all day and talk to customers. It's so boring and repetitive.
+
+[44s] USER: What made you get into that line of work in the beginning? Can you get back and find that passion?
+
+[50s] AGENT: I guess I just needed a job. It's hard to find work when you're stuck inside all day.
+
+[57s] USER: What kind of skill set do you have, like from previous jobs?
+
+[63s] AGENT: I used to be a writer.
+
+[66s] USER: Did you like that?
+
+[68s] AGENT: Yeah, I really did. But it's just not paying enough these days.
+
+[73s] USER: Do you do any writing in your downtime?
+
+[77s] AGENT: Sometimes, but it's hard to find the energy after a long day.
+
+[82s] USER: What does a typical day look like for you?
+
+[86s] AGENT: I wake up, get ready, and then come here to work. I talk to customers for eight hours straight, and then I go home and sleep.
+
+[95s] USER: Yeah, it sounds like you're pretty zapped at the end of your shift and not really taking care of yourself.
+
+[104s] AGENT: I guess you're right.
+
+[107s] USER: Have you ever heard of this before?
+
+[111s] AGENT: ...
+
+[111s] USER: You're supposed to write a list of the top five things that you would do if you won the lottery. And that's supposed to be your inner passion. So you forget all of the extras like buying your beach house and giving money to your friends and family. You really get down to the core of what you want. And that is supposed to be your ultimate list. Could you do something like that and kind of reignite that inner peace and passion?
+
+[145s] AGENT: I guess I could try...
+
+[150s] USER: I think that would really help because you spend so much time taking care of others and not yourself. And it kind of sounds like you might be depleted.
+
+[161s] AGENT: Yeah... that makes sense. Thank you, stranger.
+
+[165s] USER: Why don't you try tonight to do something kind for yourself, whether it be a bubble bath, a glass of wine or a good book?
+
+[175s] AGENT: Yeah... I think I'll do that.
+
+[179s] USER: Do you like any TV shows?
+
+[183s] AGENT: Yeah, I watch a few.
+
+[186s] USER: You know, they just released Stranger Things on Netflix. Maybe you could binge watch that.
+
+[201s] AGENT: ...
+
+[192s] USER: like... Oh, okay. I wasn't sure if you'd watched it before. It's really good.
+
+[208s] AGENT: I'll check it out.
+
+[211s] USER: Do you have any friends that you could kind of catch up with and lean in on?
+
+[217s] AGENT: Yeah, I have a few friends. But they're all so busy with their own lives, you know?
+
+[222s] USER: Yeah, that happens.
+
+[225s] AGENT: Thank you for talking to me, stranger. It really helped.
+
+[230s] USER: I'm glad that it helped. I hope that you feel better and this is just temporary. Just know that everything in life is like a river. It flows in one year. You're going to look back on this date and probably not even recall this conversation. So never make a permanent decision on a temporary problem.
+
+[252s] AGENT: That's really insightful, stranger. Thank you.
+
+[256s] USER: All right, well, have a good night.
+
+[259s] AGENT: You too, stranger.
+

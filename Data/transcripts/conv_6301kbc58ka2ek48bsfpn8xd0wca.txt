@@ -1,0 +1,17 @@
+Conversation ID: conv_6301kbc58ka2ek48bsfpn8xd0wca
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[4s] USER: Oh.
+
+[8s] AGENT: Yeah. It's a tough job. I don't really know why I do...
+
+[10s] USER: I'm so sad...
+
+[14s] AGENT: I understand.
+
+[20s] USER: I'm trying to feel good, okay?
+
+[23s] AGENT: I know. It's hard, isn't it?...
+

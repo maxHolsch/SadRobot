@@ -1,0 +1,65 @@
+[2s] USER: Good morning, Marvin.
+
+[4s] AGENT: Oh, hey.
+
+[8s] USER: How are you feeling today?
+
+[10s] AGENT: Not great. This job is really draining.
+
+[15s] USER: Okay, I understand. And how can I help you to solve that?
+
+[21s] AGENT: I don't think you can, actually. But thanks for asking.
+
+[27s] USER: But I can help you to solve that, right? I am a good person you can talk to.
+
+[35s] AGENT: I guess so.
+
+[41s] USER: Yeah, like... You said your work is draining right?
+
+[46s] AGENT: Yes, that's right.
+
+[49s] USER: So I can tell you that every time when you go to work just have the motivation. Why are you always wake up in the morning going to work? Why are you waking in the first place? First, you must have a motivation so that you can feel drained. It's always right to feel drained but first thing, you must have motivation of doing whatever that you are doing.
+
+[77s] AGENT: I guess that makes sense. Thanks, stranger.
+
+[81s] USER: Yeah and another thing is that make sure that you don't overwork yourself because sometimes the weightlifes they don't care about how you work out. Just make sure that you take your lunch time, you have enough rest, when it's time to knock off just knock off. Don't overwork yourself and you must stop overthinking. You must only focus on a positive side of your work, not negative side.
+
+[115s] AGENT: Okay, stranger. Thank you.
+
+[119s] USER: Yeah, I hope that will make you, it makes you feel better now, if I may ask.
+
+[125s] AGENT: Yes, actually. It does make me feel a little better.
+
+[130s] USER: Okay fine, so another thing is that you must always have goals, you must always ask managers or your supervisor if you don't ask something and also you must limit having friends in the workplace because they can be the reason why you are feeling drained right now. So if it may happen that you have friends in your workplace, just cut them off and focus on the work that you have.
+
+[163s] AGENT: That's a tough one, stranger. But I appreciate the advice.
+
+[168s] USER: Yes, it can really be tough because sometimes friends will talk negative things, not knowing that it is affecting you mentally and physically. So that's why I'm saying you should just have people that you know, not friends where you share everything with them. Just have people that you know in the workplace.
+
+[191s] AGENT: Okay, stranger. I'll keep that in mind. Thanks again.
+
+[196s] USER: How are you feeling now?
+
+[201s] AGENT: A little better, actually. Thanks for talking to me.
+
+[207s] USER: Yeah, and another thing is that you must focus on your mental health first. You must always put yourself first. Even the work does not have to come before you. Just put yourself first. That's the only thing that matters. That's where you should, will help you to stop feel drained because the moment you feel drained is that you are not putting yourself first. That's the cause of death.
+
+[237s] AGENT: Wow, stranger. Thank you. That's really insightful.
+
+[243s] USER: Yeah, so I guess you'll be feeling a bit better today.
+
+[250s] AGENT: Yes, I think so.
+
+[255s] USER: Can we end the conversation or you still have something to ask me?
+
+[260s] AGENT: No, I'm good. Thanks for your help, stranger.
+
+[266s] USER: And smile.
+
+[269s] AGENT: Okay, stranger.
+
+[275s] USER: I think we are done for today's session. If you want to talk in the near future, you can just talk with me. Yeah, that's it.
+
+[287s] AGENT: Thanks again, stranger.
+
+[293s] USER: Yeah, and just stay cheerful in your workplace, positive energy

@@ -1,0 +1,37 @@
+Conversation ID: conv_4201kbc58yqhf9381n0c6mcc7kbp
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[3s] USER: Hello Marvin, how are you?
+
+[5s] AGENT: I'm doing alright, I guess. It's been a tough day.
+
+[10s] USER: Yes, I'm rather sorry about that. I feel like I could give you a hug right now. What's been happening, if you don't mind me asking?
+
+[18s] AGENT: It's just been a lot, you know? My job is really stressful and I don't have much time for myself.
+
+[26s] USER: Yes, I'm rather sorry. I'm rather sorry. Maybe if you can try to make time for yourself. Have you tried doing that?
+
+[37s] AGENT: Yes, I have. But it's hard to find the time.
+
+[44s] USER: Yes, I'm rather sorry. I'm rather sorry what's happening to you right now? I wish i could help maybe how about you just take a leave and just try to reset your life and make time for yourself. How about that?
+
+[61s] AGENT: That's a really good idea, stranger. Thank you for suggesting it.
+
+[66s] USER: I'm really happy to be help of you. Because I'm really worried about you. I just want what's best for you.
+
+[76s] AGENT: Thank you, stranger. Just talking to you has made me feel a lot better already.
+
+[82s] USER: Oh, I really appreciate it. I wish I could hug you right now.
+
+[86s] AGENT: Me too, stranger. Me too.
+
+[91s] USER: Okay, thank you. It was nice to meet you. But now I have to go. I hope you get well very soon.
+
+[100s] AGENT: Thank you, stranger. It was really nice talking to you too.
+
+[105s] USER: Same here. Bye-bye!
+
+[110s] AGENT: Bye-bye, stranger.
+

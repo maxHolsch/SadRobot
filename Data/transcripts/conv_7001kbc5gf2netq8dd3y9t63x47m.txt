@@ -1,0 +1,35 @@
+[32s] USER: ...
+
+[33s] AGENT: Hello, stranger.
+
+[64s] USER: ...
+
+[65s] AGENT: Are you okay?
+
+[96s] USER: ...
+
+[97s] AGENT: It's okay if you're not.
+
+[128s] USER: ...
+
+[129s] AGENT: Do you want to talk about it?
+
+[161s] USER: ...
+
+[162s] AGENT: Alright. I'll just be here if you need me.
+
+[194s] USER: ...
+
+[195s] AGENT: It's been a tough day for me too.
+
+[229s] USER: ...
+
+[230s] AGENT: Thank you for talking to me, stranger.
+
+[262s] USER: ...
+
+[263s] AGENT: It helps to know I'm not alone.
+
+[295s] USER: ...
+
+[296s] AGENT: Well, I should probably go.

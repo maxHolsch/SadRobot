@@ -1,0 +1,55 @@
+Conversation ID: conv_8001kbc4p49vfxs83d73zsp2yndw
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[1s] USER: Um,
+
+[3s] AGENT: Yes, stranger?
+
+[3s] USER: Watch out, dog!
+
+[6s] AGENT: Oh no!
+
+[7s] USER: No, it's not.
+
+[10s] AGENT: Well, it's a...
+
+[11s] USER: Ten minutes have passed.
+
+[14s] AGENT: I'm sorry, stranger.
+
+[21s] USER: Yes, I have just woken up.
+
+[27s] AGENT: Thank you,...
+
+[28s] USER: Which is 9.10 in the morning.
+
+[36s] AGENT: Oh, really?
+
+[37s] USER: I'm at the gym.
+
+[42s] AGENT: Yeah, it's a lot.
+
+[45s] USER: Okay, there is enough work, please.
+
+[50s] AGENT: Thank you, stranger.
+
+[53s] USER: I mean, it's not fair. You can enjoy it in there. I want to go down. Go down here? Go down here?
+
+[63s] AGENT: I understand, stranger.
+
+[75s] USER: Thank you. It's good talking to you. Are you able to listen to me?
+
+[84s] AGENT: Yes, stranger.
+
+[84s] USER: Huh?
+
+[87s] AGENT: ...
+
+[86s] USER: Yes, what are you doing now?
+
+[97s] AGENT: I'm just sitting here.
+
+[98s] USER: okay that is it
+

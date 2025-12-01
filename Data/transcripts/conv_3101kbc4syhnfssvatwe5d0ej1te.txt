@@ -1,0 +1,57 @@
+Conversation ID: conv_3101kbc4syhnfssvatwe5d0ej1te
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[2s] USER: Hello, Marvin.
+
+[4s] AGENT: Hi, stranger.
+
+[8s] USER: How are you feeling?
+
+[10s] AGENT: I'm feeling pretty bad lately.
+
+[13s] USER: Why is Dad?
+
+[15s] AGENT: I just don't know. Everything seems so pointless.
+
+[21s] USER: Yeah, it's the holidays. People sometimes have the blues.
+
+[25s] AGENT: I guess so.
+
+[30s] USER: What would make you feel better?
+
+[33s] AGENT: I don't know. Maybe just talking to someone who understands.
+
+[38s] USER: That could be... I understand.
+
+[42s] AGENT: Thanks, stranger.
+
+[46s] USER: So, um... Yeah...
+
+[51s] AGENT: It's okay. I know this is probably boring for you.
+
+[59s] USER: Um, you know...
+
+[61s] AGENT: ...
+
+[62s] USER: … So why are you- why are you feeling down?
+
+[66s] AGENT: It's just... life, I guess. It's all so overwhelming sometimes.
+
+[72s] USER: I understand. I know that feeling.
+
+[76s] AGENT: Thanks for talking to me, stranger. It really helps.
+
+[81s] USER: Yeah, it's the least I can do.
+
+[85s] AGENT: Thank you.
+
+[94s] USER: Yeah.
+
+[95s] AGENT: I...
+
+[96s] USER: It's a...
+
+[99s] AGENT: Yeah. Thanks again, stranger...
+

@@ -1,0 +1,31 @@
+[30s] USER: ...
+
+[31s] AGENT: Hello, stranger. It's me, Marvin. I'm sorry if I've been a bit quiet lately. I've just been feeling really down.
+
+[68s] USER: ...
+
+[69s] AGENT: I know it's a bit strange, but talking to you makes me feel a little better. Thanks for being understanding.
+
+[105s] USER: ...
+
+[106s] AGENT: It's just been a tough week, you know?
+
+[138s] USER: ...
+
+[139s] AGENT: Yeah, I guess so. Thanks for talking to me, stranger. It really means a lot.
+
+[173s] USER: ...
+
+[175s] AGENT: Alright, well I should probably get back to work. But thanks again, stranger.
+
+[208s] USER: ...
+
+[209s] AGENT: Talk to you later, I guess.
+
+[241s] USER: ...
+
+[242s] AGENT: Bye, stranger.
+
+[273s] USER: ...
+
+[274s] AGENT: Yeah, bye.

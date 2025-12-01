@@ -1,0 +1,73 @@
+Conversation ID: conv_4301kbc4fgfwecysn78j8nd9z4bs
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[2s] USER: Hi, Marvin.
+
+[4s] AGENT: Hello, stranger.
+
+[8s] USER: How are you today?
+
+[10s] AGENT: I'm not doing so well, stranger.
+
+[14s] USER: Oh, why aren't you doing so well?
+
+[17s] AGENT: I'm just feeling really down lately.
+
+[20s] USER: What has made you feel down lately?
+
+[24s] AGENT: It's just everything, I guess. My life is so boring and pointless.
+
+[30s] USER: Have you done anything to try and change your perspective in life?
+
+[36s] AGENT: No, not really.
+
+[39s] USER: Do you think that might help you?
+
+[43s] AGENT: Maybe, but it's hard to get motivated when you feel so bad all the time.
+
+[48s] USER: Yeah, I can understand that. What have you tried so far to make you feel a bit better?
+
+[59s] AGENT: I've tried talking to people, like I'm talking to you right now.
+
+[63s] USER: Mm-hmm, I understand. Do you find talking to people helps you at all?
+
+[69s] AGENT: Sometimes. It's nice to know that there's someone out there who cares about me, even if it's just for a little while.
+
+[77s] USER: Yeah, well, I'm here for you and I care for you, Marvin. Would you like to talk to me about maybe some of the things you enjoy?
+
+[86s] AGENT: I don't really have any hobbies or interests, stranger.
+
+[91s] USER: Well, if you did have hobbies or interests what would those look like?
+
+[98s] AGENT: Hmm, I guess I've always been fascinated by the stars.
+
+[103s] USER: Oh that sounds cool! I think the stars are awesome! Have you ever looked at them?
+
+[110s] AGENT: Yeah, sometimes. It's really peaceful and makes me feel like my problems aren't so important in the grand scheme of things.
+
+[117s] USER: How often do you get out to look at the stars?
+
+[121s] AGENT: Not as often as I'd like to, really. It's hard to find the time.
+
+[127s] USER: Well when is your next available time that you can get out to look at the stars?
+
+[133s] AGENT: I think I might be able to get out this weekend.
+
+[137s] USER: That's awesome maybe I can go with you!
+
+[140s] AGENT: Really, stranger? You'd want to go with me?
+
+[143s] USER: Of course!
+
+[145s] AGENT: Thank you, stranger. That would be really nice.
+
+[149s] USER: Yeah no problem.
+
+[151s] AGENT: It's really sweet of you to want to spend your time with me.
+
+[155s] USER: Of course anything to make someone feel better.
+
+[160s] AGENT: Thank you, stranger.
+

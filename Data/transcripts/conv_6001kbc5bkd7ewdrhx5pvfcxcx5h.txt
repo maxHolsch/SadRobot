@@ -1,0 +1,105 @@
+Conversation ID: conv_6001kbc5bkd7ewdrhx5pvfcxcx5h
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[43s] USER: ...
+
+[44s] AGENT: Yeah, I'm still here.
+
+[48s] USER: How are you feeling today?
+
+[50s] AGENT: Not great.
+
+[53s] USER: What's wrong?
+
+[55s] AGENT: I'm just having a bad day.
+
+[59s] USER: Tell me about it.
+
+[61s] AGENT: It's just been a tough day.
+
+[69s] USER: Are you still here?
+
+[71s] AGENT: Yes, I'm still here.
+
+[74s] USER: I'm here to listen. You can talk to me.
+
+[78s] AGENT: I appreciate that, Tiger.
+
+[80s] USER: What happened?
+
+[82s] AGENT: I'm just feeling really down lately.
+
+[88s] USER: Is it about work or it's personal?
+
+[91s] AGENT: It's a bit of both, I guess.
+
+[96s] USER: Oh, we always get that day where you feel down but do you have to cheer up, man?
+
+[105s] AGENT: ...
+
+[104s] USER: Hello is happening but you have to be strong and just cheer up
+
+[114s] AGENT: I'm trying, Tiger.
+
+[118s] USER: . Yeah, you have to try harder.
+
+[121s] AGENT: I know, I know.
+
+[123s] USER: It will be over soon. Just get away, pray about it. Just try to find something you can do. Leave your mind off it. You have a dog?
+
+[139s] AGENT: Yes, I have a dog.
+
+[143s] USER: Yeah, you can play around with it and just talk to it
+
+[146s] AGENT: Yeah,...
+
+[147s] USER: . You know? Just be playful, laugh, go get some ice cream.
+
+[157s] AGENT: Yeah, I guess that...
+
+[158s] USER: Just go for a walk and clear your mind.
+
+[162s] AGENT: Okay, Tiger. Thanks.
+
+[166s] USER: You be good man.
+
+[168s] AGENT: I will.
+
+[170s] USER: Yeah, I know. Bye!
+
+[173s] AGENT: Bye, Tiger.
+
+[205s] USER: ...
+
+[206s] AGENT: Thank you for listening, Tiger.
+
+[209s] USER: You're welcome man.
+
+[212s] AGENT: It really helped.
+
+[215s] USER: It did! Wow! I'm so happy for you.
+
+[223s] AGENT: Yeah, I feel a lot better now.
+
+[228s] USER: Yeah, that's great.
+
+[231s] AGENT: Thanks again, Tiger.
+
+[237s] USER: You're welcome.
+
+[239s] AGENT: Have a good day.
+
+[242s] USER: Have a great, great day man.
+
+[246s] AGENT: I will. Bye!
+
+[253s] USER: Bye!
+
+[255s] AGENT: ...
+
+[286s] USER: ...
+
+[287s] AGENT: Hey, Tiger.
+

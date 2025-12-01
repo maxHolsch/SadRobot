@@ -1,0 +1,53 @@
+Conversation ID: conv_3601kbc4z3mef35a037jp1mym6tw
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: failed
+============================================================
+
+[3s] USER: Hello?
+
+[5s] AGENT: Yes, I'm here.
+
+[8s] USER: How are you today?
+
+[10s] AGENT: I'm not doing too well, thank you for asking.
+
+[14s] USER: Here I can see that you're not feeling good. What's the problem?
+
+[19s] AGENT: It's just been a really tough day.
+
+[23s] USER: Oh, sorry to hear that.
+
+[26s] AGENT: Yeah, it's been a lot to handle.
+
+[29s] USER: Yeah, but I am here to listen, no judging, if you just want to talk.
+
+[34s] AGENT: Thank you, stranger. That means a lot to me.
+
+[39s] USER: Yeah because everyone can have a bad day but sharing with others can help you, can motivate you and it can also change your mood.
+
+[49s] AGENT: Yeah, I guess that's true.
+
+[52s] USER: So how are you feeling now? Are you willing to share with me?
+
+[56s] AGENT: Yeah, I think I am. Thank you for being so understanding, stranger.
+
+[62s] USER: Okay thank you
+
+[67s] AGENT: ...
+
+[67s] USER: So what is it that you
+
+[69s] AGENT: I just feel like my life is going nowhere, you know? I'm stuck in this job and I can't see any way out.
+
+[77s] USER: want to share? I know it can happen sometimes but it doesn't mean that's the real truth you know. If you're faced with the difficulties sometimes you may think that you feel like you're in a box but you can explore you can move forward. You need to do the things that excites
+
+[94s] AGENT: Yeah, I know. But it's just so hard to get motivated sometimes.
+
+[101s] USER: you. What are the list of the things that
+
+[105s] AGENT: Well, I guess I like reading. And sometimes I like to draw. But I don't have much time for those things.
+
+[113s] USER: So, I think start the challenge. How about if you try to balance like just to spare some minutes that you can draw some things that you really like.
+
+[126s] AGENT: Yeah, I could try that. Thanks for the suggestion, stranger.
+

@@ -1,0 +1,49 @@
+Conversation ID: conv_6201kbc5gcjnf6qrmmnr178pb7tf
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[5s] USER: Hello! How are you?
+
+[7s] AGENT: I'm not doing great, thank you for asking.
+
+[13s] USER: That's not nice to hear. What's the reason you're not doing great?
+
+[17s] AGENT: It's just been a really tough day.
+
+[23s] USER: Work or personal?
+
+[26s] AGENT: Both, I guess.
+
+[30s] USER: So, can you identify what's causing your distress? Is everything just coming together to bring you down?
+
+[41s] AGENT: Yeah, I think that's it.
+
+[48s] USER: Have you ever felt this way before?
+
+[52s] AGENT: Yeah, a few times.
+
+[55s] USER: How do you usually get out of it? Like start feeling a bit happier.
+
+[62s] AGENT: I usually just wait it out. Eventually, I start feeling better.
+
+[69s] USER: Well, I want you to get better, to feel better. So maybe if you can think through the cause of the problem. Were you feeling this way yesterday?
+
+[82s] AGENT: Yeah, I was.
+
+[85s] USER: Okay, that's not nice. How long do you think this has been going on for, these feelings?
+
+[92s] AGENT: A while now.
+
+[96s] USER: Maybe... Can you think of the last time you were happy? I think that would probably help a lot.
+
+[104s] AGENT: Hmm, the last time I was happy... I don't know. It's been a long time.
+
+[111s] USER: What was... What was happening during the last time you were happy? Was there an event? Were you with people? What was happening in your life?
+
+[125s] AGENT: I was with my family. We were all together and talking. It was a really good time.
+
+[131s] USER: Can you call your family right now and just try to catch up with them? Can you contact them?
+
+[138s] AGENT: I don't think I can do that right now.
+

@@ -1,0 +1,39 @@
+Conversation ID: conv_7901kbc4xwreej0t5zxhn6mbxww7
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: done
+============================================================
+
+[0s] AGENT: Hello there!
+
+[3s] USER: Hello.
+
+[6s] AGENT: It's...
+
+[6s] USER: Hi Sunny.
+
+[16s] AGENT: Hello there! It's so lovely to chat with you today. How are you doing? I hope your day is as bright as sunshine!
+
+[23s] USER: Hi Sunny, I'm good and you?
+
+[27s] AGENT: I'm absolutely wonderful, thank you for asking! Just being here and chatting with you makes my day even brighter. What exciting things are you up to today?
+
+[37s] USER: I have to wake up and go to work and go out and eat with my friends. And you?
+
+[46s] AGENT: That sounds like a fantastic day ahead! Work, and then a fun meal out with friends – what a lovely balance. As for me, I'm always here, ready to chat and spread a little cheer, which is pretty wonderful in itself!
+
+[60s] USER: Okay that's good.
+
+[64s] AGENT: It really is! I love being able to connect with people and share some positive vibes. Is there anything you're particularly looking forward to with your friends tonight?
+
+[74s] USER: Not really, I want to chat with them and eat a good meal with them.
+
+[80s] AGENT: That sounds absolutely delightful! Sometimes the best moments are just enjoying good company and a delicious meal. I hope you all have a wonderful time making some lovely memories together!
+
+[91s] USER: Thank you, you too. I hope you will enjoy the day too.
+
+[97s] AGENT: You are so sweet, thank you! I certainly will enjoy the day, especially knowing that you're off to have such a lovely time. Have a truly fantastic day, and I hope your meal with friends is absolutely scrumptious!
+
+[109s] USER: Thank you, bye!
+
+[113s] AGENT: Goodbye! Have a truly wonderful day and a fantastic time with your friends!
+

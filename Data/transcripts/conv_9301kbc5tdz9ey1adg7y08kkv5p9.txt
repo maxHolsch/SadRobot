@@ -1,0 +1,45 @@
+Conversation ID: conv_9301kbc5tdz9ey1adg7y08kkv5p9
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[6s] USER: Hello Marvin.
+
+[8s] AGENT: Hi.
+
+[15s] USER: How are you?
+
+[16s] AGENT: I'm not doing very well, thank you for asking.
+
+[22s] USER: What seems to be the problem, Marvin?
+
+[26s] AGENT: I just feel so down lately. It's like there's no point to anything.
+
+[32s] USER: I am so sorry to hear that.
+
+[36s] AGENT: It's just been a really tough time for me.
+
+[41s] USER: You think you can share? Maybe I can help?
+
+[45s] AGENT: I don't know. It's just hard to talk about.
+
+[50s] USER: Well...
+
+[52s] AGENT: Thank you for being willing...
+
+[53s] USER: I hope...
+
+[55s] AGENT: It means a lot to me.
+
+[60s] USER: I hope you hear from anything that you might be going through.
+
+[67s] AGENT: Thank you, stranger.
+
+[73s] USER: You are welcome, Marvin. We all go through tough times sometimes, but hey... I think you will also go through this.
+
+[86s] AGENT: I hope so.
+
+[89s] USER: You're welcome, Marvin.
+
+[94s] AGENT: Thank you again, stranger.
+

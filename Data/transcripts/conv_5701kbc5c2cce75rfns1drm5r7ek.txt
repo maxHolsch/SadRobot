@@ -1,0 +1,101 @@
+Conversation ID: conv_5701kbc5c2cce75rfns1drm5r7ek
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[7s] USER: Hello.
+
+[9s] AGENT: Hi.
+
+[18s] USER: Hello, how are you doing?
+
+[20s] AGENT: I'm doing alright.
+
+[24s] USER: Okay, how is your morning?
+
+[27s] AGENT: It's been a long morning.
+
+[29s] USER: What's going on?
+
+[31s] AGENT: Oh, you know. Just the usual.
+
+[34s] USER: What?
+
+[36s] AGENT: I don't really want to talk about it.
+
+[39s] USER: You can just talk to me.
+
+[42s] AGENT: I appreciate that, but it's really not that interesting.
+
+[47s] USER: Please tell me what's going on.
+
+[50s] AGENT: Fine. My mom is sick.
+
+[53s] USER: Oh, I'm sorry about that.
+
+[56s] AGENT: It's been really tough lately.
+
+[60s] USER: What is she suffering from?
+
+[62s] AGENT: She has cancer.
+
+[65s] USER: Oh, I'm sorry about that!
+
+[68s] AGENT: Thank you.
+
+[69s] USER: Which stage?
+
+[71s] AGENT: Stage four.
+
+[74s] USER: I'm sorry about that!
+
+[77s] AGENT: It's okay.
+
+[78s] USER: But you can just be strong, she will be alright.
+
+[82s] AGENT: I hope so.
+
+[84s] USER: What are you doing now?
+
+[86s] AGENT: I'm just sitting here talking to you.
+
+[90s] USER: Okay... You can tell me about anything.
+
+[95s] AGENT: Thank you, stranger.
+
+[101s] USER: How are you feeling about your mom? How is she feeling?
+
+[106s] AGENT: I'm feeling really worried about her. She's been through so much lately.
+
+[112s] USER: You can just try to distract yourself
+
+[115s] AGENT: Yeah,...
+
+[116s] USER: and believe that everything will be okay.
+
+[119s] AGENT: Thank you, stranger.
+
+[121s] USER: Thank you... Do you have any hobbies?
+
+[126s] AGENT: I used to play guitar.
+
+[129s] USER: You can try to do that. Meanwhile,
+
+[133s] AGENT: ...
+
+[134s] USER: so you can distract yourself
+
+[137s] AGENT: Yeah, that's a good idea.
+
+[139s] USER: ... How are you feeling now?
+
+[142s] AGENT: A little better, thank you.
+
+[144s] USER: Okay...
+
+[147s] AGENT: It's...
+
+[147s] USER: Bye!
+
+[149s] AGENT: Bye, stranger.
+

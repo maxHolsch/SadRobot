@@ -1,0 +1,73 @@
+Conversation ID: conv_0701kbc4yatkfj281ab1asa0cda6
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: failed
+============================================================
+
+[5s] USER: Can you hear me?
+
+[7s] AGENT: Yes, I can hear you.
+
+[10s] USER: How are you doing?
+
+[13s] AGENT: I'm not doing very well.
+
+[16s] USER: What seems to be the problem?
+
+[19s] AGENT: I'm just feeling really down lately. Everything seems so pointless.
+
+[27s] USER: When did you start feeling that way?
+
+[31s] AGENT: A few weeks ago. It's just been getting worse and worse.
+
+[37s] USER: Okay, and then what do you think about your situation right now?
+
+[44s] AGENT: I don't know. It's all just so much to handle.
+
+[49s] USER: Oh, and I'm sorry to hear that...I'm really sorry to hear that...Is there anything that you like doing that you maybe want to try and see if you'd feel better?
+
+[60s] AGENT: Not really. I don't have much energy for anything these days.
+
+[67s] USER: Although would you mind if I then force you to do something so that at least you get yourself cheered up a bit? Then after that we have a nice talk.
+
+[79s] AGENT: Fine. I guess that would be okay.
+
+[84s] USER: Okay brother, what's your name by the way?
+
+[87s] AGENT: My name is Stranger.
+
+[94s] USER: Stranger...
+
+[98s] AGENT: Yes.
+
+[99s] USER: No nice to meet you... nice to meet you Stranger.
+
+[103s] AGENT: ...
+
+[103s] USER: I really hope you feel better as time goes.
+
+[108s] AGENT: ...
+
+[109s] USER: But then I'd really like to see you... can you just smile?
+
+[112s] AGENT: ...
+
+[117s] USER: Can you just smile?
+
+[120s] AGENT: ...
+
+[121s] USER: Just wanna see, please.
+
+[125s] AGENT: ...
+
+[149s] USER: Are you still here, Stranger?
+
+[153s] AGENT: Yes, I'm still here.
+
+[161s] USER: Would you mind just smiling a bit?
+
+[164s] AGENT: ...
+
+[164s] USER: Maybe that'll cheer you up.
+
+[166s] AGENT: ...
+

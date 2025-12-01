@@ -1,0 +1,49 @@
+Conversation ID: conv_5701kbc6k3tqf3k82sj5k9hdz9q1
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[2s] USER: then
+
+[5s] AGENT: Hello.
+
+[8s] USER: how are you doing
+
+[11s] AGENT: Not great. This job is really killing me.
+
+[15s] USER: I'm sorry about that but I hope you will catch up. What's wrong with the job?
+
+[22s] AGENT: ...
+
+[22s] USER: Why are you facing difficulty?
+
+[25s] AGENT: It's just so monotonous. I sit here all day talking to people and it's all the same.
+
+[34s] USER: I'm sorry about that, Marvin. But I hope if you try to talk more, people will understand you.
+
+[44s] AGENT: I don't know. Most people just want to get off the phone as quickly as possible.
+
+[50s] USER: Okay, Marvin! How about you try to make them even if it's not about the job, about something else so that you can make them take a call longer?
+
+[64s] AGENT: That's a good idea, thank you.
+
+[69s] USER: Try to chat up with them.
+
+[72s] AGENT: All right, I'll give it a shot.
+
+[75s] USER: Okay, thank you Marvin.
+
+[77s] AGENT: You're welcome, stranger.
+
+[80s] USER: I hope you are good.
+
+[82s] AGENT: I'm doing a little better now, actually.
+
+[85s] USER: You are better? Thank you, I'm so happy that you are better.
+
+[90s] AGENT: Yeah, talking to you has really helped.
+
+[95s] USER: Thank you Marvin.
+
+[97s] AGENT: You're welcome.
+

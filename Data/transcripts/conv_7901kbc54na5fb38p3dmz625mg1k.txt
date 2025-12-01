@@ -1,0 +1,17 @@
+Conversation ID: conv_7901kbc54na5fb38p3dmz625mg1k
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: failed
+============================================================
+
+[3s] USER: Hello
+
+[4s] AGENT: Hello.
+
+[6s] USER: . How are you?
+
+[8s] AGENT: I'm not doing too well.
+
+[11s] USER: I'm sorry. What's happening?
+
+[15s] AGENT: My life is...
+

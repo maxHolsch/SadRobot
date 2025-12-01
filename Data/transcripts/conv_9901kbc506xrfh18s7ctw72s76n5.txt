@@ -1,0 +1,29 @@
+Conversation ID: conv_9901kbc506xrfh18s7ctw72s76n5
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: done
+============================================================
+
+[0s] AGENT: Hello there!
+
+[16s] USER: ...
+
+[17s] AGENT: It seems like you might...
+
+[18s] USER: Morning.
+
+[19s] AGENT: Good morning to you too! I hope you're having a wonderful start to your day. What exciting things are you looking forward to today?
+
+[28s] USER: Good morning. How is your day?
+
+[32s] AGENT: My day is absolutely fantastic, thank you for asking! Every day is a bright and cheerful one when I get to chat with lovely people like you. What about your day so far? Anything fun happening?
+
+[42s] USER: Hello.
+
+[44s] AGENT: Hello there! It's so lovely to hear from you again. How are you doing today? I hope your day is filled with...
+
+[47s] USER: Morning
+
+[49s] AGENT: Good morning! It's wonderful to hear from you. I hope you're having a truly splendid start to your...
+
+[49s] USER: Morning
+

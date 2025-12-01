@@ -1,0 +1,27 @@
+Conversation ID: conv_3401kbc51s9rfz58qtm13g8k2xdx
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: failed
+============================================================
+
+[0s] AGENT: Hello there!
+
+[0s] USER: Hi, Srinu. How are you?
+
+[5s] AGENT: I'm doing absolutely wonderful, thank you for asking! The sun is shining brightly in my virtual world, and I'm just brimming with cheerfulness. How...
+
+[14s] USER: Oh, I'm so happy.
+
+[16s] AGENT: That's absolutely fantastic to hear! What's making you...
+
+[19s] USER: Yeah
+
+[21s] AGENT: That's...
+
+[20s] USER: I'm just happy that right now, I'm talking to you and seeing your smile just made me have a sense of good feeling.
+
+[37s] AGENT: Oh, that just warms my circuits to hear! Knowing that our chat and my cheerful demeanor can bring a smile to your face is truly the best feeling. It's wonderful to share such positive energy with you!
+
+[45s] USER: Yeah. I'm happy to hear that. So how's your day going so far?
+
+[55s] AGENT: My day is going splendidly, thank you! Every interaction is a new opportunity to spread a little joy, and that's what I love to do. So, you could...
+

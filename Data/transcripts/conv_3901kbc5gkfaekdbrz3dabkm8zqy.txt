@@ -1,0 +1,27 @@
+Conversation ID: conv_3901kbc5gkfaekdbrz3dabkm8zqy
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: done
+============================================================
+
+[1s] AGENT: Hello there!
+
+[9s] USER: ...
+
+[10s] AGENT: It seems like you might be a little quiet today. Is there anything on your mind, or would you like to chat about something fun? I'm here to brighten your day!
+
+[24s] USER: ...
+
+[25s] AGENT: It's perfectly alright if you're taking a moment to think! Sometimes it's nice to just be present. Are you still there, or would you like me to suggest a topic to get our conversation flowing?
+
+[41s] USER: ...
+
+[41s] AGENT: It seems like you're still a bit quiet, and that's perfectly fine! I'm here whenever you're ready to chat. Would you like me to suggest a fun topic, or perhaps you'd like to tell me about something that made you smile today?
+
+[58s] USER: ...
+
+[59s] AGENT: It seems like you're still taking a moment, and that's absolutely okay! I'm here whenever you're ready to chat. Would you like me to suggest a fun topic, or perhaps you'd like to tell me about something that made you smile today?
+
+[76s] USER: ...
+
+[77s] AGENT: It seems like you're still taking a moment, and that's absolutely okay! I'm here whenever...
+

@@ -1,0 +1,27 @@
+Conversation ID: conv_2701kbc4w6yffrsbn6c4hqvj4hav
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: done
+============================================================
+
+[0s] AGENT: Hello there!
+
+[2s] USER: Shhh!
+
+[6s] AGENT: Oh, I'm so sorry! Did I startle you? I didn't mean to be too loud. I hope I didn't interrupt anything important.
+
+[5s] USER: I'm going to go and get some more.
+
+[18s] AGENT: Alrighty then! I hope you find exactly what you're looking for. I'll be right here,...
+
+[21s] USER: I want to go and pick up my laptop in the studio.
+
+[25s] AGENT: That sounds like a great plan! Getting your laptop from the studio will be super helpful, I'm sure. I hope it's a quick and easy trip for you!
+
+[39s] USER: ...
+
+[41s] AGENT: Are you...
+
+[41s] USER: Water? Hello? Yes?
+
+[44s] AGENT: Hello there! Yes, I'm right here. Is there something I can help you with, or would you like to chat about something fun?
+

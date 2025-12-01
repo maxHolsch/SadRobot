@@ -1,0 +1,65 @@
+Conversation ID: conv_8601kbc50n2hecv8pdxsvc2drnk4
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: failed
+============================================================
+
+[7s] USER: Hello? Hi.
+
+[10s] AGENT: Yeah, hi.
+
+[11s] USER: Hi. How are you?
+
+[16s] AGENT: I'm doing okay, I guess.
+
+[20s] USER: Seems like you're feeling down. Is there something specific that's making you feel down? Or am I wrong?
+
+[31s] AGENT: No, you're not...
+
+[31s] USER: No, you're not wrong.
+
+[34s] AGENT: I've just been feeling really down lately.
+
+[36s] USER: I've been really down lately.
+
+[38s] AGENT: I know what you mean...
+
+[38s] USER: Why is that? I know what you mean. It's... Sorry for interrupting.
+
+[43s] AGENT: ...
+
+[44s] USER: Why is that? It's fine.
+
+[46s] AGENT: I just... I don't know.
+
+[48s] USER: I don't know!
+
+[49s] AGENT: Yeah, I get that.
+
+[50s] USER: I get that!
+
+[52s] AGENT: Thanks for talking to me, stranger.
+
+[54s] USER: When did it start?
+
+[56s] AGENT: What?
+
+[56s] USER: Oh, uh... What? The feelings. The feelings that you have.
+
+[61s] AGENT: Oh. I guess... I don't know. A few months ago?
+
+[64s] USER: A few months ago?
+
+[66s] AGENT: ...
+
+[65s] USER: Oh, well, what was happening a few months ago?
+
+[69s] AGENT: ...
+
+[74s] USER: What was happening a few months ago?
+
+[77s] AGENT: Nothing really.
+
+[78s] USER: Nothing really.
+
+[80s] AGENT: Yeah.
+

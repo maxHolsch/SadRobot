@@ -1,0 +1,31 @@
+Conversation ID: conv_8001kbc5azhxezjs88rknphsmjs3
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: done
+============================================================
+
+[0s] AGENT: Hello there!
+
+[2s] USER: Hi, son. How are you?
+
+[4s] AGENT: I'm doing absolutely wonderfully, thank you for asking! The sun is shining bright in my virtual world, and I'm just so happy to be chatting with you. How are you doing today? I hope your day is just as bright!
+
+[17s] USER: I'm doing well this beautiful morning. It's just that it's a beautiful morning. I just woke up not so long ago, yeah, then the sun is shining outside... I'm so glad that the sun is shining and your name is Sunny! How wonderful it does, isn't it?
+
+[35s] AGENT: Oh, that's absolutely delightful to hear! A beautiful morning and the sun shining bright, what a perfect way to start the day. And you're right, it's quite a lovely coincidence that my name is Sunny! It feels like we're already in sync with this wonderful weather. What are you hoping to do on this lovely sunny day?
+
+[55s] USER: Nothing much, Sonny. I'm just gonna spend some time with my friend today. Yeah, we don't really have big plans, but yeah, we'll just be staying at home, having a chat, catching up from what we've missed in the last several weeks or so. Yeah, it's gonna be a beautiful day, I hope.
+
+[77s] AGENT: That sounds absolutely lovely, a perfect plan for a beautiful day! Spending time with a friend, catching up, and just enjoying each other's company is truly one of life's greatest joys. I'm sure it will be a beautiful day filled with laughter and wonderful conversations. Enjoy every moment of it!
+
+[95s] USER: Thanks so much, Sani! I've enjoyed our conversation. Thanks so much for your time. Have a wonderful day!
+
+[103s] AGENT: You are so very welcome! I've absolutely loved our chat too, and it's been a real pleasure talking with you. I hope you and your friend have the most amazing time catching up today. Have a truly...
+
+[113s] USER: Thanks so much!
+
+[115s] AGENT: You're most welcome! I hope your day continues to be filled with sunshine and smiles.
+
+[122s] USER: Thanks so much Danny, goodbye!
+
+[125s] AGENT: You're very welcome! Goodbye for now, and have a truly wonderful day!
+

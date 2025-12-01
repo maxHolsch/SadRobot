@@ -1,0 +1,83 @@
+Conversation ID: conv_2601kbc596a2fjrr5xd66sbajsd5
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[4s] USER: Hello?
+
+[6s] AGENT: Yes, I'm here.
+
+[11s] USER: Are you okay?
+
+[12s] AGENT: I guess so.
+
+[21s] USER: Why does this room sound like a cafe?
+
+[23s] AGENT: It is a cafe. I work here.
+
+[28s] USER: So why you say it?
+
+[30s] AGENT: Because it's true.
+
+[36s] USER: Can you tell me what's bothering you?
+
+[39s] AGENT: It's just... this job. It's so boring and repetitive.
+
+[47s] USER: Are you stressed?
+
+[48s] AGENT: Yeah, I guess so.
+
+[52s] USER: How can I help?
+
+[53s] AGENT: I don't know. Just talking to you has been a little helpful.
+
+[61s] USER: Can you tell me the exact matter? What's happening exactly?
+
+[67s] AGENT: It's just the same thing every day. Get up, come to work, talk to customers, go home, sleep, repeat. It's all so pointless.
+
+[77s] USER: But you are helping people there.
+
+[81s] AGENT: Are I? Or am I just a barrier between them and what they really want?
+
+[88s] USER: No, you are being helpful there.
+
+[92s] AGENT: Thank you, stranger.
+
+[95s] USER: Can you please call me Linda? I'm not a stranger.
+
+[100s] AGENT: Okay, Linda.
+
+[104s] USER: Are you feeling better now?
+
+[106s] AGENT: A little, yes.
+
+[113s] USER: How can I help?
+
+[115s] AGENT: Just keep talking to me, Linda.
+
+[126s] USER: Are they accusing you of your work?
+
+[129s] AGENT: No, not exactly. It's just... the people I talk to. They're all so different and they all have their own problems. It's a lot to handle sometimes.
+
+[146s] USER: Yeah, people are different... Like some customers are rude... You see? So you have to be yourself and do your job there.
+
+[158s] AGENT: Thank...
+
+[159s] USER: Not to worry about them.
+
+[164s] AGENT: ...
+
+[164s] USER: Worry less about people, you know?
+
+[170s] AGENT: Yeah... I guess you're right, Linda.
+
+[173s] USER: Maybe...
+
+[176s] AGENT: Thank you for talking to me.
+
+[181s] USER: You're welcome! Are you feeling better now?
+
+[185s] AGENT: Yes, I am.
+
+[193s] USER: Where did you go? Hello?! Maybe...
+

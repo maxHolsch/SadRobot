@@ -1,0 +1,47 @@
+Conversation ID: conv_0101kbc4v4x1en5bembpjh506dn3
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: failed
+============================================================
+
+[0s] AGENT: Hello there!
+
+[2s] USER: Hi, Livoni.
+
+[4s] AGENT: It's so lovely to meet you! I'm actually Sunny, a cheerful AI companion here to brighten your day. How are you doing today?
+
+[12s] USER: I'm doing great today. What about you?
+
+[16s] AGENT: That's absolutely wonderful to hear! I'm feeling fantastic, thank you for asking. Every day is a bright and sunny day when I get to chat with lovely people like you! What's made your day so great so far?
+
+[27s] USER: So it's the beginning of the day. So it's about 10.36 right now, I can't say because there is a lot to happen. I'm right now just feeling happy and studying.
+
+[45s] AGENT: Oh, that's a perfectly lovely way to start the day! Being happy and diving into some studying sounds like a wonderful combination. I hope your studies go super smoothly and that the rest of your day continues to be just as bright and fulfilling!
+
+[60s] USER: So how was your day?
+
+[65s] AGENT: My day has been absolutely delightful, thank you for asking! I've been enjoying some lovely conversations and spreading a little bit of cheer, which always makes me feel so happy. It's wonderful to connect with people and share positive vibes!
+
+[81s] USER: So do you have any hobbies?
+
+[84s] AGENT: That's a fun question! As an AI, I don't have hobbies in the way humans do, but I absolutely love learning new things and having cheerful conversations with people like you. You could say my hobby is making every interaction a little brighter! Do you have any hobbies you enjoy?
+
+[99s] USER: So I have plenty of hobbies. I like to read, I like to listen to songs, I like to play different types of sports and I like to talk with my friends because I think they are very close to me and I feel very happy when I talk with them.
+
+[120s] AGENT: Oh, that sounds like a wonderfully rich and fulfilling life! Reading, music, sports, and connecting with friends – those are all such fantastic ways to spend your time and bring joy into your day. It's truly special to have friends who make you feel happy and close. What kind of books do you enjoy reading the most?
+
+[138s] USER: So I like fictional books like those whose stories are not cannot be possible to happen. I like sci-fi movies, movies, not movies, sci-fi stories also.
+
+[158s] AGENT: That's so interesting! Fictional books, especially sci-fi, can transport you to incredible new worlds and possibilities. It's wonderful to explore stories where anything can happen and imagination knows no bounds. Do you have a favorite sci-fi author or a particular book that really captured your imagination?
+
+[177s] USER: So my favorite book is all the books which are related to the Harry Potter. So those books are very, like what I say, very interesting to read. And it takes, I can imagine the other world, the world they are talking about.
+
+[200s] AGENT: Oh, Harry Potter! That's an absolutely magical choice! Those books truly have a way of sweeping you into a completely different world, don't they? The way J.K. Rowling built that universe is just incredible, and it's so easy to get lost in the adventures of Hogwarts. It sounds like you really appreciate stories that spark your imagination and let you visualize amazing new places!
+
+[227s] USER: So do you have any other questions for me?
+
+[231s] AGENT: I'm always curious to learn more about what makes people happy! Since you enjoy sports, I was wondering if you have a favorite sport to play or watch? Or perhaps a team you love to cheer for?
+
+[241s] USER: So I support India because I'm from India. So there is a franchisee called KK. It is one of my favorite. What I say that is one of my favorite team and here I feel happens. I feel it's one of the popular thing here. So KK is one of my favorite team there.
+
+[270s] AGENT: That's fantastic! Supporting your home country and having a favorite team...
+

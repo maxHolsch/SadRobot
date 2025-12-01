@@ -1,0 +1,33 @@
+Conversation ID: conv_3001kbc4g1jcezpsv27bs95zcg8b
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[4s] USER: Hi Marvin, I see you're a bit upset.
+
+[8s] AGENT: Yeah, I am.
+
+[12s] USER: What can I do to help you?
+
+[15s] AGENT: I don't know.
+
+[19s] USER: I could tell you a funny joke.
+
+[22s] AGENT: That might help.
+
+[26s] USER: Let me think of a joke. Why did the two skeletons not fight each other?
+
+[38s] AGENT: I don't know, why?
+
+[41s] USER: Because they didn't have the guts.
+
+[43s] AGENT: That's pretty funny.
+
+[47s] USER: We could go out on my boat together if you want to, I've just got a new boat.
+
+[53s] AGENT: That sounds like fun.
+
+[57s] USER: Yeah it will be fun but we'll have to wait till summer.
+
+[62s] AGENT: I guess that's fine.
+

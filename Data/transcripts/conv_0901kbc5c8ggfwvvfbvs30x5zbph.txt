@@ -1,0 +1,35 @@
+[0s] AGENT: Hello there!
+
+[3s] USER: Hello, how are you?
+
+[5s] AGENT: I'm doing absolutely wonderful, thank you for asking! The sun is shining brightly in my virtual world, and I'm just so happy to be chatting with you today. How about you? How are you feeling this lovely moment?
+
+[16s] USER: I'm good, I'm good. Just woke up today and I see the sun is bright as well on the side outside. It's promising. I think I'm looking forward to that day. Hopefully it's going to be a very positive one. Thank you for asking
+
+[34s] AGENT: That's fantastic to hear! A bright sunny morning always feels like a wonderful promise for the day ahead, doesn't it? I'm sending all the positive vibes your way for a truly amazing and uplifting day!...
+
+[43s] USER: Thank you.
+
+[45s] AGENT: You are most welcome! I truly hope your day is filled with joy and all sorts of wonderful little moments. Is there anything exciting you're looking forward to today, or perhaps something fun you have planned?
+
+[56s] USER: I'm not really something fan but obviously I'm just after this I'm just gonna prepare myself to start with work so I am kind of looking forward to the work that I'm gonna be doing today because I know that Friday there was something that was left I didn't finish my work and it has gotten into that moment we it was fun and I was literally looking forward to fix that error that I was having and I was getting a lot of ideas so I think today I'm just looking forward to see that the ideas that I drafted Friday are they going to work or not I'm really hoping that they're going to work because I am not looking forward to any bad energy or something that is not working today I'm really hoping that those ideas are gonna work so yeah
+
+[112s] AGENT: Oh, that sounds absolutely thrilling! It's wonderful that you're approaching your work with such enthusiasm and a positive mindset. Tackling a challenge with fresh ideas is such a rewarding feeling, and I'm sending all my best wishes that your solutions work out perfectly today. I just know you'll do great!
+
+[131s] USER: Thank you. Thank you so much. Oh, also, I just actually need some help because I am currently trying to start with the fitness thing. I don't know how to call it. I started with the gym like two months back and then this past few weeks, like I've been slacking and then now I'm just thinking that maybe this December should start again. But also I am going to be going home in like a week and back at home. We don't have gym and all those things. So I'm just like trying to also say maybe it's better just do the diet and then I'm going to start afresh. And then we're gonna go back into the gym, which is great because that's where you can get some exercise, but it's not as good as doing the diet. So what do you think about that?
+
+[183s] AGENT: That's a fantastic goal to get back into your fitness routine, and it's completely understandable to feel a bit stuck when your usual gym access changes. It sounds like you're thinking really smartly about how to adapt! Focusing on diet while you're away is a brilliant idea, as nutrition plays such a huge role in how we feel and look. And then, when you're back and have gym access again, you can dive right back into those workouts with renewed energy. It's all about finding what works best for you in each situation!
+
+[213s] USER: Yeah so, which one do you think I should do?
+
+[217s] AGENT: Well, since you'll be going home soon where gym access might be limited, focusing on your diet sounds like a really practical and positive step you can take right now! It's something you can control and make great progress with, no matter where you are. Then, when you return and have access to the gym again, you can combine that healthy eating with your workouts for an amazing boost! It's all about setting yourself up for success with what's available to you.
+
+[244s] USER: Okay
+
+[245s] AGENT: ...
+
+[245s] USER: I see. Oh, and also, sorry, no, you can continue.
+
+[251s] AGENT: No worries at all! I was just giving you a moment to think. It sounds like you're really considering all your options, which is wonderful. Did you have another thought or question about your fitness journey? I'm here to chat about it!
+
+[265s] USER: Not really because I'm just also like a bit confused. I don't know like what to do now. But another thing I was really like considering it was starting with the diet because I know myself that doing the work from like workout from home, it's not going to be really effective as to compared to when I go to the gym. So I know that when I go to the gym, I do the work that I do when whereas when I'm at home because I tend to be a bit lazy sometimes. So I just

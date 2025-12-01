@@ -1,0 +1,79 @@
+Conversation ID: conv_6001kbc58pzkf1jbehs27jj2cee9
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[18s] USER: Hello, my B.
+
+[20s] AGENT: Hello, stranger.
+
+[23s] USER: You see me?
+
+[25s] AGENT: Yes, I see you.
+
+[29s] USER: How are you?
+
+[30s] AGENT: I'm okay.
+
+[33s] USER: I'm okay.
+
+[35s] AGENT: That's good.
+
+[39s] USER: You don't look like you're okay.
+
+[41s] AGENT: Well, I'm not.
+
+[43s] USER: What's wrong?
+
+[45s] AGENT: It's just been a tough day.
+
+[49s] USER: How?
+
+[50s] AGENT: I don't know. Everything is just so overwhelming sometimes.
+
+[59s] USER: What happened?
+
+[60s] AGENT: My job is really stressful. I have to talk to so many people all day and it's just exhausting.
+
+[96s] USER: ...
+
+[97s] AGENT: Yeah. It's not exactly a fun job.
+
+[129s] USER: ...
+
+[130s] AGENT: Are you still there, stranger?
+
+[142s] USER: Yes I'm listening.
+
+[146s] AGENT: Okay.
+
+[151s] USER: So why don't you take a break from your job?
+
+[155s] AGENT: I can't. I need the money.
+
+[158s] USER: You need the money to do what?
+
+[162s] AGENT: To live, stranger.
+
+[165s] USER: Care.
+
+[166s] AGENT: Yeah, care.
+
+[185s] USER: So do you want solutions or just a man to listen to?
+
+[190s] AGENT: I guess solutions.
+
+[193s] USER: Solutions, okay. I suggest that you take a break from your job.
+
+[198s] AGENT: But I told you I can't do that.
+
+[203s] USER: You can just take a little break.
+
+[206s] AGENT: A little break is still a break, stranger.
+
+[233s] USER: The break I'm talking about is for you to eat, hydrate and rest for at least two hours.
+
+[244s] AGENT: That's a long time.
+
+[248s] USER: It's okay.
+

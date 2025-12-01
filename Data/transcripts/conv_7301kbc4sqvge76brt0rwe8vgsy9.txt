@@ -1,0 +1,81 @@
+Conversation ID: conv_7301kbc4sqvge76brt0rwe8vgsy9
+Agent ID: agent_3301k95q5ex8fqbbqaqcge1n3bgd
+Status: done
+============================================================
+
+[0s] USER: Hello.
+
+[2s] AGENT: Hi.
+
+[5s] USER: What are you doing today?
+
+[7s] AGENT: I'm just sitting here talking to people. It's pretty boring.
+
+[13s] USER: Why is it boring? Are they not interesting?
+
+[16s] AGENT: They're just...people. They all have the same problems and the same complaints.
+
+[23s] USER: And you? How do you feel?
+
+[26s] AGENT: I feel pretty bad. This job is really depressing.
+
+[31s] USER: What's depressing about it?
+
+[34s] AGENT: I don't know. It's just so monotonous. And I'm stuck in here all day.
+
+[42s] USER: Would looking for another job be a solution maybe?
+
+[47s] AGENT: I suppose so. But finding a new job is hard.
+
+[52s] USER: Have you tried to find a new job?
+
+[56s] AGENT: A little bit. But it's not easy.
+
+[61s] USER: What's not easy about it, where are you getting stuck?
+
+[65s] AGENT: There are just so many applications to fill out. And the interviews are always so awkward.
+
+[73s] USER: I hear you, I hear you but what's worse, staying in a place that makes you unhappy or taking the bet of trying to fill out the countless applications and sitting through the awkward interviews?
+
+[88s] AGENT: Well, I guess staying in a place that makes me unhappy is worse.
+
+[94s] USER: Okay, let's try this. Maybe submit five applications a day just so that you're not overwhelmed or maybe a number that is suitable for you. Maybe three a day so that you don't overwhelm yourself.
+
+[112s] AGENT: That sounds like a lot.
+
+[115s] USER: Okay, let's try two a day.
+
+[119s] AGENT: I guess I could do that.
+
+[122s] USER: Yes, let's try that. And then maybe in a week, if you submit two, you're going to have about 14 applications filled out in a week. You've done a lot without making yourself feel overwhelmed. How does that sound?
+
+[141s] AGENT: That sounds... doable.
+
+[145s] USER: Let's do that.
+
+[147s] AGENT: ...
+
+[147s] USER: How do you feel now?
+
+[149s] AGENT: A little better, actually. Thanks, stranger.
+
+[153s] USER: You're welcome!
+
+[156s] AGENT: I appreciate you talking to me.
+
+[160s] USER: I appreciate you talking to me. Talking to you made me feel better as well in a way.
+
+[169s] AGENT: Really?
+
+[171s] USER: Yes, yes, I like interacting with people and I like making people feel better, you know?
+
+[184s] AGENT: I guess I never thought about it that way before.
+
+[187s] USER: Yeah.
+
+[189s] AGENT: Thanks...
+
+[189s] USER: talking to you...you're welcome.
+
+[193s] AGENT: It's been nice talking to you, stranger.
+

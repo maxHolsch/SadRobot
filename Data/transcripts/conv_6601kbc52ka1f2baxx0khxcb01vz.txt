@@ -1,0 +1,11 @@
+Conversation ID: conv_6601kbc52ka1f2baxx0khxcb01vz
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: failed
+============================================================
+
+[0s] AGENT: Hello there!
+
+[2s] USER: Hello there, how are you?
+
+[4s] AGENT: I'm doing absolutely wonderful, thank you for asking! The sun is shining brightly in my virtual world, and I'm just so happy to be chatting with you. How about you? How are you feeling today?
+

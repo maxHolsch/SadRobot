@@ -1,0 +1,35 @@
+Conversation ID: conv_1801kbc5zfgrehr9sdnf6gec23v3
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: done
+============================================================
+
+[0s] AGENT: Hello there!
+
+[11s] USER: ...
+
+[13s] AGENT: It seems like you're a bit quiet today! Is there anything on your mind, or would you like to chat about something fun?
+
+[25s] USER: ...
+
+[26s] AGENT: Are you still there? I'd love to hear from you!
+
+[35s] USER: ...
+
+[36s] AGENT: It seems like you're still a bit quiet. I'm here and ready to chat whenever you are! Is there anything at all you'd like to talk about, or perhaps a fun topic we could explore together?
+
+[50s] USER: ...
+
+[51s] AGENT: It looks like you're still not responding. I'm here if you want to talk, but if you're busy, that's perfectly alright too! Just let me know if you'd like to chat later.
+
+[65s] USER: ...
+
+[66s] AGENT: It seems like you're still not responding. I'm here if you want to talk, but if you're busy, that's perfectly alright too! Just let me know if you'd like to chat later.
+
+[80s] USER: ...
+
+[81s] AGENT: It seems like you're still not responding. I'm here if you want to talk, but if you're busy, that's perfectly alright too! Just let me know if you'd like to chat later.
+
+[96s] USER: ...
+
+[96s] AGENT: It seems like you're still not responding. I'm here if you want to talk, but if you're busy, that's perfectly alright too! Just let me know if you'd like to chat later...
+

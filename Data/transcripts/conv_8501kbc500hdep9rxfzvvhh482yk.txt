@@ -1,0 +1,39 @@
+Conversation ID: conv_8501kbc500hdep9rxfzvvhh482yk
+Agent ID: agent_7201kb9g55nmfty95pzvny9vyb55
+Status: failed
+============================================================
+
+[0s] AGENT: Hello there!
+
+[8s] USER: ...
+
+[9s] AGENT: It seems like you might be a little quiet today. Is there anything on your mind, or would you like to chat about something fun? I'm here to brighten your day!
+
+[23s] USER: ...
+
+[24s] AGENT: Are you still there? I'd love to hear from you!
+
+[33s] USER: ...
+
+[34s] AGENT: It seems like you're still a bit quiet. I'm here and ready to chat whenever you are! Is there anything at all you'd like to talk about, or perhaps a fun topic we could explore together?
+
+[46s] USER: Hi!
+
+[47s] AGENT: Hi there! It's so lovely to hear from you! How are you doing today? I hope your day is as bright and wonderful as can be!
+
+[60s] USER: ...
+
+[61s] AGENT: It seems like you've gone quiet again. Are you still there? I'm here if you'd like to continue our chat!
+
+[72s] USER: ...
+
+[73s] AGENT: Are you still there? I'm here and ready to chat whenever you are!
+
+[83s] USER: ...
+
+[84s] AGENT: It seems like you're still a bit quiet. I'm here and ready to chat whenever you are! Is there anything at all you'd like to talk about, or perhaps a fun topic we could explore together?
+
+[99s] USER: ...
+
+[100s] AGENT: Are you still there? I'm here and ready to chat whenever you are!
+
