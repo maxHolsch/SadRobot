@@ -468,9 +468,9 @@ class Survey {
     surveyContainer.innerHTML = `
       <div class="survey-wrapper post-survey-completion">
         <div class="survey-header">
-          <h1>Thank you for completing the post-study survey! Prolific completion code: C7LT0ZTB </h1>
+          <h1>Thank you for completing the post-study survey! Prolific completion code: C6HOKJEF </h1>
           <p class="completion-message">
-            Thank you for participating in this study! Our team will review your responses and, pending standard quality checks, approve your payment promptly. Your Prolific completion code is: C7LT0ZTB
+            Thank you for participating in this study! Our team will review your responses and, pending standard quality checks, approve your payment promptly. Your Prolific completion code is: C6HOKJEF
           </p>
         </div>
         <div class="survey-buttons center">
